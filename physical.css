@@ -68,3 +68,82 @@
  .scene-page{min-height:520px}.narrative-box{padding:14px 17px 18px}.narrative-box h2{font-size:1.15rem}.narrative-box p{font-size:.94rem}
  .choice-page{min-height:480px}.page-flap{min-height:160px}.flap-copy{max-width:78%;padding:14px 44px 14px 16px}.flap-copy strong{font-size:.96rem}
 }
+
+/* Les deux pages et les volets forment un seul album, y compris sur téléphone. */
+body{background:radial-gradient(ellipse at 50% 12%,#23435a 0,#101e2a 56%,#09131e 100%)}
+.book-frame{
+ width:min(1240px,calc(100vw - 124px));height:auto;min-height:760px;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+ background:#d0b98a;border:12px solid #b88f5d;border-radius:24px;
+ box-shadow:0 4px 0 #785537,0 13px 0 #533b2e,0 36px 75px #020a12;
+ isolation:isolate
+}
+.book-frame::before{content:"";position:absolute;inset:8px -5px -8px;border:2px solid #e6d4ac;border-radius:18px;pointer-events:none;z-index:-1}
+.page-paper{background:linear-gradient(105deg,#fff8e8,#f8edd4 68%,#efdfbd);box-shadow:inset 0 0 35px rgba(124,84,34,.1)}
+.scene-page{min-width:0;min-height:736px;border-radius:12px 0 0 12px;grid-template-rows:minmax(360px,1fr) auto}
+.choice-page{min-width:0;border-radius:0 12px 12px 0;padding:0;grid-template-rows:repeat(3,minmax(210px,1fr));box-shadow:inset 20px 0 27px -24px #573c27}
+.spiral{width:26px;background:linear-gradient(90deg,transparent,#ad946b 48%,#5a4736 50%,#f9edcf 57%,transparent);z-index:25}
+.spiral::after{left:5px;width:1px;background:rgba(57,48,34,.25)}
+.scene-picture{overflow:hidden;background:#d6dfd4}
+.scene-picture .scene-svg{object-fit:cover;object-position:center}
+.chapter-chip{left:30px;top:30px;background:#fff4d7;border:2px solid #b99160;color:#273e47;box-shadow:0 4px 12px #29353a3b}
+.narrative-box{padding:24px 38px 28px;background:linear-gradient(180deg,#fbf0d9,#f4e1b9);border-top:3px solid #c9a16a}
+.narrative-box h2{font-family:Georgia,serif;font-size:clamp(1.35rem,2vw,1.85rem);line-height:1.12}
+.narrative-box p{font-size:clamp(1rem,1.27vw,1.15rem);line-height:1.52}
+.narrative-box>strong{color:#7c4a33}
+.page-flap{min-height:210px;background:#f1e5c8;border-bottom:5px solid #b99b6c;box-shadow:inset 8px 0 14px -12px #483926,inset 0 -16px 22px -18px #4c3828}
+.page-flap::before{content:"";position:absolute;inset:8px 9px 10px 7px;z-index:1;border:1px solid rgba(87,69,49,.27);pointer-events:none}
+.page-flap:hover{filter:brightness(1.07);z-index:3}
+.flap-art .scene-svg{opacity:.46;object-fit:cover;object-position:center}
+.flap-art::after{background:linear-gradient(90deg,#fff5de 3%,rgba(255,246,225,.98) 50%,rgba(255,246,225,.38) 78%,rgba(255,246,225,.15))}
+.flap-2 .flap-art::after{background:linear-gradient(90deg,#e8f0e4 3%,rgba(232,240,228,.98) 50%,rgba(232,240,228,.4) 78%,rgba(232,240,228,.15))}
+.flap-3 .flap-art::after{background:linear-gradient(90deg,#e6edf1 3%,rgba(230,237,241,.98) 50%,rgba(230,237,241,.4) 78%,rgba(230,237,241,.15))}
+.flap-copy{max-width:74%;padding:20px 24px 20px 28px}
+.flap-copy strong{font-family:Georgia,serif;font-size:clamp(1.05rem,1.6vw,1.35rem);line-height:1.24}
+.flap-copy small{font-size:.8rem;line-height:1.3;color:#425766}
+.flap-number{width:auto;height:auto;display:inline-block;padding:5px 11px;border-radius:3px;background:#315875;color:#fff;font-size:.73rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.flap-2 .flap-number{background:#527461}.flap-3 .flap-number{background:#786547}
+.flap-emblem{right:9%;width:94px;height:94px;background:#fcebd0;border-color:#a58b60}
+.page-turn-icon{right:14px;bottom:14px;background:#355a66}
+.book-wheel{width:106px;height:106px}.top-left{left:-47px;top:-37px}.top-right{right:-47px;top:-37px}.bottom-left{left:-47px;bottom:-37px}.bottom-right{right:-47px;bottom:-37px}
+.wheel-face,.hero-wheel-select{background:radial-gradient(circle at 38% 28%,#fff9eb,#e5d4ad);box-shadow:0 7px 0 #95734c,0 15px 22px #16130f70,inset 0 0 0 2px #795a3780}
+.wheel-face::after{content:"";position:absolute;inset:7px;border:1px dashed #8c7659;border-radius:50%;pointer-events:none}
+.wheel-name{font-size:.64rem;max-width:70px}
+.ending-page{justify-content:center}
+
+@media(max-width:900px){
+ .app-shell{padding:14px}
+ .book-frame{width:min(650px,calc(100vw - 46px));display:flex;flex-direction:column;margin:28px auto 34px;border-width:8px;min-height:0;gap:0}
+ .scene-page,.setup-left{border-radius:13px 13px 0 0;min-height:0}
+ .scene-page{display:grid;grid-template-rows:minmax(260px,56vw) auto}
+ .choice-page,.setup-right{border-radius:0 0 13px 13px;margin:0;min-height:0}
+ .choice-page{display:grid;grid-template-rows:repeat(3,minmax(160px,auto));box-shadow:inset 0 18px 24px -24px #573c27}
+ .page-flap{min-height:160px}
+ .spiral{display:none}
+ .choice-page{position:relative}
+ .choice-page::before{content:"";position:absolute;top:-8px;left:0;right:0;height:12px;z-index:5;pointer-events:none;background:linear-gradient(180deg,#b3986d,#5b4a37 45%,#f8eccf 55%,transparent)}
+ .book-wheel{position:absolute;width:82px;height:82px;z-index:32;bottom:auto;top:auto}
+ .top-left{left:-22px;top:-22px}.top-right{right:-22px;left:auto;top:-22px}.bottom-left{left:-22px;right:auto;bottom:-22px}.bottom-right{right:-22px;bottom:-22px}
+ .wheel-face{border-width:6px}.wheel-icon{font-size:1.55rem}.wheel-name{font-size:.52rem;max-width:55px}.hero-face .avatar-svg{width:41px;height:49px}
+ .hero-wheel-select{position:absolute;width:82px;height:82px;left:auto;right:-22px;top:auto;bottom:-22px;border-width:6px}
+ .hero-wheel-select .avatar-svg{width:46px;height:52px}.hero-wheel-select span{font-size:.58rem}
+ .book-menu{position:absolute;bottom:-22px;left:50%}
+ .setup-left{min-height:440px}.setup-right{padding:24px 23px 50px}
+}
+@media(max-width:560px){
+ .app-shell{padding:8px}
+ .book-frame{width:calc(100vw - 30px);margin:25px auto 38px;border-width:6px}
+ .scene-page{grid-template-rows:minmax(240px,68vw) auto}
+ .chapter-chip{left:62px;top:12px;font-size:.63rem}
+ .narrative-box{padding:19px 20px 24px}.narrative-box h2{font-size:1.4rem}.narrative-box p{font-size:1rem}
+ .choice-page{grid-template-rows:repeat(3,minmax(148px,auto))}.page-flap{min-height:148px}
+ .flap-copy{max-width:78%;padding:14px 8px 14px 20px}.flap-copy strong{font-size:1.04rem}.flap-copy small{font-size:.69rem}
+ .flap-number{padding:4px 8px;margin-bottom:5px;font-size:.63rem}
+ .flap-emblem{width:66px;height:66px;font-size:1.9rem;right:7%}
+ .page-turn-icon{width:27px;height:25px;font-size:.8rem}
+ .book-wheel,.hero-wheel-select{width:68px;height:68px}.top-left{left:-14px;top:-18px}.top-right{right:-14px;top:-18px}.bottom-left{left:-14px;bottom:-18px}.bottom-right{right:-14px;bottom:-18px}
+ .wheel-face{border-width:5px}.wheel-icon{font-size:1.2rem}.wheel-name{font-size:.44rem;max-width:45px}.hero-face .avatar-svg{width:32px;height:38px}
+ .hero-wheel-select .avatar-svg{width:36px;height:42px}
+ .setup-left{min-height:340px}.setup-right{padding:20px 12px 38px}
+ .hero-option small{font-size:.56rem}.hero-option strong{font-size:.78rem}
+}

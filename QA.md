@@ -77,3 +77,12 @@ Les photos de livres fournies servent uniquement de référence de mécanique et
 Les quatre autres livres ont aussi une issue de rechange pour chacun de leurs volets conditionnels lorsqu'un objet manque. Le talent personnel reste propre à chaque héros ; les scènes sans objet ne prétendent pas qu'il l'a utilisé. Les nouvelles pages du dinosaure, du TARDIS et du Dalek décrivent la conséquence de l'improvisation. Sur 1 500 parcours simulés (100 par héros et par livre), aucun lien manquant ni blocage n'a été observé ; 7 parcours ont atteint la limite de 100 choix à cause de retours possibles entre scènes.
 
 Le rendu dans un navigateur sur PC et mobile reste à examiner visuellement ; les contrôles ci-dessus portent sur les données, la syntaxe et les dessins SVG valides.
+
+## Livre relié et volets illustrés
+
+- La scène et les trois volets sont désormais deux pages continues, avec une reliure et des coins de livre. Sur téléphone, les pages restent dans le même cadre et la reliure suit le pli horizontal.
+- Les quatre roues sont fixées aux coins du livre également sur téléphone ; elles ne forment plus une barre flottante à l'écran.
+- Les volets Haut, Milieu et Bas reprennent le décor de la scène et possèdent chacun sa couleur, son pictogramme et son résultat narratif.
+- Les 259 scènes et leurs destinations passent toujours `npm test`.
+
+Le navigateur de contrôle ne peut pas ouvrir le serveur local dans cet environnement (`ERR_BLOCKED_BY_CLIENT`) : la validation visuelle par capture d'écran reste à faire sur un appareil réel.

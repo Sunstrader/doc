@@ -122,8 +122,8 @@ function renderScene(){
      <div class="scene-picture">${ART.scene(book.id,s)}<div class="chapter-chip">${esc(s.chapter||"Aventure")}</div></div>
      <div class="narrative-box"><h2>${esc(s.title)}</h2><p>${esc(txt)}</p>${s.event?`<div class="event-line">${esc(s.event)}</div>`:""}${s.guide?`<div class="page-guide">${esc(resolve(s.guide))}</div>`:""}<strong>Que veux-tu faire ?</strong></div>
    </article>
-   <aside class="choice-page page-paper">
-     ${s.choices.map((c,i)=>choiceFlap(c,i)).join("")}
+   <aside class="choice-page page-paper" aria-label="Les trois volets de l'histoire">
+     ${s.choices.map((c,i)=>choiceFlap(c,i,s)).join("")}
    </aside>
    ${wheelMarkup(0,"top-left")}${wheelMarkup(1,"top-right")}${wheelMarkup(2,"bottom-left")}${heroWheel()}
    <button class="book-menu" id="menu" aria-label="Menu">☰</button>
@@ -131,11 +131,11 @@ function renderScene(){
  document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.choice]),x));
  document.getElementById("menu").onclick=menu
 }
-function choiceFlap(c,i){
+function choiceFlap(c,i,s){
  c=choiceFor(c);
- const ok=allowed(c),labels=["1","2","3"],label=resolve(c.label),hint=resolve(c.hint),artKey={title:label,chapter:""};
- return `<button class="page-flap flap-${i+1} ${ok?"":"locked"}" data-choice="${i}">
-   <div class="flap-art">${ART.scene(book.id,artKey)}<span class="flap-emblem" aria-hidden="true">${esc(c.icon||"✦")}</span></div>
+ const ok=allowed(c),labels=["Haut","Milieu","Bas"],label=resolve(c.label),hint=resolve(c.hint);
+ return `<button class="page-flap flap-${i+1} ${ok?"":"locked"}" data-choice="${i}" aria-label="Volet ${labels[i]} : ${esc(label)}">
+   <div class="flap-art">${ART.scene(book.id,s)}<span class="flap-emblem" aria-hidden="true">${esc(c.icon||"✦")}</span></div>
    <div class="flap-copy"><span class="flap-number">${labels[i]}</span><strong>${esc(label)}</strong><small>${esc(ok?(hint||"Tourne ce volet"):lock(c))}</small></div>
    <span class="page-turn-icon">↗</span>
  </button>`
