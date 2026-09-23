@@ -1,855 +1,151 @@
-window.BOOK_01 = {
-  id: "book-01",
-  title: "Le Docteur a disparu !",
-  subtitle: "Le TARDIS est là… mais le Docteur a disparu. Trois morceaux de temps se sont mélangés. À toi de les remettre dans le bon ordre.",
-  start: "intro",
-  heroes: {
-    rose: {
-      name: "Rose Tyler",
-      short: "Rose",
-      icon: "🌹",
-      trait: "Curieuse et courageuse. Elle sait parler aux gens et repère vite ce qui ne va pas.",
-      item: { id:"psychic", name:"Papier psychique", icon:"🪪" }
+// Une courte aventure à embranchements réels. Chaque découverte avance l'histoire.
+(() => {
+  const book = {
+    id:"book-01",
+    title:"Le Docteur a disparu !",
+    subtitle:"Le TARDIS t'emmène à travers le temps. Qui aidera le Docteur à retrouver son chemin ?",
+    start:"intro",
+    heroes:{
+      rose:{name:"Rose Tyler",short:"Rose",icon:"🌹",trait:"Rose sait écouter et gagner la confiance des autres.",item:{id:"psychic",name:"Papier psychique",icon:"🪪"}},
+      amy:{name:"Amy Pond",short:"Amy",icon:"⭐",trait:"Amy grimpe haut et atteint les endroits difficiles.",item:{id:"tardisKey",name:"Clé du TARDIS",icon:"🔑"}},
+      clara:{name:"Clara Oswald",short:"Clara",icon:"🍃",trait:"Clara remarque les petits détails et comprend les machines.",item:{id:"sonic",name:"Tournevis sonique",icon:"🪛"}}
     },
-    amy: {
-      name: "Amy Pond",
-      short: "Amy",
-      icon: "⭐",
-      trait: "Audacieuse et rapide. Elle fonce quand tout le monde hésite.",
-      item: { id:"tardisKey", name:"Clé du TARDIS", icon:"🔑" }
+    items:{
+      psychic:{name:"Papier psychique",icon:"🪪"},tardisKey:{name:"Clé du TARDIS",icon:"🔑"},sonic:{name:"Tournevis sonique",icon:"🪛"},
+      clockGear:{name:"Roue d'horloge",icon:"⚙️"},feather:{name:"Plume argentée",icon:"🪶"},
+      starMap:{name:"Carte des étoiles",icon:"🗺️"},dalekCell:{name:"Pile bleue",icon:"🔋"},
+      blueCrystal:{name:"Cristal bleu",icon:"💎"}
     },
-    clara: {
-      name: "Clara Oswald",
-      short: "Clara",
-      icon: "🍃",
-      trait: "Maligne et observatrice. Elle adore résoudre les énigmes.",
-      item: { id:"sonic", name:"Tournevis sonique", icon:"🪛" }
-    }
-  },
-  items: {
-    psychic: { name:"Papier psychique", icon:"🪪" },
-    tardisKey: { name:"Clé du TARDIS", icon:"🔑" },
-    sonic: { name:"Tournevis sonique", icon:"🪛" },
-    clockGear: { name:"Roue d'horloge", icon:"⚙️" },
-    starMap: { name:"Carte des étoiles", icon:"🗺️" },
-    dalekCell: { name:"Cellule d'énergie", icon:"🔋" },
-    blueCrystal: { name:"Cristal temporel", icon:"💎" },
-    feather: { name:"Plume argentée", icon:"🪶" }
-  },
-  scenes: {
-    intro: {
-      chapter:"Prologue",
-      title:"Le TARDIS sans Docteur",
-      glyph:"🚪",
-      text:s => `${this && ""}`,
-      tone:"blue",
-      choices:[]
-    }
-  }
-};
-
-// Text and scenes are assigned separately to keep the data easy to edit.
-Object.assign(window.BOOK_01.scenes, {
-  intro: {
-    chapter:"Prologue",
-    title:"Le TARDIS sans Docteur",
-    glyph:"🚪",
-    text: state => {
-      const n = window.BOOK_01.heroes[state.hero].short;
-      return `${n} pousse la porte du TARDIS. La salle de contrôle clignote comme un sapin de Noël. Mais le Docteur n'est pas là. Sur l'écran, trois dates tournent en boucle. Puis une voix très lointaine murmure : « Trouve les trois secondes perdues… »`;
-    },
-    event:"Quelque chose a découpé le temps en trois morceaux.",
+    scenes:{}
+  };
+  const S=book.scenes;
+  const choice=(icon,label,next,hint)=>({icon,label,next,hint});
+  const result=(chapter,title,text,art,next,giveItem,flags,removeItem)=>({
+    chapter,title,text,art,next,...(giveItem?{giveItem}:{}),...(flags?{flags}:{}),
+    ...(removeItem?{removeItem}:{})
+  });
+  const end=(title,text,label,art,removeItem)=>({
+    chapter:"La fin",title,text,end:true,endLabel:label,art,...(removeItem?{removeItem}:{})
+  });
+  S.intro={
+    chapter:"Le début",title:"Où est le Docteur ?",art:"tardis",
+    text:s=>`${book.heroes[s.hero].short} entre dans le TARDIS. La grande machine brille, mais le Docteur a disparu ! Trois petites lumières montrent trois voyages. Où partir ?`,
     choices:[
-      {icon:"🕰️",label:"Suivre la date la plus ancienne",hint:"Londres, 1969",next:"london_arrival",flags:{courage:1}},
-      {icon:"🛰️",label:"Choisir la date dans le futur",hint:"Musée orbital, année 4002",next:"museum_arrival",flags:{clues:1}},
-      {icon:"🌌",label:"Toucher le symbole qui clignote",hint:"Une route inconnue",next:"rift_room",flags:{courage:1}}
+      choice("🕰️","Dans le Londres d'autrefois","london_arrival","Une horloge s'est arrêtée."),
+      choice("🌠","Dans le musée des étoiles","museum_arrival","Une carte brille dans le futur."),
+      choice("🌀","Dans le passage secret du temps","rift_room","Une porte bleue tremble.")
     ]
-  },
-
-  london_arrival: {
-    chapter:"Morceau 1 · Londres",
-    title:"La rue arrêtée",
-    glyph:"🕰️",
-    tone:"warm",
-    text:"Le TARDIS atterrit dans une petite rue de Londres. Tout est immobile : un ballon flotte dans les airs, une goutte de pluie ne tombe plus et une horloge est bloquée sur 17 h 17. Seule une petite fille bouge encore.",
+  };
+  S.rift_room={
+    chapter:"Le passage du temps",title:"La porte aux trois lumières",art:"tardis",
+    text:"Une petite porte s'ouvre dans le TARDIS. Derrière elle, trois lumières dansent. Choisis celle que tu veux suivre.",
     choices:[
-      {icon:"👧",label:"Parler à la petite fille",hint:"Elle a peut-être vu quelque chose.",next:"london_girl",flags:{mercy:1}},
-      {icon:"🕰️",label:"Examiner la grande horloge",hint:"Quelque chose brille derrière le cadran.",next:"clock_tower",flags:{clues:1}},
-      {icon:"🚪",label:"Entrer dans la boutique ouverte",hint:"Une lumière bleue vient de l'intérieur.",next:"watch_shop"}
+      choice("🕰️","La lumière dorée","london_arrival","Elle mène à Londres."),
+      choice("🌠","La lumière violette","museum_arrival","Elle mène au musée."),
+      choice("🤖","La lumière bleue","dalek_approach","Elle mène tout près du Docteur.")
     ]
-  },
-
-  london_girl: {
-    chapter:"Morceau 1 · Londres",
-    title:"La fille qui compte",
-    glyph:"👧",
-    tone:"warm",
-    text:"La petite fille compte tout bas : « seize… dix-sept… seize… dix-sept… » Elle explique qu'un homme avec un grand manteau a caché quelque chose dans l'horloge avant de disparaître dans une lumière blanche.",
-    event:"Indice trouvé : le Docteur est bien passé ici.",
+  };
+  S.london_arrival={
+    chapter:"Londres · autrefois",title:"La minute immobile",art:"london",
+    text:"À Londres, la pluie reste suspendue en l'air. Le grand cadran ne bouge plus. Une petite fille attend près d'une boutique de montres. Qui veux-tu aider ?",
     choices:[
-      {icon:"🤝",label:"Lui promettre de réparer le temps",next:"clock_tower",flags:{mercy:1,clues:1}},
-      {icon:"🏃",label:"Courir vers l'horloge",next:"clock_tower",flags:{courage:1}},
-      {icon:"🛍️",label:"Chercher un outil dans la boutique",next:"watch_shop",flags:{clues:1}}
+      choice("👧","Parler à la petite fille","girl_meeting","Elle semble savoir ce qui s'est passé."),
+      choice("🕰️","Aller directement à l'horloge","clock_tower","Les aiguilles sont coincées."),
+      choice("⌚","Entrer dans la boutique","watch_shop","Un horloger cherche une pièce.")
     ]
-  },
-
-  watch_shop: {
-    chapter:"Morceau 1 · Londres",
-    title:"La boutique des montres",
-    glyph:"⌚",
-    tone:"warm",
-    text:"Des centaines de montres font toutes « tic » en même temps, puis « tac » en même temps. Un coffre fermé, un gardien inquiet et une porte de service offrent trois façons d'avancer.",
-    guide:s=>s.hero==="clara"?"Clara : ton tournevis peut ouvrir le volet du haut. Observe aussi ce que les autres volets proposent.":s.hero==="rose"?"Rose : ton papier psychique peut convaincre le gardien au volet du milieu.":"Amy : la clé du TARDIS réagit à la porte du volet du bas.",
+  };
+  S.girl_meeting={
+    chapter:"Londres · la petite fille",title:"Un secret dans sa poche",art:"girl",
+    text:"« Le Docteur m'a dit que chaque seconde compte », chuchote la petite fille. Elle a vu quelque chose tomber de l'horloge.",
     choices:[
-      {icon:"🪛",label:s=>s.hero==="clara"?"Ouvrir le coffre avec le tournevis":"Examiner la vitrine du coffre",hint:s=>s.hero==="clara"?"Talent de Clara : ouverture directe.":"Une aiguille semble cacher un indice.",next:s=>s.hero==="clara"?"shop_sonic":"shop_window"},
-      {icon:"🪪",label:s=>s.hero==="rose"?"Montrer le papier psychique au gardien":"Demander au gardien ce qu'il a vu",hint:s=>s.hero==="rose"?"Talent de Rose : il te confiera la roue.":"Son récit t'aidera à choisir la suite.",next:s=>s.hero==="rose"?"shop_psychic":"guard_story"},
-      {icon:"🔑",label:s=>s.hero==="amy"?"Essayer la clé sur la porte de service":"Résoudre l'énigme des trois aiguilles",hint:s=>s.hero==="amy"?"Talent d'Amy : un raccourci surprenant.":"Le coffre a un code de trois nombres.",next:s=>s.hero==="amy"?"shop_back_door":"shop_puzzle"}
+      choice("🤝","Écouter son secret",s=>s.hero==="rose"?"girl_gear":"girl_hint","Rose sait mettre les gens en confiance."),
+      choice("🎈","Attraper le ballon perché",s=>s.hero==="amy"?"girl_balloon":"girl_feather","Amy peut grimper très haut."),
+      choice("🔍","Regarder son dessin",s=>s.hero==="clara"?"girl_pattern":"girl_drawing","Clara voit les détails cachés.")
     ]
-  },
-
-  shop_window: {
-    chapter:"Morceau 1 · Londres",title:"La vitrine à contretemps",glyph:"🔍",
-    text:"Dans la vitrine, une aiguille avance pendant que les autres reculent. Son reflet dessine le nombre 17 sur le coffre. La roue manquante n'est plus loin, mais la grande horloge tremble déjà.",
-    flags:{clues:1},
+  };
+  S.girl_gear=result("Londres","Une roue dans la poche","Rose écoute la petite fille. Elle lui confie une petite roue dorée. Ensemble, elles la remettent dans l'horloge : tic, tac ! La pluie recommence à tomber.","girl","tardis_between","clockGear",{piece1:true,kind:true});
+  S.girl_hint=result("Londres","Le rythme retrouvé","La petite fille fredonne « tic, tac ». En suivant son rythme, tu aides l'horloger à relancer la pendule. Le temps repart, même sans emporter de roue.","girl","tardis_between",null,{piece1:true,kind:true});
+  S.girl_balloon=result("Londres","Tout là-haut !","Amy grimpe pour décrocher le ballon. Une petite roue y était accrochée ! La petite fille l'aide à la placer dans l'horloge. Tic, tac : Londres reprend vie.","london","tardis_between","clockGear",{piece1:true});
+  S.girl_feather=result("Londres","Le cadeau du ballon","Tu fais descendre le ballon avec une longue branche. La petite fille te donne la plume argentée attachée à sa ficelle, puis montre à l'horloger comment réparer la pendule.","girl","tardis_between","feather",{piece1:true,kind:true});
+  S.girl_pattern=result("Londres","Le dessin de Clara","Clara voit que les aiguilles dessinées forment une flèche. La petite fille lui montre où pousser la roue de l'horloge. La pendule repart ! Tu gardes la roue de rechange.","girl","tardis_between","clockGear",{piece1:true,clues:1});
+  S.girl_drawing=result("Londres","Un indice dessiné","Sur le dessin, la petite fille a entouré l'aiguille bloquée. Tu la remets doucement en place avec elle. Le temps repart, et tu te souviens de ce signe.","girl","tardis_between",null,{piece1:true,clues:1});
+  S.clock_tower={
+    chapter:"Londres · la tour",title:"Tout en haut de l'horloge",art:"tower",
+    text:"Tu arrives devant la grande horloge. Une petite roue brille derrière le cadran. Comment atteindre le mécanisme ?",
     choices:[
-      {icon:"🧩",label:"Utiliser le nombre sur le coffre",next:"shop_puzzle"},
-      {icon:"🕰️",label:"Monter voir l'horloge avant le coffre",next:"clock_tower"},
-      {icon:"👧",label:"Demander à la petite fille pourquoi elle compte",next:"london_girl"}
+      choice("🧗","Grimper jusqu'au cadran",s=>s.hero==="amy"?"tower_roof":"tower_stairs","Amy est une excellente grimpeuse."),
+      choice("🔍","Observer les petites aiguilles",s=>s.hero==="clara"?"tower_pattern":"tower_ticks","Clara remarque un détail."),
+      choice("💬","Demander de l'aide au gardien",s=>s.hero==="rose"?"tower_friend":"tower_hand","Rose sait trouver les bons mots.")
     ]
-  },
-
-  shop_back_door: {
-    chapter:"Morceau 1 · Londres",title:"La clé qui ouvre ailleurs",glyph:"🔑",
-    text:"La clé du TARDIS ne devrait ouvrir aucune porte de cette boutique. Pourtant, la serrure de service devient bleue. Amy l'ouvre : derrière, une roue dentée flotte dans un rayon de lumière. Elle l'attrape avant que la porte disparaisse.",
-    giveItem:"clockGear",flags:{clues:1},event:"La roue verte contient maintenant la roue d'horloge.",
+  };
+  S.tower_roof=result("Londres","Amy atteint la roue","Amy grimpe près du cadran. Elle récupère la roue tombée entre deux pierres et la remet en place. Ding ! L'horloge se réveille.","tower","tardis_between","clockGear",{piece1:true});
+  S.tower_stairs=result("Londres","L'escalier du gardien","Le mur est trop haut. Un gardien t'ouvre un escalier secret. Ensemble, vous redressez une aiguille et l'horloge repart.","tower","tardis_between",null,{piece1:true,kind:true});
+  S.tower_pattern=result("Londres","Les trois petits traits","Clara repère trois marques sur le cadran. Avec son tournevis, elle libère une roue coincée. L'horloge se remet à sonner ; elle garde la roue de rechange.","tower","tardis_between","clockGear",{piece1:true,clues:1});
+  S.tower_ticks=result("Londres","Tic... tac !","Les aiguilles avancent dans le mauvais ordre. Tu comptes doucement avec le gardien : une, deux, trois ! Elles reprennent leur place.","tower","tardis_between",null,{piece1:true,clues:1});
+  S.tower_friend=result("Londres","Un nouvel ami","Rose demande au gardien ce qui manque. Il lui donne sa roue de secours. Ensemble, ils réparent le cadran et Londres se remet à bouger.","tower","tardis_between","clockGear",{piece1:true,kind:true});
+  S.tower_hand=result("Londres","Une aiguille à pousser","Le gardien t'aide à tenir la grande aiguille. Tu la pousses tout doucement. Ding ! Le temps repart ; il te remercie.","tower","tardis_between",null,{piece1:true,kind:true});
+  S.watch_shop={
+    chapter:"Londres · la boutique",title:"Les montres endormies",art:"shop",
+    text:"Dans la boutique, toutes les montres sont arrêtées. Une roue brille sous verre. L'horloger te regarde avec espoir.",
     choices:[
-      {icon:"⚙️",label:"Porter la roue à l'horloge",next:"clock_tower"},
-      {icon:"👧",label:"Montrer la découverte à la petite fille",next:"london_girl"},
-      {icon:"🪪",label:"Questionner le gardien sur cette porte",next:"guard_story"}
+      choice("💬","Parler à l'horloger",s=>s.hero==="rose"?"shop_friend":"shop_clue","Rose sait rassurer les gens."),
+      choice("🪛","Ouvrir la vitrine bleue",s=>s.hero==="clara"?"shop_sonic":"shop_window","Clara comprend cette serrure."),
+      choice("🧗","Atteindre la plus haute étagère",s=>s.hero==="amy"?"shop_high":"shop_floor","Amy grimpe sans difficulté.")
     ]
-  },
-
-  shop_sonic: {
-    chapter:"Morceau 1 · Londres",
-    title:"Le coffre bleu",
-    glyph:"🪛",
-    text:"Le tournevis sonique chante doucement. Le coffre s'ouvre. À l'intérieur se trouve une petite roue dentée couverte de poussière bleue. Quand tu la touches, toutes les montres s'arrêtent.",
-    giveItem:"clockGear",
-    event:"Objet obtenu : Roue d'horloge.",
+  };
+  S.shop_friend=result("Londres","Le cadeau de l'horloger","Rose écoute l'horloger. Soulagé, il lui confie la roue sous verre. Il la place lui-même dans la grande horloge. Tic, tac !","shop","tardis_between","clockGear",{piece1:true,kind:true});
+  S.shop_clue=result("Londres","La bonne montre","L'horloger montre la montre qui marche encore. Grâce à elle, vous réglez ensemble la grande horloge. La rue reprend vie.","shop","tardis_between",null,{piece1:true,clues:1});
+  S.shop_sonic=result("Londres","Le chant du tournevis","Le tournevis de Clara fait « bzzz ». La vitrine s'ouvre ! L'horloger prend une roue pour réparer l'horloge et te confie celle de rechange.","shop","tardis_between","clockGear",{piece1:true,clues:1});
+  S.shop_window=result("Londres","Le reflet dans la vitre","La vitrine ne s'ouvre pas. Mais dans son reflet, tu vois la bonne position des aiguilles. L'horloger les remet en place ; le temps repart.","shop","tardis_between",null,{piece1:true,clues:1});
+  S.shop_high=result("Londres","Amy sur l'étagère","Amy atteint la roue de secours tout en haut. L'horloger répare l'horloge avec elle et t'offre une deuxième roue pour la suite.","shop","tardis_between","clockGear",{piece1:true});
+  S.shop_floor=result("Londres","Le tiroir d'en bas","Tu ne peux pas atteindre l'étagère. En bas, un tiroir contient une vieille plume. Elle chatouille le nez de l'horloger, qui rit et répare enfin l'horloge.","shop","tardis_between","feather",{piece1:true,kind:true});
+  S.tardis_between=result("Le TARDIS","Une nouvelle lumière","Londres bouge de nouveau ! Dans le TARDIS, un point lumineux montre maintenant le musée des étoiles. Le Docteur est peut-être là-bas.","tardis","museum_arrival");
+  S.museum_arrival={
+    chapter:"Le musée · futur",title:"La carte qui bouge",art:"museum",
+    text:"Dans le futur, un musée flotte parmi les étoiles. Une carte lumineuse tourne, un petit robot cherche sa pile et une gardienne surveille les vitrines.",
     choices:[
-      {icon:"⚙️",label:"Porter la roue à la grande horloge",next:"clock_fix"},
-      {icon:"👧",label:"Retourner voir la petite fille",next:"london_girl",flags:{mercy:1}},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"tardis_between",flags:{clues:1}}
+      choice("🗺️","Étudier la carte des étoiles",s=>s.hero==="clara"?"museum_map":"museum_lines","Clara suit facilement les signes."),
+      choice("🤖","Aider le petit robot",s=>s.hero==="amy"?"museum_robot":"museum_robot_help","Amy atteint sa pile en hauteur."),
+      choice("👩","Parler à la gardienne",s=>s.hero==="rose"?"museum_guard":"museum_ticket","Rose sait la rassurer.")
     ]
-  },
-
-  shop_psychic: {
-    chapter:"Morceau 1 · Londres",
-    title:"Inspectrice du temps",
-    glyph:"🪪",
-    text:"Le gardien regarde le papier psychique et ouvre de grands yeux. Pour lui, tu es une « Inspectrice officielle des horloges impossibles ». Il te remet aussitôt une petite roue dentée trouvée sous le coffre.",
-    giveItem:"clockGear",
-    event:"Objet obtenu : Roue d'horloge.",
+  };
+  S.museum_map=result("Le musée","Les étoiles de Clara","Clara relie trois étoiles avec son doigt. La carte montre où le Docteur attend ! Elle peut emporter une petite copie.","museum","tardis_to_dalek","starMap",{piece2:true,clues:1});
+  S.museum_lines=result("Le musée","Une étoile à suivre","La carte tourne trop vite. Tu suis une seule étoile bleue du regard. Elle montre la direction du Docteur ; tu la gardes en mémoire.","museum","tardis_to_dalek",null,{piece2:true,clues:1});
+  S.museum_robot=result("Le musée","Merci, Amy !","Amy grimpe et remet la pile du petit robot en place. Ravi, il offre sa pile de secours et indique où se trouve le Docteur.","museum","tardis_to_dalek","dalekCell",{piece2:true,kind:true});
+  S.museum_robot_help=result("Le musée","Le robot réparé","Tu appelles la gardienne. Elle soulève le robot pour que tu puisses le réparer. Il clignote joyeusement et indique le bon chemin.","museum","tardis_to_dalek",null,{piece2:true,kind:true});
+  S.museum_guard=result("Le musée","La confiance de la gardienne","Rose explique qu'elle cherche un ami. La gardienne lui confie une copie de la carte des étoiles et lui montre le chemin.","museum","tardis_to_dalek","starMap",{piece2:true,kind:true});
+  S.museum_ticket=result("Le musée","Un billet étoilé","La gardienne ne peut pas donner la carte. Elle te montre pourtant une étoile dessinée sur un billet. Ce dessin suffit à guider le TARDIS.","museum","tardis_to_dalek",null,{piece2:true,clues:1});
+  S.tardis_to_dalek=result("Le TARDIS","Presque arrivés","Le TARDIS suit la piste trouvée au musée. Une petite voix de métal appelle à l'aide. Le Docteur est tout près !","tardis","dalek_approach");
+  S.dalek_approach={
+    chapter:"Tout près du Docteur",title:"Le Dalek et la bulle de temps",art:"dalek",
+    text:"Le Docteur attend dans une bulle brillante. Un Dalek garde la machine, mais sa lumière bleue clignote : lui aussi a besoin d'aide. Que fais-tu ?",
     choices:[
-      {icon:"⚙️",label:"Réparer la grande horloge",next:"clock_fix",flags:{clues:1}},
-      {icon:"👧",label:"Demander au gardien ce qu'il a vu",next:"guard_story"},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"tardis_between"}
+      choice("💬","Demander au Dalek ce qui ne va pas",s=>s.hero==="rose"?"dalek_listens":"dalek_echo","Rose trouve des mots gentils."),
+      choice("🧗","Monter à la passerelle",s=>s.hero==="amy"?"dalek_roof":"dalek_ground","Amy peut atteindre un cristal."),
+      choice("🪛","Regarder les fils bleus",s=>s.hero==="clara"?"dalek_console":"dalek_button","Clara sait lire la machine.")
     ]
-  },
-
-  shop_puzzle: {
-    chapter:"Morceau 1 · Londres",
-    title:"Trois aiguilles",
-    glyph:"🧩",
-    text:"Sur le coffre, trois petites aiguilles peuvent tourner. Un mot est gravé : « La seconde vient après la minute, mais avant demain. » En observant les montres, tu comprends qu'il faut toutes les placer sur 17.",
+  };
+  S.dalek_listens=result("La bulle","Le Dalek écoute Rose","Rose écoute le Dalek : sa pile est vide. Elle l'aide à rallumer sa lumière. Pour la remercier, il lui donne un cristal bleu qui ouvre la bulle.","dalek","final_console","blueCrystal",{piece3:true,kind:true});
+  S.dalek_echo=result("La bulle","Une voix derrière le métal","Tu entends la voix du Docteur dans la bulle : « Regarde les trois lumières ! » Le Dalek s'écarte pour te laisser essayer.","dalek","final_console",null,{piece3:true,clues:1});
+  S.dalek_roof=result("La bulle","Amy voit d'en haut","Amy grimpe sur la passerelle. Elle trouve un cristal bleu tombé derrière la machine. Le Dalek la laisse l'emporter pour aider le Docteur.","dalek","final_console","blueCrystal",{piece3:true});
+  S.dalek_ground=result("La bulle","Un bouton près du sol","La passerelle est trop haute. Tout près de tes pieds, tu vois un bouton bleu. Tu appuies : la bulle devient plus légère.","dalek","final_console",null,{piece3:true,clues:1});
+  S.dalek_console=result("La bulle","Clara et les fils bleus","Clara trouve le fil débranché. Son tournevis le remet en place. La machine ronronne ; un cristal bleu se détache pour l'aider.","dalek","final_console","blueCrystal",{piece3:true,clues:1});
+  S.dalek_button=result("La bulle","La bonne lumière","Tu ne sais pas quel fil toucher. Le Dalek montre une petite lumière bleue. Tu la suis jusqu'au bouton qui desserre la bulle.","dalek","final_console",null,{piece3:true,kind:true});
+  S.final_console={
+    chapter:"La dernière page",title:"Ouvrir la bulle",art:"dalek",
+    text:"Le Docteur te sourit derrière la bulle de temps. Devant toi, trois dessins : une roue, une carte et une lumière. Choisis comment l'aider.",
     choices:[
-      {icon:"1️⃣",label:"Mettre 17 - 17 - 17",hint:"Ça semble logique.",next:"shop_puzzle_win",flags:{clues:1}},
-      {icon:"2️⃣",label:"Mettre 12 - 6 - 3",next:"shop_puzzle_bump"},
-      {icon:"3️⃣",label:"Laisser le coffre et monter à l'horloge",next:"clock_tower"}
+      choice("⚙️","Essayer la roue d'horloge",s=>s.inventory.includes("clockGear")?"ending_clock":"ending_improvise",s=>s.inventory.includes("clockGear")?"La roue verte contient la pièce.":"Sans roue, il faudra inventer une autre idée."),
+      choice("🗺️","Suivre la carte des étoiles",s=>s.inventory.includes("starMap")?"ending_map":"ending_signal",s=>s.inventory.includes("starMap")?"La roue bleue contient la carte.":"Sans carte, rappelle-toi l'étoile du musée."),
+      choice("💎","Allumer la lumière bleue",s=>s.inventory.includes("blueCrystal")?"ending_energy":s.inventory.includes("dalekCell")?"ending_cell":"ending_kind",s=>s.inventory.includes("blueCrystal")||s.inventory.includes("dalekCell")?"La roue jaune a de quoi l'allumer.":"Sans objet, demande de l'aide au Dalek.")
     ]
-  },
-
-  shop_puzzle_win: {
-    chapter:"Morceau 1 · Londres",
-    title:"Le clic parfait",
-    glyph:"⚙️",
-    text:"Clic ! Le coffre s'ouvre. À l'intérieur, une roue dentée brille comme si elle était éclairée par une étoile.",
-    giveItem:"clockGear",
-    event:"Objet obtenu : Roue d'horloge.",
-    choices:[
-      {icon:"🕰️",label:"Réparer l'horloge",next:"clock_fix"},
-      {icon:"👧",label:"Montrer la roue à la petite fille",next:"london_girl",flags:{mercy:1}},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"tardis_between"}
-    ]
-  },
-
-  shop_puzzle_bump: {
-    chapter:"Morceau 1 · Londres",
-    title:"BONG !",
-    glyph:"🔔",
-    text:"Le coffre ne s'ouvre pas. En revanche, toutes les montres sonnent d'un coup. BONG ! Une trappe s'ouvre dans le plafond et laisse tomber une vieille échelle.",
-    choices:[
-      {icon:"🪜",label:"Monter par l'échelle",next:"clock_tower",flags:{courage:1}},
-      {icon:"🧩",label:"Réessayer l'énigme",next:"shop_puzzle"},
-      {icon:"🚪",label:"Sortir dans la rue",next:"london_arrival"}
-    ]
-  },
-
-  guard_story: {
-    chapter:"Morceau 1 · Londres",
-    title:"L'homme pressé",
-    glyph:"🧥",
-    text:"Le gardien se souvient d'un homme très pressé qui parlait tout seul : « Pas une boucle. Une tresse ! Trois moments attachés ensemble ! » Puis l'homme a disparu avant la fin de sa phrase.",
-    event:"Indice : les trois époques doivent être reliées, pas seulement visitées.",
-    choices:[
-      {icon:"🕰️",label:"Réparer l'horloge",next:"clock_fix",flags:{clues:1}},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"tardis_between",flags:{clues:1}},
-      {icon:"👧",label:"Aller voir la petite fille",next:"london_girl",flags:{mercy:1}}
-    ]
-  },
-
-  clock_tower: {
-    chapter:"Morceau 1 · Londres",
-    title:"Derrière le cadran",
-    glyph:"🕰️",
-    tone:"warm",
-    text:"Tu montes dans la tour. Derrière le cadran, une roue manque. À chaque tentative de l'horloge, une lumière blanche repousse les aiguilles.",
-    guide:s=>s.inventory.includes("clockGear")?"Tu as la roue verte : le volet du haut répare entièrement l'horloge.":s.hero==="clara"?"Clara : le volet du milieu repère une pièce cachée au tournevis.":"Sans la roue, le volet du haut tente une autre réparation. Tu avanceras aussi.",
-    choices:[
-      {icon:"⚙️",label:s=>s.inventory.includes("clockGear")?"Placer la roue d'horloge":"Caler le mécanisme sans la roue",next:s=>s.inventory.includes("clockGear")?"clock_fix":"clock_improvise"},
-      {icon:"🪛",label:s=>s.hero==="clara"?"Repérer la pièce avec le tournevis":"Observer la lumière derrière les aiguilles",next:s=>s.hero==="clara"?"clock_sonic":"white_light"},
-      {icon:"👧",label:"Demander à la petite fille de compter pour toi",next:"london_girl",flags:{mercy:1}}
-    ]
-  },
-
-  clock_sonic: {
-    chapter:"Morceau 1 · Londres",
-    title:"Le mécanisme répond",
-    glyph:"🪛",
-    text:"Le tournevis sonique révèle une petite pièce cachée derrière le mécanisme. C'est exactement la roue qui manquait ! Tu la replaces et le grand balancier repart.",
-    giveItem:"clockGear",
-    choices:[
-      {icon:"▶️",label:"Lancer l'horloge",next:"clock_fix",flags:{clues:1}},
-      {icon:"✨",label:"Examiner la poussière bleue",next:"white_light",flags:{clues:1}},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"tardis_between"}
-    ]
-  },
-
-  clock_improvise: {
-    chapter:"Morceau 1 · Londres",title:"Une minute empruntée",glyph:"🕰️",tone:"warm",
-    text:"Sans la roue manquante, tu coinces doucement le balancier avec une petite tige de cuivre. Les aiguilles avancent d'un seul cran. La pluie retombe ; la petite fille peut enfin bouger. La réparation ne durera pas éternellement, mais le TARDIS capte la première seconde.",
-    flags:{piece1:true,temporaryClock:true},
-    event:"Londres repart provisoirement, sans objet à garder.",
-    choices:[
-      {icon:"👧",label:"Dire au revoir à la petite fille",next:"london_goodbye",flags:{mercy:1}},
-      {icon:"🚪",label:"Suivre la piste vers le futur",next:"tardis_between"},
-      {icon:"✨",label:"Écouter la lumière blanche",next:"white_light",flags:{clues:1}}
-    ]
-  },
-
-  white_light: {
-    chapter:"Morceau 1 · Londres",
-    title:"Une seconde prisonnière",
-    glyph:"✨",
-    text:"Dans la lumière, tu vois une image du Docteur. Il frappe contre une paroi invisible et montre trois doigts. Puis l'image disparaît. La lumière vient du futur.",
-    event:"Tu comprends que chaque époque contient une partie de la prison du Docteur.",
-    choices:[
-      {icon:"🛍️",label:"Chercher la pièce manquante dans la boutique",next:"watch_shop"},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"tardis_between",flags:{clues:1}},
-      {icon:"🕰️",label:"Fouiller encore le mécanisme",next:"clock_tower"}
-    ]
-  },
-
-  clock_fix: {
-    chapter:"Morceau 1 · Londres",
-    title:"La première seconde",
-    glyph:"⚙️",
-    tone:"success",
-    text:"La roue s'emboîte. TAC ! Le ballon retombe, la pluie recommence et la petite fille éclate de rire. Une étincelle bleue jaillit de l'horloge et file vers le TARDIS.",
-    event:"Premier morceau de temps réparé.",
-    flags:{piece1:true,clues:1},
-    choices:[
-      {icon:"🚪",label:"Retourner au TARDIS",next:"tardis_between"},
-      {icon:"👧",label:"Dire au revoir à la petite fille",next:"london_goodbye",flags:{mercy:1}},
-      {icon:"✨",label:"Suivre l'étincelle bleue",next:"tardis_between",flags:{courage:1}}
-    ]
-  },
-
-  london_goodbye: {
-    chapter:"Morceau 1 · Londres",
-    title:"Un petit cadeau",
-    glyph:"🪶",
-    tone:"warm",
-    text:"La petite fille te donne une plume argentée trouvée juste avant que le temps se bloque. « Pour que tu te souviennes de moi. » La plume brille quand tu la rapproches du TARDIS.",
-    giveItem:"feather",
-    event:"Objet obtenu : Plume argentée.",
-    choices:[
-      {icon:"🚪",label:"Retourner au TARDIS",next:"tardis_between"},
-      {icon:"✨",label:"Regarder la plume briller",next:"feather_hint",flags:{clues:1}},
-      {icon:"👋",label:"Lui faire un grand signe et partir",next:"tardis_between",flags:{mercy:1}}
-    ]
-  },
-
-  feather_hint: {
-    chapter:"Morceau 1 · Londres",
-    title:"La plume pointe vers les étoiles",
-    glyph:"🪶",
-    text:"La plume tourne toute seule et pointe vers le ciel. Pendant une seconde, tu aperçois le reflet d'une station spatiale dans sa surface.",
-    event:"La prochaine piste se trouve dans le futur.",
-    choices:[
-      {icon:"🛰️",label:"Partir pour le futur",next:"museum_arrival",flags:{clues:1}},
-      {icon:"🚪",label:"Retourner d'abord au TARDIS",next:"tardis_between"},
-      {icon:"🕰️",label:"Regarder une dernière fois l'horloge",next:"tardis_between"}
-    ]
-  },
-
-  tardis_between: {
-    chapter:"Entre les morceaux",
-    title:"Le TARDIS respire",
-    glyph:"💙",
-    text: state => {
-      const fixed = state.flags.piece1 ? "Une des trois dates a cessé de clignoter." : "Les trois dates clignotent encore.";
-      return `Le TARDIS ronronne faiblement. ${fixed} Sur l'écran apparaît maintenant un musée suspendu au-dessus d'une planète violette.`;
-    },
-    choices:[
-      {icon:"🛰️",label:"Aller au musée orbital",next:"museum_arrival"},
-      {icon:"🌌",label:"Suivre la fissure lumineuse",next:"rift_room",flags:{courage:1}},
-      {icon:"🧭",label:"Demander au TARDIS de choisir",next:"museum_arrival",flags:{clues:1}}
-    ]
-  },
-
-  museum_arrival: {
-    chapter:"Morceau 2 · An 4002",
-    title:"Le musée sans visiteurs",
-    glyph:"🛰️",
-    text:"Le TARDIS apparaît dans un immense musée orbital. Des planètes tournent sous un plafond transparent. Pourtant, il n'y a personne. Au centre de la salle flotte une carte des étoiles avec un gros morceau manquant.",
-    choices:[
-      {icon:"🗺️",label:"Examiner la carte des étoiles",next:"star_map_room",flags:{clues:1}},
-      {icon:"🤖",label:"Suivre un petit robot de nettoyage",next:"robot_route"},
-      {icon:"🚨",label:"Ouvrir la porte marquée « Interdit »",next:"forbidden_gallery",flags:{courage:1}}
-    ]
-  },
-
-  star_map_room: {
-    chapter:"Morceau 2 · An 4002",
-    title:"La carte incomplète",
-    glyph:"🗺️",
-    text:"La carte montre Londres, le musée et un vaisseau inconnu. Une tache noire cache sa destination. Tu peux tenter de l'effacer, suivre un indice rapporté de Londres ou demander l'aide de BIP.",
-    guide:s=>s.hero==="clara"?"Clara : le volet du haut utilise ton tournevis.":s.inventory.includes("feather")?"La plume est sur la roue bleue : tourne le volet du milieu.":"Sans outil adapté, BIP peut te mener à une autre piste par le volet du bas.",
-    choices:[
-      {icon:"🪛",label:s=>s.hero==="clara"?"Scanner la tache au tournevis":"Observer la tache depuis la passerelle",next:s=>s.hero==="clara"?"map_sonic":"shadow_watch"},
-      {icon:"🪶",label:s=>s.inventory.includes("feather")?"Poser la plume sur la carte":"Suivre la ligne argentée jusqu'à la galerie",next:s=>s.inventory.includes("feather")?"map_feather":"forbidden_gallery"},
-      {icon:"🤖",label:"Demander à BIP de chercher une entrée",next:"robot_route"}
-    ]
-  },
-
-  map_sonic: {
-    chapter:"Morceau 2 · An 4002",
-    title:"Coordonnées retrouvées",
-    glyph:"🪛",
-    text:"Le tournevis sonique fait disparaître la tache noire. Le troisième point est un ancien vaisseau Dalek caché dans une nébuleuse. La carte se détache du projecteur et se replie dans ta main.",
-    giveItem:"starMap",
-    event:"Objet obtenu : Carte des étoiles.",
-    choices:[
-      {icon:"🚨",label:"Explorer la galerie interdite",next:"forbidden_gallery"},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"museum_exit",flags:{clues:1}},
-      {icon:"🤖",label:"Questionner le petit robot",next:"robot_route"}
-    ]
-  },
-
-  map_feather: {
-    chapter:"Morceau 2 · An 4002",
-    title:"Un chemin dans les étoiles",
-    glyph:"🪶",
-    text:"La plume se met à dessiner une ligne argentée sur la carte. Elle révèle un ancien vaisseau Dalek caché dans une nébuleuse. Puis la carte se replie et tombe doucement dans ta main.",
-    giveItem:"starMap",
-    event:"Objet obtenu : Carte des étoiles.",
-    flags:{clues:1},
-    choices:[
-      {icon:"🚪",label:"Retourner au TARDIS",next:"museum_exit"},
-      {icon:"🚨",label:"Explorer la galerie interdite",next:"forbidden_gallery"},
-      {icon:"🤖",label:"Suivre le robot",next:"robot_route"}
-    ]
-  },
-
-  robot_route: {
-    chapter:"Morceau 2 · An 4002",
-    title:"BIP veut aider",
-    glyph:"🤖",
-    text:"Le petit robot s'appelle BIP. Il projette une phrase : « VISITEUR TEMPOREL DÉTECTÉ. CONSERVATEUR : PORTÉ DISPARU. OBJET DANGEREUX : GALERIE 7. » Puis il te tend une carte d'accès.",
-    choices:[
-      {icon:"🚨",label:"Aller à la galerie 7",next:"forbidden_gallery",flags:{clues:1}},
-      {icon:"🪪",label:s=>s.hero==="rose"?"Montrer le papier psychique à BIP":"Voir la vidéo enregistrée par BIP",next:s=>s.hero==="rose"?"robot_psychic":"shadow_watch"},
-      {icon:"🗺️",label:"Retourner examiner la carte",next:"star_map_room"}
-    ]
-  },
-
-  robot_psychic: {
-    chapter:"Morceau 2 · An 4002",
-    title:"Accès méga-super-officiel",
-    glyph:"🤖",
-    text:"BIP lit le papier psychique. Ses yeux clignotent très vite. « AUTORISATION : MÉGA-SUPER-OFFICIELLE. » Il ouvre une petite trappe secrète qui mène directement derrière la galerie 7.",
-    flags:{clues:1},
-    choices:[
-      {icon:"🚪",label:"Prendre le passage secret",next:"crystal_room"},
-      {icon:"🗺️",label:"Demander où est le vaisseau inconnu",next:"star_map_room"},
-      {icon:"🤖",label:"Remercier BIP",next:"forbidden_gallery",flags:{mercy:1}}
-    ]
-  },
-
-  forbidden_gallery: {
-    chapter:"Morceau 2 · An 4002",
-    title:"Galerie 7",
-    glyph:"💎",
-    tone:"danger",
-    text:"Derrière la porte, une salle entière est gelée dans le temps. Au centre flotte un cristal bleu. À l'intérieur, tu vois encore le Docteur ! Une ombre métallique tourne autour du cristal.",
-    choices:[
-      {icon:"💎",label:"S'approcher doucement du cristal",next:"crystal_room",flags:{clues:1}},
-      {icon:"🏃",label:"Courir et attraper le cristal",next:"shadow_chase",flags:{courage:1}},
-      {icon:"🚪",label:"Se cacher et observer l'ombre",next:"shadow_watch",flags:{clues:1}}
-    ]
-  },
-
-  shadow_watch: {
-    chapter:"Morceau 2 · An 4002",
-    title:"L'ombre n'est pas vivante",
-    glyph:"🛰️",
-    tone:"danger",
-    text:"Tu restes immobile. L'ombre recommence exactement le même trajet, encore et encore. Ce n'est pas un monstre : c'est l'enregistrement d'un Dalek pris dans la boucle temporelle.",
-    event:"Tu peux traverser la salle juste après son passage.",
-    choices:[
-      {icon:"👣",label:"Passer derrière l'ombre",next:"crystal_room",flags:{clues:1}},
-      {icon:"🏃",label:"Courir devant elle",next:"shadow_chase",flags:{courage:1}},
-      {icon:"🚪",label:"Retourner chercher BIP",next:"robot_route"}
-    ]
-  },
-
-  shadow_chase: {
-    chapter:"Morceau 2 · An 4002",
-    title:"Trop vite !",
-    glyph:"⚡",
-    tone:"danger",
-    text:"Tu bondis vers le cristal. L'ombre métallique s'allume et crie un mot incompréhensible. Un rayon passe juste au-dessus de ta tête. Heureusement, BIP déclenche l'alarme et l'ombre se fige.",
-    event:"Tu as eu chaud, mais la voie est libre.",
-    choices:[
-      {icon:"💎",label:"Prendre le cristal maintenant",next:"crystal_room",flags:{courage:1}},
-      {icon:"🤖",label:"Rejoindre BIP",next:"robot_route",flags:{mercy:1}},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"museum_exit"}
-    ]
-  },
-
-  crystal_room: {
-    chapter:"Morceau 2 · An 4002",
-    title:"La deuxième seconde",
-    glyph:"💎",
-    tone:"success",
-    text:"Le cristal pulse comme un petit cœur. Quand tu le prends, la salle se remet en mouvement. L'image du Docteur disparaît du cristal et une voix sort des haut-parleurs : « Deux sur trois ! Ne laisse pas les Daleks fermer la tresse ! »",
-    giveItem:"blueCrystal",
-    flags:{piece2:true,clues:1},
-    event:"Deuxième morceau de temps réparé. Objet obtenu : Cristal temporel.",
-    choices:[
-      {icon:"🗺️",label:"Chercher les coordonnées du vaisseau Dalek",next:"star_map_room"},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"museum_exit"},
-      {icon:"🤖",label:"Dire au revoir à BIP",next:"museum_goodbye",flags:{mercy:1}}
-    ]
-  },
-
-  museum_goodbye: {
-    chapter:"Morceau 2 · An 4002",
-    title:"BIP fait coucou",
-    glyph:"🤖",
-    text:"BIP agite ses deux petites pinces. Sur son écran apparaît un cœur carré. Avant ton départ, il envoie directement au TARDIS les coordonnées de la nébuleuse.",
-    flags:{hasCoords:true,mercy:1,clues:1},
-    choices:[
-      {icon:"🚪",label:"Partir pour la nébuleuse",next:"museum_exit"},
-      {icon:"💎",label:"Observer le cristal",next:"crystal_message"},
-      {icon:"👋",label:"Faire coucou à BIP jusqu'à la porte",next:"museum_exit",flags:{mercy:1}}
-    ]
-  },
-
-  crystal_message: {
-    chapter:"Morceau 2 · An 4002",
-    title:"Le message caché",
-    glyph:"💎",
-    text:"Dans le cristal, trois images apparaissent : une horloge, une étoile et un œil Dalek. Puis le Docteur montre la console du TARDIS et fait un grand geste comme pour dire : « Ensemble ! »",
-    event:"Indice important : les morceaux doivent être réunis dans le TARDIS.",
-    flags:{clues:2},
-    choices:[
-      {icon:"🚪",label:"Retourner au TARDIS",next:"museum_exit"},
-      {icon:"🗺️",label:"Chercher la carte des étoiles",next:"star_map_room"},
-      {icon:"🤖",label:"Demander de l'aide à BIP",next:"museum_goodbye",flags:{mercy:1}}
-    ]
-  },
-
-  museum_exit: {
-    chapter:"Entre les morceaux",
-    title:"Une destination dangereuse",
-    glyph:"🌌",
-    text: state => {
-      const clue = state.inventory.includes("starMap") || state.flags.hasCoords
-        ? "Les coordonnées du vaisseau Dalek apparaissent clairement sur l'écran."
-        : "Le TARDIS retrouve une faible trace Dalek dans la nébuleuse.";
-      return `${clue} Une seule date clignote encore. Le Docteur est tout près.`;
-    },
-    choices:[
-      {icon:"🌌",label:"Entrer dans la nébuleuse",next:"dalek_approach",flags:{courage:1}},
-      {icon:"💎",label:s=>s.inventory.includes("blueCrystal")?"Lire le message du cristal":"Retourner chercher le cristal",next:s=>s.inventory.includes("blueCrystal")?"crystal_message":"forbidden_gallery"},
-      {icon:"🌀",label:"Suivre la fissure temporelle",next:"rift_room"}
-    ]
-  },
-
-  rift_room: {
-    chapter:"Hors du temps",
-    title:"La fissure blanche",
-    glyph:"🌀",
-    tone:"danger",
-    text:"Le TARDIS traverse une fissure blanche et atterrit dans un lieu impossible : une petite pièce où trois portes flottent dans le vide. Sur chacune est dessiné un symbole : horloge, étoile, Dalek.",
-    choices:[
-      {icon:"🕰️",label:"Prendre la porte Horloge",next:"london_arrival"},
-      {icon:"⭐",label:"Prendre la porte Étoile",next:"museum_arrival"},
-      {icon:"🤖",label:"Prendre la porte Dalek",next:"dalek_approach",flags:{courage:1}}
-    ]
-  },
-
-  dalek_approach: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Le vaisseau silencieux",
-    glyph:"🛸",
-    tone:"danger",
-    text:"Un ancien vaisseau Dalek flotte dans la brume violette. Aucune lumière. Aucun mouvement. Pourtant, le TARDIS refuse d'approcher davantage. Il faudra entrer à pied par une petite passerelle.",
-    choices:[
-      {icon:"🔑",label:s=>s.hero==="amy"?"Verrouiller le TARDIS avec la clé":"Écouter les voix derrière la passerelle",next:s=>s.hero==="amy"?"dalek_airlock_safe":"dalek_voice",flags:{clues:1}},
-      {icon:"🗺️",label:s=>s.inventory.includes("starMap")?"Trouver l'entrée secrète sur la carte":"Suivre une ancienne conduite dans le mur",next:s=>s.inventory.includes("starMap")?"dalek_secret_entry":"dalek_corridor",flags:{clues:1}},
-      {icon:"🚪",label:"Prendre la passerelle principale",next:"dalek_airlock",flags:{courage:1}}
-    ]
-  },
-
-  dalek_airlock_safe: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"La porte se referme",
-    glyph:"🔑",
-    tone:"danger",
-    text:"Tu verrouilles le TARDIS. À peine as-tu quitté la passerelle qu'une pince Dalek essaie d'ouvrir sa porte. CLANG ! Elle n'y arrive pas. Bonne idée : ton chemin de retour reste sûr.",
-    flags:{tardisSafe:true},
-    choices:[
-      {icon:"👣",label:"Avancer dans le couloir",next:"dalek_corridor"},
-      {icon:"🔍",label:"Suivre les câbles bleus",next:"energy_room",flags:{clues:1}},
-      {icon:"👂",label:"Écouter derrière la grande porte",next:"dalek_voice"}
-    ]
-  },
-
-  dalek_secret_entry: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Le conduit oublié",
-    glyph:"🗺️",
-    tone:"danger",
-    text:"La carte révèle une ancienne entrée de maintenance. Tu arrives derrière la salle d'énergie sans croiser un seul Dalek. Au sol, une cellule d'énergie encore chargée clignote.",
-    giveItem:"dalekCell",
-    flags:{secretRoute:true,clues:1},
-    event:"Objet obtenu : Cellule d'énergie.",
-    choices:[
-      {icon:"🔋",label:"Prendre la cellule vers la salle centrale",next:"dalek_core"},
-      {icon:"👂",label:"Écouter les voix dans le couloir",next:"dalek_voice"},
-      {icon:"🚪",label:"Chercher une sortie vers le TARDIS",next:"dalek_corridor"}
-    ]
-  },
-
-  dalek_airlock: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Porte verrouillée",
-    glyph:"🚨",
-    tone:"danger",
-    text:"La passerelle se ferme derrière toi. Trois lumières rouges s'allument. Une voix métallique annonce : « INTRUS DÉTECTÉ. » Mais aucun Dalek n'apparaît. Le vaisseau semble presque vide.",
-    choices:[
-      {icon:"🪛",label:s=>s.hero==="clara"?"Ouvrir le panneau au tournevis":"Suivre le câble du panneau",next:"energy_room"},
-      {icon:"🪪",label:s=>s.hero==="rose"?"Présenter le papier psychique au scanner":"Écouter ce que répète le scanner",next:s=>s.hero==="rose"?"scanner_confused":"dalek_voice"},
-      {icon:"🏃",label:"Courir avant que l'alarme se réveille",next:"dalek_corridor",flags:{courage:1}}
-    ]
-  },
-
-  scanner_confused: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Le Dalek qui hésite",
-    glyph:"🪪",
-    tone:"danger",
-    text:"Le scanner lit le papier psychique. « IDENTITÉ : … TECHNICIEN SUPÉRIEUR DES… GÂTEAUX ? » La porte s'ouvre pendant que l'ordinateur essaie de comprendre ce qu'est un gâteau.",
-    flags:{clues:1},
-    choices:[
-      {icon:"🔋",label:"Entrer dans la salle d'énergie",next:"energy_room"},
-      {icon:"👣",label:"Prendre le couloir central",next:"dalek_corridor"},
-      {icon:"🎂",label:"Dire très sérieusement : « Inspection des gâteaux ! »",next:"dalek_corridor",flags:{courage:1}}
-    ]
-  },
-
-  dalek_corridor: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Les voix derrière les murs",
-    glyph:"👁️",
-    tone:"danger",
-    text:"Le couloir est sombre. Dans les murs, des voix Daleks répètent la même phrase. Ce ne sont pas de vrais soldats : seulement des souvenirs enregistrés. Au bout, deux portes : ÉNERGIE et CŒUR TEMPOREL.",
-    choices:[
-      {icon:"🔋",label:"Entrer dans ÉNERGIE",next:"energy_room"},
-      {icon:"💙",label:"Entrer dans CŒUR TEMPOREL",next:"dalek_core",flags:{courage:1}},
-      {icon:"👂",label:"Écouter les voix",next:"dalek_voice",flags:{clues:1}}
-    ]
-  },
-
-  dalek_voice: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Ce que les Daleks voulaient",
-    glyph:"👁️",
-    tone:"danger",
-    text:"Tu comprends quelques mots : les Daleks ont essayé d'enfermer le Docteur dans une seconde qui recommence sans fin. Mais leur machine a cassé et a coincé aussi leur propre vaisseau.",
-    event:"La prison et le vaisseau utilisent la même source d'énergie.",
-    flags:{clues:2},
-    choices:[
-      {icon:"🔋",label:"Couper la source d'énergie",next:"energy_room"},
-      {icon:"💙",label:"Aller directement au cœur temporel",next:"dalek_core"},
-      {icon:"🚪",label:"Retourner vers le TARDIS",next:"dalek_corridor"}
-    ]
-  },
-
-  energy_room: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"La dernière batterie",
-    glyph:"🔋",
-    tone:"danger",
-    text:"Une seule cellule alimente encore tout le vaisseau. Si tu la retires, les portes risquent de se fermer. Mais sans elle, la prison temporelle ne pourra plus tenir longtemps.",
-    choices:[
-      {icon:"🔋",label:"Retirer la cellule d'énergie",next:"take_cell",flags:{courage:1}},
-      {icon:"🪛",label:s=>s.hero==="clara"?"Dérégler doucement au tournevis":"Écouter la voix dans le moteur",next:s=>s.hero==="clara"?"soft_shutdown":"doctor_whisper",flags:{clues:1}},
-      {icon:"💙",label:"Laisser la cellule et aller au cœur",next:"dalek_core"}
-    ]
-  },
-
-  take_cell: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Silence total",
-    glyph:"🔋",
-    tone:"danger",
-    text:"Tu retires la cellule. Toutes les lumières s'éteignent. Puis un petit éclair bleu apparaît au fond de la pièce : la prison du Docteur vient de perdre une partie de sa force.",
-    giveItem:"dalekCell",
-    flags:{powerCut:true},
-    event:"Objet obtenu : Cellule d'énergie.",
-    choices:[
-      {icon:"💙",label:"Courir vers le cœur temporel",next:"dalek_core",flags:{courage:1}},
-      {icon:"🚪",label:"Retourner vers le TARDIS",next:"dalek_corridor"},
-      {icon:"👂",label:"Écouter dans le noir",next:"doctor_whisper",flags:{clues:1}}
-    ]
-  },
-
-  soft_shutdown: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Tout doucement…",
-    glyph:"🪛",
-    tone:"danger",
-    text:"Le tournevis sonique baisse l'énergie sans couper les portes. La prison temporelle faiblit et les systèmes Daleks restent endormis. C'est exactement ce qu'il fallait.",
-    flags:{powerCut:true,cleanShutdown:true,clues:1},
-    choices:[
-      {icon:"💙",label:"Aller au cœur temporel",next:"dalek_core"},
-      {icon:"👂",label:"Chercher la voix du Docteur",next:"doctor_whisper"},
-      {icon:"🚪",label:"Vérifier le chemin du retour",next:"dalek_corridor"}
-    ]
-  },
-
-  doctor_whisper: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"« Pas la porte rouge ! »",
-    glyph:"🗣️",
-    tone:"danger",
-    text:"Dans le noir, la voix du Docteur arrive comme un souffle : « Si tu m'entends… le cœur a trois anneaux. Bleu, blanc, rouge. Surtout pas rouge ! Enfin… sauf si tu aimes les explosions. »",
-    event:"Indice : au cœur temporel, choisir l'anneau bleu ou blanc.",
-    flags:{clues:2},
-    choices:[
-      {icon:"💙",label:"Aller au cœur temporel",next:"dalek_core"},
-      {icon:"🔋",label:"Garder la cellule avec toi",next:"dalek_core"},
-      {icon:"🚪",label:"Retourner au TARDIS",next:"dalek_corridor"}
-    ]
-  },
-
-  dalek_core: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Le cœur temporel",
-    glyph:"🌀",
-    tone:"danger",
-    text:"Une sphère blanche flotte au centre de la salle. À l'intérieur, le Docteur est figé en plein milieu d'un pas. Trois anneaux tournent autour de lui : bleu, blanc et rouge.",
-    choices:[
-      {icon:"🔵",label:"Arrêter l'anneau bleu",next:"blue_ring",flags:{clues:1}},
-      {icon:"⚪",label:"Arrêter l'anneau blanc",next:"white_ring",flags:{mercy:1}},
-      {icon:"🔴",label:"Arrêter l'anneau rouge",next:"red_ring",flags:{courage:1}}
-    ]
-  },
-
-  blue_ring: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"La troisième seconde",
-    glyph:"🔵",
-    tone:"success",
-    text:"L'anneau bleu ralentit. La sphère se fissure. Le Docteur bouge enfin un doigt, puis deux. « Excellent choix ! Maintenant, retour au TARDIS ! Il faut tresser les trois secondes ensemble ! »",
-    flags:{piece3:true,correctRing:true,clues:1},
-    choices:[
-      {icon:"🏃",label:"Courir vers le TARDIS",next:"final_console",flags:{courage:1}},
-      {icon:"🔋",label:s=>s.inventory.includes("dalekCell")?"Utiliser la cellule sur le cœur":"Chercher une cellule dans la salle d'énergie",next:s=>s.inventory.includes("dalekCell")?"cell_stabilize":"energy_room"},
-      {icon:"💎",label:s=>s.inventory.includes("blueCrystal")?"Utiliser le cristal temporel":"Écouter le conseil du Docteur",next:s=>s.inventory.includes("blueCrystal")?"crystal_stabilize":"doctor_whisper"}
-    ]
-  },
-
-  white_ring: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Une porte s'ouvre",
-    glyph:"⚪",
-    tone:"success",
-    text:"L'anneau blanc s'arrête et ouvre une brèche. Le Docteur tombe hors de la sphère comme s'il sortait d'une porte invisible. « Je savais que tu viendrais ! Enfin… j'espérais très fort. »",
-    flags:{piece3:true,doctorFree:true,clues:1},
-    choices:[
-      {icon:"🏃",label:"Retourner ensemble au TARDIS",next:"final_console"},
-      {icon:"🔋",label:"Couper l'énergie avant de partir",next:"energy_room",flags:{clues:1}},
-      {icon:"👁️",label:"Vérifier qu'aucun Dalek ne se réveille",next:"final_console",flags:{courage:1}}
-    ]
-  },
-
-  red_ring: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Oh oh.",
-    glyph:"🔴",
-    tone:"danger",
-    text:"L'anneau rouge s'arrête. Le vaisseau entier se met à trembler. Le Docteur se libère… mais toutes les alarmes Daleks s'allument en même temps. « Techniquement, ça a marché ! Maintenant : COURS ! »",
-    flags:{piece3:true,redAlarm:true,doctorFree:true},
-    choices:[
-      {icon:"🏃",label:"Courir vers le TARDIS",next:"escape_red",flags:{courage:1}},
-      {icon:"🔋",label:"Retirer la cellule d'énergie",next:"take_cell"},
-      {icon:"🪛",label:s=>s.hero==="clara"?"Éteindre l'alarme au tournevis":"Couper l'alarme depuis la salle d'énergie",next:s=>s.hero==="clara"?"soft_shutdown":"energy_room"}
-    ]
-  },
-
-  cell_stabilize: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Une batterie pour une seconde",
-    glyph:"🔋",
-    tone:"success",
-    text:"Tu places la cellule dans un logement vide. Le cœur se stabilise assez longtemps pour libérer complètement le Docteur. Il attrape ta main : « Très beau bricolage. On rentre ! »",
-    flags:{doctorFree:true,stableCore:true},
-    choices:[
-      {icon:"🚪",label:"Retourner au TARDIS",next:"final_console"},
-      {icon:"👁️",label:"Éteindre le reste du vaisseau",next:"final_console",flags:{clues:1}},
-      {icon:"🏃",label:"Partir avant que ça change d'avis",next:"final_console",flags:{courage:1}}
-    ]
-  },
-
-  crystal_stabilize: {
-    chapter:"Morceau 3 · La nébuleuse",
-    title:"Les deux lumières",
-    glyph:"💎",
-    tone:"success",
-    text:"Le cristal du musée et le cœur Dalek brillent ensemble. Pendant une seconde, tout devient bleu. Puis la prison disparaît. Le Docteur tombe sur ses pieds et sourit : « Trois morceaux. Une seule seconde. Parfait. »",
-    flags:{doctorFree:true,stableCore:true,perfectLink:true,clues:2},
-    choices:[
-      {icon:"🚪",label:"Retourner au TARDIS",next:"final_console"},
-      {icon:"💎",label:"Emporter le cristal",next:"final_console",flags:{clues:1}},
-      {icon:"👣",label:"Laisser le cristal stabiliser le vaisseau",next:"final_console",flags:{mercy:1}}
-    ]
-  },
-
-  escape_red: {
-    chapter:"Course finale",
-    title:"Les Daleks se réveillent",
-    glyph:"🚨",
-    tone:"danger",
-    text: state => state.flags.tardisSafe
-      ? "Des yeux Daleks s'allument dans les couloirs. Mais le TARDIS est toujours verrouillé et intact. Tu atteins sa porte juste avant qu'un rayon frappe la passerelle."
-      : "Des yeux Daleks s'allument dans les couloirs. Tu cours jusqu'au TARDIS, mais une pince métallique est déjà accrochée à sa porte.",
-    choices:[
-      {icon:"🔑",label:s=>s.hero==="amy"?"Ouvrir vite avec la clé":"Passer sous la pince pendant qu'elle tourne",next:"final_console",flags:{courage:1}},
-      {icon:"🪛",label:s=>s.hero==="clara"?"Détacher la pince au tournevis":"Tirer la pince pour libérer la porte",next:s=>s.hero==="clara"?"final_console":"final_console_damaged"},
-      {icon:"💥",label:"Pousser la pince et se glisser à l'intérieur",next:"final_console_damaged"}
-    ]
-  },
-
-  final_console: {
-    chapter:"Final",
-    title:"Trois secondes, une histoire",
-    glyph:"💙",
-    tone:"success",
-    text: state => {
-      const doctor = state.flags.doctorFree ? "Le Docteur bondit autour de la console." : "La voix du Docteur résonne depuis la console.";
-      const count=["piece1","piece2","piece3"].filter(k=>state.flags[k]).length;
-      return `${doctor} Trois lumières apparaissent : Londres, le musée et la nébuleuse. ${count} sur 3 brillent déjà. « Choisis comment les relier. Tes roues peuvent changer ce qui arrive ! »`;
-    },
-    guide:s=>s.inventory.includes("blueCrystal")?"Le cristal est sur la roue jaune : le volet du haut peut tresser les secondes.":s.inventory.includes("dalekCell")?"La cellule est sur la roue jaune : le volet du milieu peut alimenter le TARDIS.":"La roue jaune est vide. Tu peux choisir une réparation différente et atteindre une autre fin.",
-    choices:[
-      {icon:"💎",label:s=>s.inventory.includes("blueCrystal")?"Placer le cristal dans la console":"Relier les lumières à la main",hint:s=>s.inventory.includes("blueCrystal")?"La roue jaune sera utilisée.":"La liaison sera moins précise.",next:s=>(s.flags.piece1&&s.flags.piece2&&s.flags.piece3&&!s.flags.temporaryClock&&s.inventory.includes("blueCrystal")&&s.flags.clues>=5)?"ending_perfect":(s.flags.piece1&&s.flags.piece2&&s.flags.piece3)?"ending_partial":"ending_patchwork",removeItem:"blueCrystal"},
-      {icon:"🔋",label:s=>s.inventory.includes("dalekCell")?"Alimenter le TARDIS avec la cellule":"Appeler le Docteur à la rescousse",hint:s=>s.inventory.includes("dalekCell")?"La roue jaune sera utilisée.":"Il aidera même sans batterie.",next:s=>s.inventory.includes("dalekCell")&&s.flags.piece3?"ending_energy":s.flags.doctorFree?"ending_rescue":"ending_signal",removeItem:"dalekCell"},
-      {icon:"🌀",label:"Piloter le TARDIS à travers la fissure",hint:"Rassemble les secondes réparées.",next:s => (s.flags.piece1 && s.flags.piece2 && s.flags.piece3) ? "ending_partial" : "ending_fail"}
-    ]
-  },
-
-  final_console_damaged: {
-    chapter:"Final",
-    title:"Le TARDIS tousse",
-    glyph:"💥",
-    tone:"danger",
-    text:"La pince Dalek a abîmé une partie de la porte. Le TARDIS décolle quand même, mais la console crache des étincelles. Il faut choisir vite avant que la boucle se referme.",
-    flags:{tardisDamaged:true},
-    choices:[
-      {icon:"💎",label:s=>s.inventory.includes("blueCrystal")?"Utiliser le cristal temporel":"Demander au Docteur de tenir la console",next:s=>s.inventory.includes("blueCrystal")?"ending_partial":s.flags.doctorFree?"ending_rescue":"ending_signal",removeItem:"blueCrystal"},
-      {icon:"🔋",label:s=>s.inventory.includes("dalekCell")?"Utiliser la cellule Dalek":"Rebrancher les fils de secours",next:s=>s.inventory.includes("dalekCell")?"ending_energy":"ending_patchwork",removeItem:"dalekCell"},
-      {icon:"🌀",label:"Forcer le départ du TARDIS",next:"ending_fail"}
-    ]
-  },
-
-  ending_energy: {
-    end:true,endLabel:"Fin ingénieuse",title:"Une dernière batterie",glyph:"🔋",tone:"success",
-    text:s=>`${window.BOOK_01.heroes[s.hero].short} branche la cellule Dalek. Son énergie suffit pour ramener le Docteur et sortir le TARDIS de la boucle. ${s.flags.piece1&&s.flags.piece2?"Le musée rallume ses étoiles ; à Londres, l'horloge repart.":"Certaines secondes devront encore être réparées lors d'un autre voyage."} « Rangeons cette batterie loin du grille-pain », dit le Docteur.`
-  },
-
-  ending_rescue: {
-    end:true,endLabel:"Fin solidaire",title:"À deux mains sur la console",glyph:"🤝",tone:"warm",
-    text:s=>`${window.BOOK_01.heroes[s.hero].short} appelle le Docteur. Ensemble, ils maintiennent les lumières assez longtemps pour sortir le TARDIS de la fissure. Le temps reprend son cours, même si quelques horloges devront encore être réglées. « La prochaine fois », dit le Docteur, « nous prendrons une boîte à outils. »`
-  },
-
-  ending_patchwork: {
-    end:true,endLabel:"Fin débrouillarde",title:"Des secondes rafistolées",glyph:"⚙️",tone:"warm",
-    text:s=>`${window.BOOK_01.heroes[s.hero].short} relie les fils de la console à la main. Le TARDIS se pose en douceur, mais une petite lumière clignote encore : le travail n'est pas parfait. Le Docteur, toujours proche, répond à travers la console : « Bien joué ! Nous finirons la réparation ensemble. »`
-  },
-
-  ending_signal: {
-    end:true,endLabel:"Fin pleine d'espoir",title:"Le message traverse le temps",glyph:"📡",tone:"warm",
-    text:s=>`${window.BOOK_01.heroes[s.hero].short} n'a pas de cellule, mais trouve un autre bouton : APPELER. Le TARDIS envoie un signal dans les trois époques. Le Docteur répond aussitôt et guide le vaisseau hors de la fissure. Il faudra revenir terminer les réparations ; maintenant, ils savent comment se retrouver.`
-  },
-
-  ending_perfect: {
-    end:true,
-    endLabel:"Fin parfaite",
-    title:"Le temps chante de nouveau",
-    glyph:"✨",
-    tone:"success",
-    text: state => {
-      const hero = window.BOOK_01.heroes[state.hero].short;
-      return `${hero} place le dernier élément sur la console. Les trois lumières se rejoignent comme des rubans. Londres reprend son cours, le musée retrouve ses visiteurs et le vaisseau Dalek s'éteint sans exploser. Le Docteur est libre. Il sourit : « Tu n'as pas seulement sauvé ma seconde. Tu as sauvé toutes celles qui venaient après. Alors… où allons-nous maintenant ? »`;
-    }
-  },
-
-  ending_partial: {
-    end:true,
-    endLabel:"Fin aventureuse",
-    title:"Sauvé… mais pas tout à fait rangé",
-    glyph:"🌠",
-    tone:"warm",
-    text: state => {
-      const hero = window.BOOK_01.heroes[state.hero].short;
-      return `Le TARDIS secoue ${hero} comme une boîte pleine de billes, puis tout devient calme. Le Docteur est libre et la boucle est cassée. Une petite chose reste étrange : quelque part dans l'univers, une horloge avance maintenant de trois secondes. Le Docteur hausse les épaules. « On réparera ça après le goûter. »`;
-    }
-  },
-
-  ending_fail: {
-    end:true,
-    endLabel:"Fin à recommencer",
-    title:"La seconde recommence",
-    glyph:"⏳",
-    tone:"danger",
-    text: state => {
-      const hero = window.BOOK_01.heroes[state.hero].short;
-      return `La console clignote. Une lumière blanche remplit le TARDIS. Puis ${hero} ouvre les yeux devant la même porte qu'au début. Le Docteur a encore disparu… mais cette fois, un petit mot est posé sur la console : « Presque ! Cherche mieux les trois morceaux. — Le Docteur »`;
-    }
-  }
-});
+  };
+  S.ending_clock=end("Le grand tic-tac","Tu places la roue dans la machine. Tic, tac ! La bulle s'ouvre. « Tu as retrouvé le temps ! », dit le Docteur. Le Dalek fait clignoter sa lampe de joie.","Le temps retrouvé","dalek","clockGear");
+  S.ending_improvise=end("Une idée à deux","Tu n'as pas la roue. Tu comptes « un, deux, trois » avec le Docteur et le Dalek. Au troisième tic, ils ouvrent la bulle ensemble !","Une fin à inventer ensemble","dalek");
+  S.ending_map=end("Le chemin des étoiles","Tu poses la carte sur la machine. Les étoiles dessinent une porte et le Docteur en sort. « Bien joué, exploratrice ! »","Le chemin retrouvé","dalek","starMap");
+  S.ending_signal=end("Une étoile dans la tête","Tu n'as pas la carte, mais tu te souviens d'une étoile bleue. Tu la montres au Dalek. Il règle la machine et libère le Docteur.","Une belle mémoire","dalek");
+  S.ending_energy=end("La petite lumière bleue","Le cristal s'allume dans ta main. Sa lumière ouvre la bulle et le Docteur te rejoint. « Le TARDIS nous attend ! »","La lumière retrouvée","dalek","blueCrystal");
+  S.ending_cell=end("La pile du petit robot","Tu branches la pile offerte par le robot. La bulle s'éteint doucement et le Docteur sort. Il promet de remercier ton nouvel ami.","Une aide précieuse","dalek","dalekCell");
+  S.ending_kind=end("Tous ensemble","Tu n'as ni pile ni cristal. Tu demandes de l'aide au Dalek. Il éclaire la bulle pendant que le Docteur la pousse. Pop ! Vous êtes réunis.","La force de l'entraide","dalek");
+  window.BOOK_01=book;
+})();

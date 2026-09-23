@@ -190,6 +190,7 @@
   `;
 
   function keyFor(bookId, scene={}) {
+    if(bookId==="book-01" && scene.art) return scene.art;
     const s=((scene.chapter||"")+" "+(scene.title||"")).toLowerCase();
     if(bookId==="book-01"){
       if(/boutique|coffre|vitrine|gardien|aiguilles|montres|porte de service/.test(s)) return "clockShop";
@@ -226,7 +227,12 @@
 
   function scene(bookId, scene) {
     const k=keyFor(bookId,scene);
-    const illustrated={clockShop:"book-01-shop.webp",clockTower:"book-01-tower.webp",clockGirl:"book-01-girl.webp"};
+    const illustrated={
+      tardis:"book-01-tardis-v2.webp",london:"book-01-london-v2.webp",
+      girl:"book-01-london-v2.webp",tower:"book-01-london-v2.webp",
+      shop:"book-01-shop-v2.webp",museum:"book-01-museum-v2.webp",
+      dalek:"book-01-dalek-v2.webp"
+    };
     if(bookId==="book-01" && illustrated[k]) return `<img class="scene-svg" src="assets/${illustrated[k]}" alt="" loading="eager">`;
     const bodies={clock,clockShop,clockTower,clockGirl,museum,park,greenhouse,lab,library,beach,heart,station,dalek,solar};
     const body=bodies[k] ? bodies[k]() : station();
@@ -235,7 +241,7 @@
   }
 
   function cover(bookId) {
-    const fake={chapter:"",title:{
+    const fake={chapter:"",art:bookId==="book-01"?"tardis":undefined,title:{
       "book-01":"Londres horloge","book-02":"musée ange","book-03":"Hyde Park dinosaure",
       "book-04":"bibliothèque TARDIS","book-05":"station étoile"
     }[bookId]||""};
@@ -243,6 +249,7 @@
   }
 
   function avatar(key, label="") {
+    if(["rose","amy","clara"].includes(key)) return `<img class="avatar-svg" src="assets/hero-${key}-v2.webp" alt="" loading="eager">`;
     const palette={
       rose:["#d7a37e","#d7b47a","#6f3c2f","#244e78"],
       amy:["#e2a47d","#d2956c","#9b4a2d","#9c3d57"],

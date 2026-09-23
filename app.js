@@ -116,19 +116,21 @@ function renderScene(){
  const s=book.scenes[state.scene];if(!s){root.innerHTML='<section class="tutorial card"><h1>Scène introuvable</h1><button class="primary" id="home">Retour</button></section>';document.getElementById("home").onclick=home;return}
  apply(s);if(s.end)return ending(s);
  const txt=resolve(s.text);
+ const interlude=s.next!==undefined;
  root.innerHTML=`<section class="book-frame adventure-frame">
    <div class="spiral"></div>
    <article class="scene-page page-paper">
      <div class="scene-picture">${ART.scene(book.id,s)}<div class="chapter-chip">${esc(s.chapter||"Aventure")}</div></div>
      <div class="narrative-box"><h2>${esc(s.title)}</h2><p>${esc(txt)}</p>${s.event?`<div class="event-line">${esc(s.event)}</div>`:""}${s.guide?`<div class="page-guide">${esc(resolve(s.guide))}</div>`:""}<strong>Que veux-tu faire ?</strong></div>
    </article>
-   <aside class="choice-page page-paper" aria-label="Les trois volets de l'histoire">
-     ${s.choices.map((c,i)=>choiceFlap(c,i,s)).join("")}
+   <aside class="choice-page page-paper ${interlude?"interlude-page":""}" aria-label="${interlude?"La suite de l'histoire":"Les trois volets de l'histoire"}">
+     ${interlude?`<div class="interlude-illustration">${ART.scene(book.id,s)}</div><div class="interlude-copy"><span>La suite de l'histoire</span><h3>${esc(s.title)}</h3><p>${s.giveItem?`Sur la roue : ${esc(item(s.giveItem).name)}.`:"Ton aventure continue."}</p><button id="continue-page" class="continue-page" type="button">Tourner la page <b aria-hidden="true">↗</b></button></div>`:s.choices.map((c,i)=>choiceFlap(c,i,s)).join("")}
    </aside>
    ${wheelMarkup(0,"top-left")}${wheelMarkup(1,"top-right")}${wheelMarkup(2,"bottom-left")}${heroWheel()}
    <button class="book-menu" id="menu" aria-label="Menu">☰</button>
  </section>`;
  document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.choice]),x));
+ if(interlude)document.getElementById("continue-page").onclick=e=>turnChoice({next:s.next},e.currentTarget);
  document.getElementById("menu").onclick=menu
 }
 function choiceFlap(c,i,s){

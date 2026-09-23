@@ -24,11 +24,13 @@ Collection fan-made de cinq livres-jeux interactifs pour jeunes enfants, pensée
 
 ## Interface
 
-Le projet contient maintenant une direction artistique originale Doctor Who : couvertures, personnages simplifiés et décors sont dessinés en SVG directement dans le projet. Aucun visuel des livres de référence n'est intégré.
+Le premier livre dispose d'illustrations originales du TARDIS, de Londres, du musée, du Dalek et des trois héroïnes. Les autres livres utilisent des décors SVG. Aucun visuel des livres de référence n'est intégré.
 
-Sur ordinateur/tablette : double page ouverte avec spirale centrale et quatre roues aux coins.
+Sur ordinateur/tablette : double page ouverte avec reliure centrale et quatre roues aux coins.
 
-Sur mobile : lecture verticale et quatre roues compactes persistantes en bas de l'écran.
+Sur mobile : les deux pages restent dans le même livre vertical, avec les roues à ses quatre coins.
+
+Dans le livre 1, un volet ouvre une page de résultat puis avance vers le prochain chapitre : aucun retour artificiel à la petite fille, à la tour ou à la boutique. Les pages de décision ont trois volets ; les pages de résultat proposent simplement de tourner la page.
 
 ## Fichiers principaux
 
