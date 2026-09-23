@@ -1,345 +1,79 @@
 (() => {
-  "use strict";
+"use strict";
+const books=[window.BOOK_01,window.BOOK_02,window.BOOK_03,window.BOOK_04,window.BOOK_05].filter(Boolean);
+const root=document.getElementById("app"); let book=books[0], heroCursor=0;
+const state={hero:null,inventory:[null,null,null],flags:{},scene:null,history:[],changed:-1};
+const meta={"book-01":["🕰️","Boucle temporelle"],"book-02":["👼","Mystère"],"book-03":["🦕","Aventure"],"book-04":["🚪","Exploration"],"book-05":["👁️","Épopée"]};
+const esc=(v="")=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
 
-  const books = [
-    window.BOOK_01,
-    window.BOOK_02,
-    window.BOOK_03,
-    window.BOOK_04,
-    window.BOOK_05
-  ].filter(Boolean);
+const Feedback={
+ enabled:localStorage.getItem("dw_sound")!=="off",ctx:null,
+ tone(f=440,d=.05,v=.02,t="sine"){if(!this.enabled)return;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!this.ctx)this.ctx=new AC();const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,this.ctx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,this.ctx.currentTime+d);o.connect(g);g.connect(this.ctx.destination);o.start();o.stop(this.ctx.currentTime+d)},
+ vib(ms=20){try{if(window.AndroidBridge?.vibrate)window.AndroidBridge.vibrate(ms);else navigator.vibrate?.(ms)}catch(_){}},
+ page(){this.tone(330,.04,.014,"triangle");setTimeout(()=>this.tone(430,.05,.012,"triangle"),35);this.vib(20)},
+ item(){this.tone(650,.05,.02);setTimeout(()=>this.tone(850,.08,.018),45);this.vib(28)},
+ toggle(){this.enabled=!this.enabled;localStorage.setItem("dw_sound",this.enabled?"on":"off");soundButton()}
+};
+function soundButton(){const b=document.getElementById("global-sound-toggle");if(b){b.textContent=Feedback.enabled?"🔊":"🔇";b.title=Feedback.enabled?"Couper les sons":"Activer les sons"}}
 
-  const app = document.getElementById("app");
-  let book = books[0];
+function reset(){state.hero=null;state.inventory=[null,null,null];state.flags={};state.scene=null;state.history=[];state.changed=-1}
+function item(id){return id?(book.items[id]||{name:id,icon:"?"}):{name:"Vide",icon:"○"}}
+function sig(){return state.hero?book.heroes[state.hero].item.id:null}
+function has(id){return state.inventory.includes(id)||sig()===id}
+function add(id){
+ if(!id||state.inventory.includes(id)||sig()===id)return;
+ let i=state.inventory.findIndex(x=>!x);if(i<0)i=0;
+ state.inventory[i]=id;state.changed=i;Feedback.item()
+}
+function remove(id){let i=id?state.inventory.indexOf(id):state.inventory.findIndex(Boolean);if(i>=0){state.inventory[i]=null;state.changed=i}}
+function flags(o){if(!o)return;Object.entries(o).forEach(([k,v])=>state.flags[k]=typeof v==="number"?(state.flags[k]||0)+v:v)}
+function viewState(){return {...state,item:state.inventory.find(Boolean)||null}}
 
-  const state = {
-    hero: null,
-    item: null,
-    flags: {},
-    scene: null,
-    history: [],
-    lastItem: null
-  };
+function home(){
+ reset();
+ root.innerHTML=`<section class="home card collection-home"><div class="kicker">Doctor Who · Ma Première Aventure</div><h1 class="logo">Choisis ton aventure</h1><p class="subtitle">Une roue personnage, trois roues d'inventaire et trois volets à tourner.</p><div class="books-grid">${books.map((b,i)=>{const m=meta[b.id]||["✦","Aventure"];return `<button class="book-card" data-book="${i}"><span class="book-number">Livre ${i+1}</span><span class="book-cover-icon">${m[0]}</span><strong>${esc(b.title)}</strong><small>${m[1]} · ${Object.keys(b.scenes).length} scènes</small></button>`}).join("")}</div><p class="legal-note">Projet fan-made non officiel.</p></section>`;
+ document.querySelectorAll("[data-book]").forEach(x=>x.onclick=()=>{book=books[+x.dataset.book];heroCursor=0;intro()})
+}
+function intro(){
+ reset();const i=books.indexOf(book),m=meta[book.id]||["✦","Aventure"];
+ root.innerHTML=`<section class="home card"><div class="book-badge">Livre ${i+1} sur ${books.length} · ${m[1]}</div><div class="book-cover-big">${m[0]}</div><h1 class="logo">${esc(book.title)}</h1><p class="subtitle">${esc(book.subtitle)}</p><button class="primary" id="start">Choisir mon personnage</button><button class="secondary" id="back">← Bibliothèque</button></section>`;
+ document.getElementById("start").onclick=heroWheel;document.getElementById("back").onclick=home
+}
+function heroWheel(){
+ const entries=Object.entries(book.heroes),[id,h]=entries[heroCursor];
+ root.innerHTML=`<section class="hero-wheel-screen card"><div class="kicker">${esc(book.title)}</div><h1>Tourne la roue et choisis ton personnage</h1><p class="hero-wheel-help">Les trois roues d'objet sont <strong>vides au départ</strong>.</p><div class="hero-picker"><button class="wheel-arrow" id="prev">‹</button><button class="hero-big-wheel" id="pick"><span class="wheel-pointer"></span><span class="hero-wheel-icon">${h.icon}</span><span class="hero-wheel-name">${esc(h.name)}</span></button><button class="wheel-arrow" id="next">›</button></div><div class="hero-detail"><strong>${esc(h.trait)}</strong><small>Atout du personnage : ${h.item.icon} ${esc(h.item.name)}</small></div><div class="empty-wheels-preview"><span>🟢 ○ vide</span><span>🔵 ○ vide</span><span>🟡 ○ vide</span></div><button class="primary" id="choose">Je choisis ${esc(h.name)}</button><button class="secondary" id="back">← Retour</button></section>`;
+ const rot=d=>{heroCursor=(heroCursor+d+entries.length)%entries.length;heroWheel()};
+ document.getElementById("prev").onclick=()=>rot(-1);document.getElementById("next").onclick=()=>rot(1);document.getElementById("pick").onclick=()=>start(id);document.getElementById("choose").onclick=()=>start(id);document.getElementById("back").onclick=intro
+}
+function start(id){reset();state.hero=id;state.flags={courage:0,brave:0,clues:0,mercy:0,kind:0,careful:0};state.scene=book.start;Feedback.page();scene()}
 
-  const coverMeta = {
-    "book-01": {icon:"🕰️", label:"Boucle temporelle"},
-    "book-02": {icon:"👼", label:"Mystère"},
-    "book-03": {icon:"🦕", label:"Aventure"},
-    "book-04": {icon:"🚪", label:"Exploration"},
-    "book-05": {icon:"👁️", label:"Épopée"}
-  };
+function allowed(c){if(c.requiresItem&&!has(c.requiresItem))return false;if(c.requiresHero&&state.hero!==c.requiresHero)return false;if(c.requiresFlag&&!state.flags[c.requiresFlag])return false;return true}
+function lock(c){
+ if(c.requiresItem&&!has(c.requiresItem)){const owner=Object.values(book.heroes).find(h=>h.item.id===c.requiresItem);return owner?`Atout de ${owner.name}`:`Il faut : ${item(c.requiresItem).name}`}
+ if(c.requiresHero&&state.hero!==c.requiresHero)return"Réservé à un autre personnage";
+ if(c.requiresFlag&&!state.flags[c.requiresFlag])return"Il manque un indice";return""
+}
+function apply(s){state.changed=-1;if(s.giveItem)add(s.giveItem);if(s.removeItem)remove(typeof s.removeItem==="string"?s.removeItem:null);flags(s.flags)}
+function go(c){if(!allowed(c))return;Feedback.page();if(c.setItem!==undefined)add(c.setItem);flags(c.flags);state.history.push(state.scene);state.scene=typeof c.next==="function"?c.next(viewState()):c.next;scene()}
 
-  const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
-  })[c]);
+function invWheel(i,pos){const it=item(state.inventory[i]),cols=["green","blue","yellow"];return `<aside class="corner-wheel wheel-${cols[i]} ${pos} ${state.changed===i?"changed":""}"><div class="mini-wheel"><span class="mini-pointer"></span><span class="mini-icon">${it.icon}</span><span class="mini-label">${esc(it.name)}</span></div></aside>`}
+function heroCorner(){const h=book.heroes[state.hero];return `<aside class="corner-wheel hero-corner bottom-right"><div class="mini-wheel hero-mini-wheel"><span class="mini-pointer"></span><span class="mini-icon">${h.icon}</span><span class="mini-label">${esc(h.short)}</span></div></aside>`}
+function frame(inner){return `<section class="physical-book">${invWheel(0,"top-left")}${invWheel(1,"top-right")}${invWheel(2,"bottom-left")}${heroCorner()}${inner}</section>`}
 
-  const Feedback = {
-    enabled: localStorage.getItem("dw_sound") !== "off",
-    ctx: null,
-    ensure() {
-      if (!this.enabled) return null;
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return null;
-      if (!this.ctx) this.ctx = new AC();
-      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
-      return this.ctx;
-    },
-    tone(freq = 440, duration = 0.045, volume = 0.025, type = "sine") {
-      const ctx = this.ensure();
-      if (!ctx) return;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(volume, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + duration);
-    },
-    vibrate(ms = 20) {
-      try {
-        if (window.AndroidBridge && typeof window.AndroidBridge.vibrate === "function") {
-          window.AndroidBridge.vibrate(ms);
-        } else if (navigator.vibrate) {
-          navigator.vibrate(ms);
-        }
-      } catch (_) {}
-    },
-    click() {
-      this.tone(520, 0.035, 0.018, "square");
-      this.vibrate(15);
-    },
-    page() {
-      this.tone(320, 0.04, 0.014, "triangle");
-      setTimeout(() => this.tone(410, 0.05, 0.012, "triangle"), 35);
-      this.vibrate(22);
-    },
-    item() {
-      this.tone(620, 0.05, 0.02, "sine");
-      setTimeout(() => this.tone(820, 0.08, 0.018, "sine"), 45);
-      this.vibrate(28);
-    },
-    toggle() {
-      this.enabled = !this.enabled;
-      localStorage.setItem("dw_sound", this.enabled ? "on" : "off");
-      updateSoundButton();
-      if (this.enabled) this.click();
-    }
-  };
-
-  function updateSoundButton() {
-    const btn = document.getElementById("global-sound-toggle");
-    if (!btn) return;
-    btn.textContent = Feedback.enabled ? "🔊" : "🔇";
-    btn.setAttribute("aria-label", Feedback.enabled ? "Couper les sons" : "Activer les sons");
-    btn.title = Feedback.enabled ? "Couper les sons" : "Activer les sons";
-  }
-
-
-  function resetState() {
-    state.hero = null;
-    state.item = null;
-    state.flags = {};
-    state.scene = null;
-    state.history = [];
-    state.lastItem = null;
-  }
-
-  function renderHome() {
-    resetState();
-    app.innerHTML = `
-      <section class="home card collection-home">
-        <div class="kicker">Doctor Who · Ma Première Aventure</div>
-        <h1 class="logo">Choisis ton aventure</h1>
-        <p class="subtitle">Cinq histoires courtes, trois personnages par livre, des objets à trouver et plusieurs chemins jusqu'à la fin.</p>
-        <div class="books-grid">
-          ${books.map((b,i) => {
-            const m = coverMeta[b.id] || {icon:"✦",label:"Aventure"};
-            return `
-              <button class="book-card" data-book="${i}">
-                <span class="book-number">Livre ${i+1}</span>
-                <span class="book-cover-icon">${m.icon}</span>
-                <strong>${escapeHtml(b.title)}</strong>
-                <small>${escapeHtml(m.label)} · ${Object.keys(b.scenes).length} scènes</small>
-              </button>`;
-          }).join("")}
-        </div>
-        <p class="legal-note">Projet fan-made non officiel.</p>
-      </section>`;
-
-    document.querySelectorAll("[data-book]").forEach(btn => {
-      btn.onclick = () => {
-        book = books[Number(btn.dataset.book)];
-        renderBookIntro();
-      };
-    });
-  }
-
-  function renderBookIntro() {
-    resetState();
-    const index = books.indexOf(book);
-    const m = coverMeta[book.id] || {icon:"✦",label:"Aventure"};
-    app.innerHTML = `
-      <section class="home card">
-        <div class="book-badge">Livre ${index+1} sur ${books.length} · ${escapeHtml(m.label)}</div>
-        <div class="book-cover-big" aria-hidden="true">${m.icon}</div>
-        <h1 class="logo">${escapeHtml(book.title)}</h1>
-        <p class="subtitle">${escapeHtml(book.subtitle)}</p>
-        <button class="primary" id="start">Commencer</button>
-        <button class="secondary" id="back-library">← Bibliothèque</button>
-      </section>`;
-    document.getElementById("start").onclick = renderHeroSelect;
-    document.getElementById("back-library").onclick = renderHome;
-  }
-
-  function renderHeroSelect() {
-    app.innerHTML = `
-      <section class="select-screen card">
-        <div class="kicker">${escapeHtml(book.title)}</div>
-        <h1>Choisis ton personnage</h1>
-        <p class="subtitle" style="margin-left:0">Chaque personnage commence avec un objet différent. Certains chemins deviennent plus faciles selon ton choix.</p>
-        <div class="select-grid">
-          ${Object.entries(book.heroes).map(([id,h]) => `
-            <button class="hero-select" data-hero="${id}">
-              <div class="hero-avatar">${h.icon}</div>
-              <h3>${escapeHtml(h.name)}</h3>
-              <p>${escapeHtml(h.trait)}</p>
-              <p><strong>${h.item.icon} ${escapeHtml(h.item.name)}</strong></p>
-            </button>`).join("")}
-        </div>
-        <div class="footer-actions">
-          <button class="secondary" id="book-back">← Présentation</button>
-          <button class="secondary" id="home">⌂ Bibliothèque</button>
-        </div>
-      </section>`;
-    document.querySelectorAll("[data-hero]").forEach(btn => {
-      btn.onclick = () => startWithHero(btn.dataset.hero);
-    });
-    document.getElementById("book-back").onclick = renderBookIntro;
-    document.getElementById("home").onclick = renderHome;
-  }
-
-  function startWithHero(id) {
-    const hero = book.heroes[id];
-    state.hero = id;
-    state.item = hero.item.id;
-    state.lastItem = null;
-    state.flags = { courage:0, brave:0, clues:0, mercy:0, kind:0, careful:0 };
-    state.scene = book.start;
-    state.history = [];
-    Feedback.page();
-    renderScene();
-  }
-
-  function getItem(id) {
-    if (!id) return {name:"Rien",icon:"○"};
-    return book.items[id] || {name:id,icon:"?"};
-  }
-
-  function wheel(kind) {
-    const hero = book.heroes[state.hero];
-    const isHero = kind === "hero";
-    const item = getItem(state.item);
-    return `
-      <aside class="wheel-wrap ${isHero ? "left":"right"}">
-        <div class="wheel-label">${isHero ? "Personnage":"Objet"}</div>
-        <div class="wheel ${!isHero && state.lastItem !== state.item ? "changed":""}">
-          <div class="wheel-core">
-            <span><span class="wheel-icon">${isHero ? hero.icon:item.icon}</span>${escapeHtml(isHero ? hero.short:item.name)}</span>
-          </div>
-        </div>
-      </aside>`;
-  }
-
-  function applyFlags(flags) {
-    if (!flags) return;
-    Object.entries(flags).forEach(([k,v]) => {
-      state.flags[k] = typeof v === "number" ? (state.flags[k] || 0) + v : v;
-    });
-  }
-
-  function applyEffects(scene) {
-    state.lastItem = state.item;
-    if (scene.giveItem) state.item = scene.giveItem;
-    if (scene.removeItem) state.item = null;
-    if (state.lastItem !== state.item) Feedback.item();
-    applyFlags(scene.flags);
-  }
-
-  function choiceAllowed(choice) {
-    if (choice.requiresItem && state.item !== choice.requiresItem) return false;
-    if (choice.requiresHero && state.hero !== choice.requiresHero) return false;
-    if (choice.requiresFlag && !state.flags[choice.requiresFlag]) return false;
-    return true;
-  }
-
-  function go(choice) {
-    if (!choiceAllowed(choice)) return;
-    Feedback.page();
-    if (choice.setItem !== undefined) {
-      state.lastItem = state.item;
-      state.item = choice.setItem;
-    }
-    applyFlags(choice.flags);
-    if (choice.setItem !== undefined) Feedback.item();
-    state.history.push(state.scene);
-    state.scene = typeof choice.next === "function" ? choice.next(state) : choice.next;
-    renderScene();
-  }
-
-  function renderScene() {
-    const scene = book.scenes[state.scene];
-    if (!scene) {
-      app.innerHTML = '<section class="home card"><h1>Scène introuvable</h1><button class="primary" id="home">Bibliothèque</button></section>';
-      document.getElementById("home").onclick = renderHome;
-      return;
-    }
-
-    applyEffects(scene);
-    if (scene.end) return renderEnd(scene);
-
-    const eventText = scene.event ? `<div class="event">${escapeHtml(scene.event)}</div>` : "";
-    app.innerHTML = `
-      <section class="game">
-        ${wheel("hero")}
-        <article class="story card">
-          <div class="scene-art" data-tone="${scene.tone || "blue"}">
-            <span class="art-glyph" aria-hidden="true">${scene.glyph || "✦"}</span>
-            <div>
-              <div class="chapter">${escapeHtml(scene.chapter || "Aventure")}</div>
-              <h2>${escapeHtml(scene.title)}</h2>
-            </div>
-          </div>
-          <div class="story-body">
-            <p class="story-text">${escapeHtml(typeof scene.text === "function" ? scene.text(state) : scene.text)}</p>
-            ${eventText}
-            <div class="choices flaps" aria-label="Choisis un volet">
-              ${scene.choices.map((c,i) => {
-                const ok = choiceAllowed(c);
-                const lockReason =
-                  c.requiresItem && !ok ? `Il faut : ${getItem(c.requiresItem).name}` :
-                  c.requiresHero && !ok ? "Choix réservé à un autre personnage" :
-                  c.requiresFlag && !ok ? "Il manque un indice" : "";
-                const flapName = ["Volet du haut","Volet du milieu","Volet du bas"][i] || "Volet";
-                const flapClass = ["flap-top","flap-mid","flap-bot"][i] || "";
-                return `<button class="choice book-flap ${flapClass} ${ok ? "":"locked"}" data-choice="${i}" ${ok ? "":"disabled"}>
-                  <span class="flap-tab">${flapName}</span>
-                  <span class="flap-main"><span class="ci">${c.icon || ["🔷","🟨","🔺"][i] || "➜"}</span><span>${escapeHtml(c.label)}</span></span>
-                  <small>${escapeHtml(ok ? (c.hint || "") : lockReason)}</small>
-                </button>`;
-              }).join("")}
-            </div>
-            <div class="footer-actions">
-              <button class="secondary" id="restart">↻ Recommencer ce livre</button>
-              <button class="secondary" id="home">⌂ Bibliothèque</button>
-            </div>
-          </div>
-        </article>
-        ${wheel("item")}
-      </section>`;
-
-    document.querySelectorAll("[data-choice]").forEach(btn => {
-      btn.onclick = () => go(scene.choices[Number(btn.dataset.choice)]);
-    });
-    document.getElementById("restart").onclick = renderHeroSelect;
-    document.getElementById("home").onclick = renderHome;
-  }
-
-  function renderEnd(scene) {
-    const hero = book.heroes[state.hero];
-    app.innerHTML = `
-      <section class="game">
-        ${wheel("hero")}
-        <article class="story card end-card">
-          <div class="scene-art" data-tone="${scene.tone || "success"}">
-            <span class="art-glyph" aria-hidden="true">${scene.glyph || "✨"}</span>
-            <div>
-              <div class="end-rank">${escapeHtml(scene.endLabel || "Fin")}</div>
-              <h2>${escapeHtml(scene.title)}</h2>
-            </div>
-          </div>
-          <div class="story-body">
-            <p class="story-text">${escapeHtml(typeof scene.text === "function" ? scene.text(state) : scene.text)}</p>
-            <div class="event">Aventure terminée avec <strong>${escapeHtml(hero.name)}</strong> et <strong>${escapeHtml(getItem(state.item).name)}</strong>.</div>
-            <div class="end-actions">
-              <button class="primary" id="again">Rejouer avec un autre personnage</button>
-              <button class="secondary" id="other-book">Choisir un autre livre</button>
-            </div>
-          </div>
-        </article>
-        ${wheel("item")}
-      </section>`;
-    document.getElementById("again").onclick = renderHeroSelect;
-    document.getElementById("other-book").onclick = renderHome;
-  }
-
-  const soundBtn = document.getElementById("global-sound-toggle");
-  if (soundBtn) {
-    soundBtn.addEventListener("click", () => Feedback.toggle());
-    updateSoundButton();
-  }
-
-  renderHome();
+function scene(){
+ const s=book.scenes[state.scene];if(!s){root.innerHTML='<section class="home card"><h1>Scène introuvable</h1></section>';return}
+ apply(s);if(s.end)return ending(s);
+ const txt=typeof s.text==="function"?s.text(viewState()):s.text;
+ const ev=s.event?`<div class="event">${esc(s.event)}</div>`:"";
+ const choices=s.choices.map((c,i)=>{const ok=allowed(c),names=["Volet du haut","Volet du milieu","Volet du bas"],cls=["flap-top","flap-mid","flap-bot"];return `<button class="choice book-flap ${cls[i]} ${ok?"":"locked"}" data-choice="${i}" ${ok?"":"disabled"}><span class="flap-tab">${names[i]}</span><span class="flap-main"><span class="ci">${c.icon||["🔷","🟨","🔺"][i]}</span><span>${esc(c.label)}</span></span><small>${esc(ok?(c.hint||""):lock(c))}</small></button>`}).join("");
+ root.innerHTML=frame(`<article class="story card book-page"><div class="scene-art" data-tone="${s.tone||"blue"}"><span class="art-glyph">${s.glyph||"✦"}</span><div><div class="chapter">${esc(s.chapter||"Aventure")}</div><h2>${esc(s.title)}</h2></div></div><div class="story-body"><p class="story-text">${esc(txt)}</p>${ev}<div class="choices flaps">${choices}</div><div class="footer-actions"><button class="secondary" id="restart">↻ Recommencer</button><button class="secondary" id="home">⌂ Bibliothèque</button></div></div></article>`);
+ document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>go(s.choices[+x.dataset.choice]));document.getElementById("restart").onclick=heroWheel;document.getElementById("home").onclick=home
+}
+function ending(s){
+ const txt=typeof s.text==="function"?s.text(viewState()):s.text,its=state.inventory.filter(Boolean).map(x=>item(x).name);
+ root.innerHTML=frame(`<article class="story card book-page end-card"><div class="scene-art" data-tone="${s.tone||"success"}"><span class="art-glyph">${s.glyph||"✨"}</span><div><div class="end-rank">${esc(s.endLabel||"Fin")}</div><h2>${esc(s.title)}</h2></div></div><div class="story-body"><p class="story-text">${esc(txt)}</p><div class="event">Inventaire final : <strong>${its.length?esc(its.join(" · ")):"aucun objet"}</strong>.</div><div class="end-actions"><button class="primary" id="again">Rejouer avec la roue personnage</button><button class="secondary" id="other">Un autre livre</button></div></div></article>`);
+ document.getElementById("again").onclick=heroWheel;document.getElementById("other").onclick=home
+}
+const sound=document.getElementById("global-sound-toggle");if(sound){sound.onclick=()=>Feedback.toggle();soundButton()}
+home();
 })();
