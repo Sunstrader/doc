@@ -33,6 +33,71 @@
     "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
   })[c]);
 
+  const Feedback = {
+    enabled: localStorage.getItem("dw_sound") !== "off",
+    ctx: null,
+    ensure() {
+      if (!this.enabled) return null;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      if (!this.ctx) this.ctx = new AC();
+      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
+      return this.ctx;
+    },
+    tone(freq = 440, duration = 0.045, volume = 0.025, type = "sine") {
+      const ctx = this.ensure();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    },
+    vibrate(ms = 20) {
+      try {
+        if (window.AndroidBridge && typeof window.AndroidBridge.vibrate === "function") {
+          window.AndroidBridge.vibrate(ms);
+        } else if (navigator.vibrate) {
+          navigator.vibrate(ms);
+        }
+      } catch (_) {}
+    },
+    click() {
+      this.tone(520, 0.035, 0.018, "square");
+      this.vibrate(15);
+    },
+    page() {
+      this.tone(320, 0.04, 0.014, "triangle");
+      setTimeout(() => this.tone(410, 0.05, 0.012, "triangle"), 35);
+      this.vibrate(22);
+    },
+    item() {
+      this.tone(620, 0.05, 0.02, "sine");
+      setTimeout(() => this.tone(820, 0.08, 0.018, "sine"), 45);
+      this.vibrate(28);
+    },
+    toggle() {
+      this.enabled = !this.enabled;
+      localStorage.setItem("dw_sound", this.enabled ? "on" : "off");
+      updateSoundButton();
+      if (this.enabled) this.click();
+    }
+  };
+
+  function updateSoundButton() {
+    const btn = document.getElementById("global-sound-toggle");
+    if (!btn) return;
+    btn.textContent = Feedback.enabled ? "🔊" : "🔇";
+    btn.setAttribute("aria-label", Feedback.enabled ? "Couper les sons" : "Activer les sons");
+    btn.title = Feedback.enabled ? "Couper les sons" : "Activer les sons";
+  }
+
+
   function resetState() {
     state.hero = null;
     state.item = null;
@@ -124,6 +189,7 @@
     state.flags = { courage:0, brave:0, clues:0, mercy:0, kind:0, careful:0 };
     state.scene = book.start;
     state.history = [];
+    Feedback.page();
     renderScene();
   }
 
@@ -158,6 +224,7 @@
     state.lastItem = state.item;
     if (scene.giveItem) state.item = scene.giveItem;
     if (scene.removeItem) state.item = null;
+    if (state.lastItem !== state.item) Feedback.item();
     applyFlags(scene.flags);
   }
 
@@ -170,11 +237,13 @@
 
   function go(choice) {
     if (!choiceAllowed(choice)) return;
+    Feedback.page();
     if (choice.setItem !== undefined) {
       state.lastItem = state.item;
       state.item = choice.setItem;
     }
     applyFlags(choice.flags);
+    if (choice.setItem !== undefined) Feedback.item();
     state.history.push(state.scene);
     state.scene = typeof choice.next === "function" ? choice.next(state) : choice.next;
     renderScene();
@@ -206,16 +275,18 @@
           <div class="story-body">
             <p class="story-text">${escapeHtml(typeof scene.text === "function" ? scene.text(state) : scene.text)}</p>
             ${eventText}
-            <div class="choices">
+            <div class="choices flaps" aria-label="Choisis un volet">
               ${scene.choices.map((c,i) => {
                 const ok = choiceAllowed(c);
                 const lockReason =
                   c.requiresItem && !ok ? `Il faut : ${getItem(c.requiresItem).name}` :
                   c.requiresHero && !ok ? "Choix réservé à un autre personnage" :
                   c.requiresFlag && !ok ? "Il manque un indice" : "";
-                return `<button class="choice ${ok ? "":"locked"}" data-choice="${i}" ${ok ? "":"disabled"}>
-                  <span class="ci">${c.icon || ["🔷","🟨","🔺"][i] || "➜"}</span>
-                  ${escapeHtml(c.label)}
+                const flapName = ["Volet du haut","Volet du milieu","Volet du bas"][i] || "Volet";
+                const flapClass = ["flap-top","flap-mid","flap-bot"][i] || "";
+                return `<button class="choice book-flap ${flapClass} ${ok ? "":"locked"}" data-choice="${i}" ${ok ? "":"disabled"}>
+                  <span class="flap-tab">${flapName}</span>
+                  <span class="flap-main"><span class="ci">${c.icon || ["🔷","🟨","🔺"][i] || "➜"}</span><span>${escapeHtml(c.label)}</span></span>
                   <small>${escapeHtml(ok ? (c.hint || "") : lockReason)}</small>
                 </button>`;
               }).join("")}
@@ -262,6 +333,12 @@
       </section>`;
     document.getElementById("again").onclick = renderHeroSelect;
     document.getElementById("other-book").onclick = renderHome;
+  }
+
+  const soundBtn = document.getElementById("global-sound-toggle");
+  if (soundBtn) {
+    soundBtn.addEventListener("click", () => Feedback.toggle());
+    updateSoundButton();
   }
 
   renderHome();
