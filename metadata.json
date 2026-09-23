@@ -2,7 +2,5 @@
   "name": "Doctor Who — Ma Première Aventure",
   "description": "Collection fan-made de livres-jeux Doctor Who pour enfants.",
   "permissions": [],
-  "capabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  "capabilities": []
 }
