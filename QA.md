@@ -8,10 +8,10 @@ Contrôle effectué sur la collection complète.
 |---|---:|---|---:|---:|
 | Livre 1 — Le Docteur a disparu ! | 61 | OK | 0 | 0 |
 | Livre 2 — Les Anges du Musée | 39 | OK | 0 | 0 |
-| Livre 3 — Le Dinosaure de Londres | 45 | OK | 0 | 0 |
-| Livre 4 — Panique dans le TARDIS | 53 | OK | 0 | 0 |
-| Livre 5 — Le Dernier Dalek | 49 | OK | 0 | 0 |
-| **Total** | **247** | **OK** | **0** | **0** |
+| Livre 3 — Le Dinosaure de Londres | 48 | OK | 0 | 0 |
+| Livre 4 — Panique dans le TARDIS | 61 | OK | 0 | 0 |
+| Livre 5 — Le Dernier Dalek | 50 | OK | 0 | 0 |
+| **Total** | **259** | **OK** | **0** | **0** |
 
 Le moteur `app.js` passe également la vérification de syntaxe.
 
@@ -72,6 +72,8 @@ Les photos de livres fournies servent uniquement de référence de mécanique et
 - Sans roue, la tour propose une réparation provisoire qui avance le récit. Sans cristal ni cellule, la console donne d'autres conclusions : l'absence d'objet modifie l'issue sans bloquer la lecture.
 - Les objets utilisés à la console quittent leur roue après le choix.
 - Trois illustrations originales de la boutique, de la tour et de la petite fille distinguent ces scènes ; les volets ont des emblèmes propres à leur action.
-- `npm test` vérifie les liens des 247 scènes et les embranchements conditionnels essentiels du livre 1.
+- `npm test` vérifie les liens des 259 scènes et les embranchements conditionnels essentiels du livre 1.
+
+Les quatre autres livres ont aussi une issue de rechange pour chacun de leurs volets conditionnels lorsqu'un objet manque. Le talent personnel reste propre à chaque héros ; les scènes sans objet ne prétendent pas qu'il l'a utilisé. Les nouvelles pages du dinosaure, du TARDIS et du Dalek décrivent la conséquence de l'improvisation. Sur 1 500 parcours simulés (100 par héros et par livre), aucun lien manquant ni blocage n'a été observé ; 7 parcours ont atteint la limite de 100 choix à cause de retours possibles entre scènes.
 
 Le rendu dans un navigateur sur PC et mobile reste à examiner visuellement ; les contrôles ci-dessus portent sur les données, la syntaxe et les dessins SVG valides.

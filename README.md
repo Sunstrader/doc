@@ -11,6 +11,7 @@ Collection fan-made de cinq livres-jeux interactifs pour jeunes enfants, pensée
 - la page gauche contient l'illustration et le texte court ;
 - la page droite est découpée en **trois volets** : un seul est choisi et tourné ;
 - certains résultats dépendent du personnage, des objets conservés ou des événements précédents ;
+- lorsqu'un objet manque, le même volet raconte une autre issue et continue l'histoire ; les talents des héros ouvrent des passages différents ;
 - les fins utilisent aussi l'état final des roues.
 
 ## Collection

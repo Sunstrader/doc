@@ -544,9 +544,9 @@ window.BOOK_04 = {
       tone:"danger",
       text:"Derrière une petite trappe se trouve une salle énorme. Au centre, un cristal bleu fissuré pulse trop vite. Trois anneaux autour de lui portent les mots : REPÈRE, SOUVENIR, ÉNERGIE.",
       choices:[
-        {icon:"🧭",label:"Explorer l'anneau REPÈRE",hint:"Place la boussole ou pars la chercher.",next:s=>s.inventory.includes("compass")?"repair_anchor":"compass_room"},
-        {icon:"🧵",label:"Explorer l'anneau SOUVENIR",hint:"Place le fil bleu ou pars le chercher.",next:s=>s.inventory.includes("blueThread")?"repair_memory":"blue_thread_room"},
-        {icon:"💎",label:"Explorer l'anneau ÉNERGIE",hint:"Place le cristal ou pars le chercher.",next:s=>s.inventory.includes("crystal")?"repair_energy":"crystal_store"}
+        {icon:"🧭",label:"Explorer l'anneau REPÈRE",hint:"Avec la boussole, ou en suivant sa propre aiguille.",next:s=>s.inventory.includes("compass")?"repair_anchor":"need_anchor"},
+        {icon:"🧵",label:"Explorer l'anneau SOUVENIR",hint:"Avec le fil bleu, ou en écoutant le TARDIS.",next:s=>s.inventory.includes("blueThread")?"repair_memory":"need_memory"},
+        {icon:"💎",label:"Explorer l'anneau ÉNERGIE",hint:"Avec le cristal, ou en trouvant une autre étincelle.",next:s=>s.inventory.includes("crystal")?"repair_energy":"need_energy"}
       ]
     },
 

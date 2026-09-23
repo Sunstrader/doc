@@ -90,6 +90,7 @@ function heroPage(){
 }
 function start(id){reset();state.hero=id;state.flags={courage:0,brave:0,clues:0,mercy:0,kind:0,careful:0};state.scene=book.start;Feedback.turn();renderScene()}
 function allowed(c){if(c.requiresItem&&!has(c.requiresItem))return false;if(c.requiresHero&&state.hero!==c.requiresHero)return false;if(c.requiresFlag&&!state.flags[c.requiresFlag])return false;return true}
+function choiceFor(c){return !allowed(c)&&c.otherwise?{icon:c.icon,...c.otherwise}:c}
 function lock(c){
  if(c.requiresItem&&!has(c.requiresItem)){const owner=Object.values(book.heroes).find(h=>h.item.id===c.requiresItem);return owner?`Talent de ${owner.name}`:`Il faut ${item(c.requiresItem).name}`}
  if(c.requiresHero&&state.hero!==c.requiresHero)return"Un autre héros ferait autrement";
@@ -127,10 +128,11 @@ function renderScene(){
    ${wheelMarkup(0,"top-left")}${wheelMarkup(1,"top-right")}${wheelMarkup(2,"bottom-left")}${heroWheel()}
    <button class="book-menu" id="menu" aria-label="Menu">☰</button>
  </section>`;
- document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>turnChoice(s.choices[+x.dataset.choice],x));
+ document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.choice]),x));
  document.getElementById("menu").onclick=menu
 }
 function choiceFlap(c,i){
+ c=choiceFor(c);
  const ok=allowed(c),labels=["1","2","3"],label=resolve(c.label),hint=resolve(c.hint),artKey={title:label,chapter:""};
  return `<button class="page-flap flap-${i+1} ${ok?"":"locked"}" data-choice="${i}">
    <div class="flap-art">${ART.scene(book.id,artKey)}<span class="flap-emblem" aria-hidden="true">${esc(c.icon||"✦")}</span></div>

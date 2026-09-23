@@ -8,6 +8,7 @@ const context = vm.createContext({window});
 for (let n = 1; n <= 5; n++) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, `../books/book-0${n}.js`), 'utf8'), context);
 }
+vm.runInContext(fs.readFileSync(path.join(__dirname, '../books/alternatives.js'), 'utf8'), context);
 const books = Array.from({length: 5}, (_, i) => window[`BOOK_0${i + 1}`]);
 let sceneCount = 0;
 for (const book of books) {
@@ -21,6 +22,13 @@ for (const book of books) {
         ? Object.keys(book.heroes).flatMap(hero => [null, ...Object.keys(book.items)].map(item => choice.next({hero, inventory: [item, null, null], flags: {}, item})))
         : [choice.next];
       for (const target of targets) assert(book.scenes[target], `${book.id}/${id} mène vers ${target}`);
+      if(choice.otherwise){
+        assert(choice.otherwise.label, `${book.id}/${id} manque un texte alternatif`);
+        assert(book.scenes[choice.otherwise.next], `${book.id}/${id} mène vers ${choice.otherwise.next} sans l'objet`);
+      }
+      if(book.id !== 'book-01' && choice.requiresItem){
+        assert(choice.otherwise, `${book.id}/${id} bloque un volet sans autre résultat`);
+      }
     }
   }
 }
@@ -49,4 +57,8 @@ assert.equal(routes('star_map_room', state('rose', [null, 'feather']))[1], 'map_
 assert.equal(routes('final_console', state('clara', [null, null, 'blueCrystal'], {piece1: true, piece2: true, piece3: true, clues: 5}))[0], 'ending_perfect');
 assert.equal(routes('final_console', state('amy'))[0], 'ending_patchwork');
 assert.equal(routes('final_console', state('amy'))[1], 'ending_signal');
+assert.equal(books[1].scenes.room17_door.choices[0].otherwise.next, 'angel_clock');
+assert.equal(books[2].scenes.meet_dino.choices[0].otherwise.next, 'blue_glow');
+assert.equal(books[3].scenes.zero_door.choices[0].otherwise.next, 'zero_knock');
+assert.equal(books[4].scenes.dalek_final_role.choices[0].otherwise.next, 'shield_final');
 console.log(`${sceneCount} scènes vérifiées, routes conditionnelles du livre 1 validées.`);
