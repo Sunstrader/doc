@@ -413,7 +413,7 @@ window.BOOK_04 = {
       choices:[
         {icon:"🗝️",label:"Utiliser la clé de la chambre zéro",requiresItem:"roomKey",next:"zero_room"},
         {icon:"🔑",label:"Essayer la clé du TARDIS",requiresItem:"tardisKey",next:"zero_key"},
-        {icon:"📓",label:"Écrire le nom de la salle de contrôle",requiresItem:"notebook",next:"zero_note"}
+        {icon:"📓",label:"Écrire le nom ou chercher une clé",hint:"Le carnet peut ouvrir la porte.",next:s=>s.hero==="amy"||s.inventory.includes("notebook")?"zero_note":"blue_thread_room"}
       ]
     },
 
@@ -544,9 +544,9 @@ window.BOOK_04 = {
       tone:"danger",
       text:"Derrière une petite trappe se trouve une salle énorme. Au centre, un cristal bleu fissuré pulse trop vite. Trois anneaux autour de lui portent les mots : REPÈRE, SOUVENIR, ÉNERGIE.",
       choices:[
-        {icon:"🧭",label:"Placer la boussole sur REPÈRE",requiresItem:"compass",next:"repair_anchor"},
-        {icon:"🧵",label:"Placer le fil bleu sur SOUVENIR",requiresItem:"blueThread",next:"repair_memory"},
-        {icon:"💎",label:"Placer le cristal sur ÉNERGIE",requiresItem:"crystal",next:"repair_energy"}
+        {icon:"🧭",label:"Explorer l'anneau REPÈRE",hint:"Place la boussole ou pars la chercher.",next:s=>s.inventory.includes("compass")?"repair_anchor":"compass_room"},
+        {icon:"🧵",label:"Explorer l'anneau SOUVENIR",hint:"Place le fil bleu ou pars le chercher.",next:s=>s.inventory.includes("blueThread")?"repair_memory":"blue_thread_room"},
+        {icon:"💎",label:"Explorer l'anneau ÉNERGIE",hint:"Place le cristal ou pars le chercher.",next:s=>s.inventory.includes("crystal")?"repair_energy":"crystal_store"}
       ]
     },
 

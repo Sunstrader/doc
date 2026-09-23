@@ -604,7 +604,7 @@ window.BOOK_05 = {
       choices:[
         {icon:"🔋",label:"L'aider avec une cellule d'énergie",requiresItem:"powerCell",next:"dalek_shared_load"},
         {icon:"🌱",label:"Détourner une partie vers la graine",requiresItem:"seed",next:"seed_final"},
-        {icon:"🌟",label:"Fermer vite le collecteur",requiresItem:"starKey",next:"dalek_sacrifice"}
+        {icon:"🌟",label:"Fermer le collecteur ou chercher sa clé",hint:"Si la clé manque, il faut la retrouver vite.",next:s=>s.inventory.includes("starKey")?"dalek_sacrifice":"star_key_hunt"}
       ]
     },
 
