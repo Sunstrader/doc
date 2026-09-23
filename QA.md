@@ -26,3 +26,16 @@ Le moteur `app.js` passe également la vérification de syntaxe.
 ## Version
 
 Première collection complète : 5 aventures jouables, moteur commun, interface responsive, roues personnage et objet.
+
+
+## Passe interface « livre physique » — 2026-09-23
+
+Éléments récupérés du prototype IA Studio initial, sans reprendre son ancien scénario :
+- trois choix transformés en **volets Haut / Milieu / Bas** ;
+- roues personnage / objet rendues plus mécaniques avec repère et crans ;
+- sons synthétiques locaux via Web Audio (aucun fichier externe) ;
+- retour haptique via vibration mobile / AndroidBridge si disponible ;
+- bouton son global avec préférence persistante dans localStorage ;
+- aucune dépendance Gemini/API nécessaire pour ces fonctions.
+
+Le scénario et les embranchements des cinq livres restent ceux de la collection complète.
