@@ -1,46 +1,41 @@
-# Doctor Who — Ma Première Aventure
+# Doctor Who — Petites Aventures
 
-Collection fan-made de **5 livres-jeux interactifs** courts inspirés du principe des livres à choix pour jeunes enfants.
+Collection fan-made de cinq livres-jeux interactifs pour jeunes enfants, pensée comme un **album physique transposé au navigateur**.
+
+## Principe
+
+- une **roue rouge** pour choisir le personnage ;
+- trois roues **verte, bleue et jaune** qui commencent vides ;
+- les objets, indices et certains états remplacent le contenu de ces roues au fil du récit ;
+- chaque grande scène est présentée comme un **livre ouvert** ;
+- la page gauche contient l'illustration et le texte court ;
+- la page droite est découpée en **trois volets** : un seul est choisi et tourné ;
+- certains résultats dépendent du personnage, des objets conservés ou des événements précédents ;
+- les fins utilisent aussi l'état final des roues.
 
 ## Collection
 
-1. **Le Docteur a disparu !** — boucle temporelle, Londres, musée orbital et ancien vaisseau Dalek.
-2. **Les Anges du Musée** — aventure nocturne, observation, lumière, miroirs et salle 17.
-3. **Le Dinosaure de Londres** — aventure plus légère autour de Milo, un jeune dinosaure perdu dans le temps.
-4. **Panique dans le TARDIS** — exploration de salles impossibles à l'intérieur du TARDIS.
-5. **Le Dernier Dalek** — aventure spatiale autour d'un appel de détresse et d'un choix de confiance.
+1. Le Docteur a disparu !
+2. Les Anges du Musée
+3. Le Dinosaure de Londres
+4. Panique dans le TARDIS
+5. Le Dernier Dalek
 
-## Mécaniques
+## Interface
 
-- 3 personnages au choix par livre.
-- Objet de départ différent selon le personnage.
-- Roue **personnage** toujours visible.
-- Roue **objet** qui évolue pendant l'histoire.
-- 3 choix par scène importante.
-- Choix parfois conditionnés par l'objet possédé.
-- Plusieurs routes qui se croisent.
-- Plusieurs fins par aventure.
-- Interface responsive PC/mobile.
-- Aucun framework ni dépendance externe.
+Le projet contient maintenant une direction artistique originale Doctor Who : couvertures, personnages simplifiés et décors sont dessinés en SVG directement dans le projet. Aucun visuel des livres de référence n'est intégré.
 
-## Fichiers
+Sur ordinateur/tablette : double page ouverte avec spirale centrale et quatre roues aux coins.
 
-- `index.html` — point d'entrée.
-- `styles.css` — design commun.
-- `app.js` — moteur générique de la collection.
-- `books/book-01.js` à `books/book-05.js` — histoires indépendantes.
+Sur mobile : lecture verticale et quatre roues compactes persistantes en bas de l'écran.
 
-## Qualité / contrôles
+## Fichiers principaux
 
-Chaque livre a été créé séparément puis contrôlé pour :
-- syntaxe JavaScript ;
-- destinations de scènes inexistantes ;
-- cohérence du moteur commun.
-
-La collection contient actuellement plusieurs centaines de scènes et transitions.
-
-## Lancer
-
-Ouvrir `index.html` dans un navigateur ou publier le dépôt avec GitHub Pages.
+- `index.html`
+- `app.js` : moteur
+- `art.js` : illustrations vectorielles originales
+- `styles.css`
+- `physical.css` : mise en page livre physique
+- `books/book-01.js` à `book-05.js`
 
 Projet fan-made non officiel. Doctor Who et les éléments associés appartiennent à leurs ayants droit.
