@@ -6,12 +6,12 @@ Contrôle effectué sur la collection complète.
 
 | Fichier | Scènes | Syntaxe | Scènes sans 3 choix | Liens manquants |
 |---|---:|---|---:|---:|
-| Livre 1 — Le Docteur a disparu ! | 54 | OK | 0 | 0 |
+| Livre 1 — Le Docteur a disparu ! | 61 | OK | 0 | 0 |
 | Livre 2 — Les Anges du Musée | 39 | OK | 0 | 0 |
 | Livre 3 — Le Dinosaure de Londres | 45 | OK | 0 | 0 |
 | Livre 4 — Panique dans le TARDIS | 53 | OK | 0 | 0 |
 | Livre 5 — Le Dernier Dalek | 49 | OK | 0 | 0 |
-| **Total** | **240** | **OK** | **0** | **0** |
+| **Total** | **247** | **OK** | **0** | **0** |
 
 Le moteur `app.js` passe également la vérification de syntaxe.
 
@@ -64,3 +64,14 @@ Référence mécanique vérifiée à partir des exemples fournis et de descripti
 - responsive mobile sans masquer le texte.
 
 Les photos de livres fournies servent uniquement de référence de mécanique et de composition ; aucune image de référence n'est incluse dans le dépôt.
+
+## Reprise des embranchements du livre 1 — 2026-09-23
+
+- Les trois volets de la boutique, de la tour, de la carte et de l'approche du vaisseau ont des issues adaptées à Rose, Amy et Clara. Aucun de ces volets n'exige un héros absent.
+- La roue d'horloge ouvre la réparation ; la plume modifie le parcours au musée ; le cristal et la cellule donnent des résolutions différentes à la console.
+- Sans roue, la tour propose une réparation provisoire qui avance le récit. Sans cristal ni cellule, la console donne d'autres conclusions : l'absence d'objet modifie l'issue sans bloquer la lecture.
+- Les objets utilisés à la console quittent leur roue après le choix.
+- Trois illustrations originales de la boutique, de la tour et de la petite fille distinguent ces scènes ; les volets ont des emblèmes propres à leur action.
+- `npm test` vérifie les liens des 247 scènes et les embranchements conditionnels essentiels du livre 1.
+
+Le rendu dans un navigateur sur PC et mobile reste à examiner visuellement ; les contrôles ci-dessus portent sur les données, la syntaxe et les dessins SVG valides.

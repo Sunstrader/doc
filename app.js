@@ -31,6 +31,7 @@ function add(id){if(!id||has(id))return;const i=slotFor(id);state.inventory[i]=i
 function remove(id){if(id){const i=state.inventory.indexOf(id);if(i>=0){state.inventory[i]=null;state.changed=i}}}
 function flags(o){if(!o)return;Object.entries(o).forEach(([k,v])=>state.flags[k]=typeof v==="number"?(state.flags[k]||0)+v:v)}
 function view(){return {...state,item:state.inventory.find(Boolean)||null}}
+function resolve(value){return typeof value==="function"?value(view()):value}
 
 function coverCard(b,i){
  const m=meta[b.id]||["Aventure",""];
@@ -97,8 +98,10 @@ function lock(c){
 function apply(s){state.changed=-1;if(s.giveItem)add(s.giveItem);if(typeof s.removeItem==="string")remove(s.removeItem);flags(s.flags)}
 function turnChoice(c,btn){
  if(!allowed(c)){btn.classList.add("nope");setTimeout(()=>btn.classList.remove("nope"),300);return}
+ if(root.dataset.turning)return;
+ root.dataset.turning="yes";
  btn.classList.add("turning");Feedback.turn();
- setTimeout(()=>{if(c.setItem!==undefined)add(c.setItem);flags(c.flags);state.history.push(state.scene);state.scene=typeof c.next==="function"?c.next(view()):c.next;renderScene()},330)
+ setTimeout(()=>{if(c.setItem!==undefined)add(c.setItem);flags(c.flags);const next=resolve(c.next);if(c.removeItem)remove(c.removeItem);state.history.push(state.scene);state.scene=next;delete root.dataset.turning;renderScene()},330)
 }
 function wheelMarkup(i,pos,forceEmpty=false){
  const id=forceEmpty?null:state.inventory[i],it=item(id),color=["green","blue","yellow"][i];
@@ -111,12 +114,12 @@ function heroWheel(){
 function renderScene(){
  const s=book.scenes[state.scene];if(!s){root.innerHTML='<section class="tutorial card"><h1>Scène introuvable</h1><button class="primary" id="home">Retour</button></section>';document.getElementById("home").onclick=home;return}
  apply(s);if(s.end)return ending(s);
- const txt=typeof s.text==="function"?s.text(view()):s.text;
+ const txt=resolve(s.text);
  root.innerHTML=`<section class="book-frame adventure-frame">
    <div class="spiral"></div>
    <article class="scene-page page-paper">
      <div class="scene-picture">${ART.scene(book.id,s)}<div class="chapter-chip">${esc(s.chapter||"Aventure")}</div></div>
-     <div class="narrative-box"><h2>${esc(s.title)}</h2><p>${esc(txt)}</p>${s.event?`<div class="event-line">${esc(s.event)}</div>`:""}<strong>Que veux-tu faire ?</strong></div>
+     <div class="narrative-box"><h2>${esc(s.title)}</h2><p>${esc(txt)}</p>${s.event?`<div class="event-line">${esc(s.event)}</div>`:""}${s.guide?`<div class="page-guide">${esc(resolve(s.guide))}</div>`:""}<strong>Que veux-tu faire ?</strong></div>
    </article>
    <aside class="choice-page page-paper">
      ${s.choices.map((c,i)=>choiceFlap(c,i)).join("")}
@@ -128,10 +131,10 @@ function renderScene(){
  document.getElementById("menu").onclick=menu
 }
 function choiceFlap(c,i){
- const ok=allowed(c),labels=["1","2","3"],artKey={title:c.label,chapter:""};
+ const ok=allowed(c),labels=["1","2","3"],label=resolve(c.label),hint=resolve(c.hint),artKey={title:label,chapter:""};
  return `<button class="page-flap flap-${i+1} ${ok?"":"locked"}" data-choice="${i}">
-   <div class="flap-art">${ART.scene(book.id,artKey)}</div>
-   <div class="flap-copy"><span class="flap-number">${labels[i]}</span><strong>${esc(c.label)}</strong><small>${esc(ok?(c.hint||"Tourne ce volet"):lock(c))}</small></div>
+   <div class="flap-art">${ART.scene(book.id,artKey)}<span class="flap-emblem" aria-hidden="true">${esc(c.icon||"✦")}</span></div>
+   <div class="flap-copy"><span class="flap-number">${labels[i]}</span><strong>${esc(label)}</strong><small>${esc(ok?(hint||"Tourne ce volet"):lock(c))}</small></div>
    <span class="page-turn-icon">↗</span>
  </button>`
 }

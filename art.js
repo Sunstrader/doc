@@ -42,6 +42,52 @@
     ${tardis(700,300,.72)}
   `;
 
+  const clockShop = () => `
+    <rect width="1000" height="650" fill="#3e5766"/>
+    <path d="M0 0H1000V455H0Z" fill="#4f6670"/>
+    <path d="M0 455H1000V650H0Z" fill="#8b6751"/>
+    <path d="M0 516H1000M0 580H1000" stroke="#a9805b" stroke-width="6"/>
+    <rect x="45" y="65" width="270" height="372" rx="12" fill="#2e3948" stroke="#eac989" stroke-width="18"/>
+    <rect x="683" y="65" width="270" height="372" rx="12" fill="#2e3948" stroke="#eac989" stroke-width="18"/>
+    ${[110,222,335].map(y=>`<path d="M55 ${y}H305M693 ${y}H943" stroke="#bb9471" stroke-width="12"/>`).join("")}
+    ${Array.from({length:12},(_,i)=>{let x=i<6?102+(i%2)*130:740+(i%2)*130,y=125+Math.floor((i%6)/2)*111;return `<circle cx="${x}" cy="${y}" r="32" fill="#ead5aa" stroke="#af8a5b" stroke-width="6"/><path d="M${x} ${y}v-21m0 21 17 10" stroke="#52616a" stroke-width="5" stroke-linecap="round"/>`}).join("")}
+    <path d="M335 480H670L640 350H365Z" fill="#4c3440" stroke="#d2aa75" stroke-width="14"/>
+    <path d="M383 351H620L593 276H406Z" fill="#745465" stroke="#e5c68b" stroke-width="12"/>
+    <circle cx="500" cy="368" r="34" fill="#acdfea" stroke="#e6d89d" stroke-width="10"/>
+    <path d="M459 365H541M500 324V406" stroke="#fff3d1" stroke-width="5"/>
+    <path d="M0 0H1000V650H0Z" fill="#112838" opacity=".09"/>
+  `;
+
+  const clockTower = () => `
+    <rect width="1000" height="650" fill="#8cc5ca"/>
+    <path d="M0 460Q170 400 330 455T660 435T1000 460V650H0Z" fill="#547c7a"/>
+    <rect x="278" y="80" width="445" height="560" fill="#b78d6d" stroke="#665464" stroke-width="18"/>
+    <path d="M239 110 500 15 759 110Z" fill="#5c637b"/>
+    <circle cx="500" cy="277" r="174" fill="#eadbb6" stroke="#595c68" stroke-width="22"/>
+    <circle cx="500" cy="277" r="146" fill="none" stroke="#bdac83" stroke-width="5"/>
+    ${Array.from({length:12},(_,i)=>{let a=i*Math.PI/6,x=500+128*Math.sin(a),y=277-128*Math.cos(a);return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#4d5962"/>`}).join("")}
+    <path d="M500 277V175M500 277l99 42" stroke="#495660" stroke-width="18" stroke-linecap="round"/>
+    <circle cx="500" cy="277" r="19" fill="#d6b96e"/>
+    <path d="M355 491H645" stroke="#745b53" stroke-width="22"/>
+    <circle cx="500" cy="522" r="52" fill="#d2a75e" stroke="#67535a" stroke-width="12"/>
+    <circle cx="500" cy="522" r="17" fill="#789ead"/>
+    <path d="M95 490q35-90 70 0m640 0q35-90 70 0" fill="none" stroke="#daf5f6" stroke-width="8" opacity=".65"/>
+  `;
+
+  const clockGirl = () => `
+    <rect width="1000" height="650" fill="#a0cacf"/>
+    <path d="M0 414Q180 385 350 415T700 401T1000 410V650H0Z" fill="#657d77"/>
+    <path d="M95 395V80H265V400M710 400V115H940V401" fill="#b6a08a" stroke="#617074" stroke-width="12"/>
+    <circle cx="175" cy="155" r="44" fill="#e9d8b3" stroke="#566068" stroke-width="10"/>
+    <path d="M0 515Q250 464 500 510T1000 497V650H0Z" fill="#8d8f76"/>
+    <path d="M452 330Q505 262 555 330L589 500H420Z" fill="#d38663" stroke="#795d64" stroke-width="12"/>
+    <circle cx="503" cy="292" r="49" fill="#e6b891"/>
+    <path d="M455 286Q450 228 509 237Q558 238 553 295L537 268Q493 246 455 286Z" fill="#423d45"/>
+    <path d="M453 365 389 440M554 365l61 57M456 490l-27 110M552 490l29 110" stroke="#4c4955" stroke-width="22" stroke-linecap="round"/>
+    ${Array.from({length:17},(_,i)=>`<circle cx="${(i*167+45)%960}" cy="${(i*91+40)%410}" r="${3+i%3}" fill="#f5f5de" opacity=".7"/>`).join("")}
+    <circle cx="675" cy="210" r="25" fill="#ecdbb0" opacity=".75"/>
+  `;
+
   const museum = () => `
     <rect y="455" width="1000" height="195" fill="#324559"/>
     <path d="M80 450 V180 Q500 20 920 180 V450Z" fill="#d7d0bd"/>
@@ -146,6 +192,9 @@
   function keyFor(bookId, scene={}) {
     const s=((scene.chapter||"")+" "+(scene.title||"")).toLowerCase();
     if(bookId==="book-01"){
+      if(/boutique|coffre|vitrine|gardien|aiguilles|montres|porte de service/.test(s)) return "clockShop";
+      if(/fille|petit cadeau|plume|compte/.test(s)) return "clockGirl";
+      if(/tour|cadran|mécanisme|grande horloge|roue d'horloge/.test(s)) return "clockTower";
       if(/londres|horloge|montre/.test(s)) return "clock";
       if(/musée|4002|galerie 7/.test(s)) return "museum";
       if(/dalek|nébuleuse|cœur temporel/.test(s)) return "dalek";
@@ -177,9 +226,11 @@
 
   function scene(bookId, scene) {
     const k=keyFor(bookId,scene);
-    const bodies={clock,museum,park,greenhouse,lab,library,beach,heart,station,dalek,solar};
+    const illustrated={clockShop:"book-01-shop.webp",clockTower:"book-01-tower.webp",clockGirl:"book-01-girl.webp"};
+    if(bookId==="book-01" && illustrated[k]) return `<img class="scene-svg" src="assets/${illustrated[k]}" alt="" loading="eager">`;
+    const bodies={clock,clockShop,clockTower,clockGirl,museum,park,greenhouse,lab,library,beach,heart,station,dalek,solar};
     const body=bodies[k] ? bodies[k]() : station();
-    const bg={clock:"#86cce0",museum:"#6fa3ba",park:"#8fd0df",greenhouse:"#87caaa",lab:"#263d4b",library:"#352c4d",beach:"#80d5eb",heart:"#07182f",station:"#07182f",dalek:"#15152b",solar:"#10182c"}[k];
+    const bg={clock:"#86cce0",clockShop:"#3e5766",clockTower:"#8cc5ca",clockGirl:"#a0cacf",museum:"#6fa3ba",park:"#8fd0df",greenhouse:"#87caaa",lab:"#263d4b",library:"#352c4d",beach:"#80d5eb",heart:"#07182f",station:"#07182f",dalek:"#15152b",solar:"#10182c"}[k];
     return wrap(bg,body);
   }
 
