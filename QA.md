@@ -39,3 +39,28 @@ Première collection complète : 5 aventures jouables, moteur commun, interface 
 - aucune dépendance Gemini/API nécessaire pour ces fonctions.
 
 Le scénario et les embranchements des cinq livres restent ceux de la collection complète.
+
+
+## Refonte album physique — 2026-09-23
+
+Référence mécanique vérifiée à partir des exemples fournis et de descriptions publiques de la gamme :
+- pleine page de situation ;
+- trois résolutions/volets ;
+- roue personnage rouge ;
+- trois roues verte/bleue/jaune vides au départ ;
+- objets/états visibles en permanence sur ces roues ;
+- verdict final dépendant des états conservés.
+
+### Changements
+- remplacement de l'interface web classique par une double page ;
+- trois vrais volets visuels sur la page droite ;
+- animation de retournement du volet choisi ;
+- roues intégrées aux quatre coins ;
+- attribution stable des objets à une couleur de roue par livre ;
+- bibliothèque présentée comme une étagère de couvertures ;
+- écran d'ouverture du livre ;
+- page personnage inspirée d'un album jeunesse mais avec DA originale ;
+- illustrations SVG Doctor Who originales dans `art.js` ;
+- responsive mobile sans masquer le texte.
+
+Les photos de livres fournies servent uniquement de référence de mécanique et de composition ; aucune image de référence n'est incluse dans le dépôt.
