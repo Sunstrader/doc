@@ -118,12 +118,15 @@
     chapter:"La dernière page",title:"Ouvrir la bulle",art:"dalek",
     text:"Le Docteur te sourit derrière la bulle de temps. Devant toi, trois dessins : une roue, une carte et une lumière. Choisis comment l'aider.",
     choices:[
-      choice("⚙️","Essayer la roue d'horloge",s=>s.inventory.includes("clockGear")?"ending_clock":"ending_improvise",s=>s.inventory.includes("clockGear")?"La roue verte contient la pièce.":"Sans roue, il faudra inventer une autre idée."),
-      choice("🗺️","Suivre la carte des étoiles",s=>s.inventory.includes("starMap")?"ending_map":"ending_signal",s=>s.inventory.includes("starMap")?"La roue bleue contient la carte.":"Sans carte, rappelle-toi l'étoile du musée."),
-      choice("💎","Allumer la lumière bleue",s=>s.inventory.includes("blueCrystal")?"ending_energy":s.inventory.includes("dalekCell")?"ending_cell":"ending_kind",s=>s.inventory.includes("blueCrystal")||s.inventory.includes("dalekCell")?"La roue jaune a de quoi l'allumer.":"Sans objet, demande de l'aide au Dalek.")
+      choice("⚙️","Regarder le dessin de la roue","gear_check","As-tu une roue d'horloge ?"),
+      choice("🗺️","Regarder le dessin des étoiles","map_check","As-tu une carte des étoiles ?"),
+      choice("💎","Regarder la lumière bleue","light_check","As-tu un objet pour l'allumer ?")
     ]
   };
   S.final_console.common=true;
+  S.gear_check={chapter:"La dernière page",title:"La roue de l'horloge",art:"dalek",text:"Regarde ta roue verte. As-tu la roue d'horloge ?",itemCheck:{item:"clockGear",yes:"ending_clock",no:"ending_improvise"}};
+  S.map_check={chapter:"La dernière page",title:"La carte des étoiles",art:"dalek",text:"Regarde ta roue bleue. As-tu la carte des étoiles ?",itemCheck:{item:"starMap",yes:"ending_map",no:"ending_signal"}};
+  S.light_check={chapter:"La dernière page",title:"La lumière bleue",art:"dalek",text:"Regarde ta roue jaune. As-tu le cristal bleu ou la pile bleue ?",itemCheck:{anyItems:["blueCrystal","dalekCell"],yes:s=>s.inventory.includes("blueCrystal")?"ending_energy":"ending_cell",no:"ending_kind"}};
   S.ending_clock=end("Le grand tic-tac","Tu places la roue dans la machine. Tic, tac ! La bulle s'ouvre. « Tu as retrouvé le temps ! », dit le Docteur. Le Dalek fait clignoter sa lampe de joie.","Le temps retrouvé","dalek","clockGear");
   S.ending_improvise=end("Une idée à deux","Tu n'as pas la roue. Tu comptes « un, deux, trois » avec le Docteur et le Dalek. Au troisième tic, ils ouvrent la bulle ensemble !","Une fin à inventer ensemble","dalek");
   S.ending_map=end("Le chemin des étoiles","Tu poses la carte sur la machine. Les étoiles dessinent une porte et le Docteur en sort. « Bien joué, exploratrice ! »","Le chemin retrouvé","dalek","starMap");

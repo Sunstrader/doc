@@ -1,6 +1,6 @@
 (() => {
 "use strict";
-const books=[window.BOOK_06,window.BOOK_01,window.BOOK_02,window.BOOK_03,window.BOOK_04,window.BOOK_05].filter(Boolean);
+const books=[window.BOOK_01,window.BOOK_02,window.BOOK_03,window.BOOK_04,window.BOOK_05,window.BOOK_06].filter(Boolean);
 const root=document.getElementById("app");let book=books[0],heroCursor=0;
 const state={hero:null,inventory:[null,null,null],flags:{},scene:null,history:[],changed:-1,flapOrigin:null,flapRow:null};
 const meta={"book-06":["Victoria · 1879","Une nuit de lune à Torchwood."],"book-01":["Boucle temporelle","Le temps s'est cassé."],"book-02":["Mystère","Ne détourne pas les yeux."],"book-03":["Aventure","Un dinosaure est perdu à Londres."],"book-04":["Exploration","Le TARDIS a mélangé ses pièces."],"book-05":["Épopée","Un Dalek demande de l'aide."]};
@@ -89,10 +89,11 @@ function heroPage(){
  document.getElementById("confirm").onclick=()=>start(id)
 }
 function start(id){reset();state.hero=id;state.flags={courage:0,brave:0,clues:0,mercy:0,kind:0,careful:0};state.scene=book.start;Feedback.turn();renderScene()}
-function allowed(c){if(c.requiresItem&&!has(c.requiresItem))return false;if(c.requiresHero&&state.hero!==c.requiresHero)return false;if(c.requiresFlag&&!state.flags[c.requiresFlag])return false;return true}
+function allowed(c){if(c.requiresItem&&!has(c.requiresItem))return false;if(c.requiresAnyItem&&!c.requiresAnyItem.some(has))return false;if(c.requiresHero&&state.hero!==c.requiresHero)return false;if(c.requiresFlag&&!state.flags[c.requiresFlag])return false;return true}
 function choiceFor(c){return !allowed(c)&&c.otherwise?{icon:c.icon,...c.otherwise}:c}
 function lock(c){
  if(c.requiresItem&&!has(c.requiresItem))return `Il faut ${item(c.requiresItem).name}`;
+ if(c.requiresAnyItem&&!c.requiresAnyItem.some(has))return `Il faut ${c.requiresAnyItem.map(id=>item(id).name).join(" ou ")}`;
  if(c.requiresHero&&state.hero!==c.requiresHero)return"Un autre héros ferait autrement";
  if(c.requiresFlag&&!state.flags[c.requiresFlag])return"Il te manque un indice";return""
 }
@@ -115,6 +116,28 @@ function heroWheel(){
  const h=book.heroes[state.hero];
  return `<aside class="book-wheel wheel-red bottom-right"><div class="wheel-face hero-face">${ART.avatar(state.hero,h.name)}<span class="wheel-name">${esc(h.short)}</span></div></aside>`
 }
+function checkMet(check){
+ if(check.hero)return state.hero===check.hero;
+ if(check.item)return has(check.item);
+ if(check.anyItems)return check.anyItems.some(has);
+ return false;
+}
+function checkName(check){
+ if(check.hero)return book.heroes[check.hero].name;
+ if(check.item)return item(check.item).name;
+ return check.anyItems.map(id=>item(id).name).join(" ou ");
+}
+function checkTarget(check){return resolve(checkMet(check)?check.yes:check.no)}
+function needsPageGate(c){return Boolean(c.otherwise&&(c.requiresItem||c.requiresAnyItem||c.requiresHero))}
+function openChoiceGate(c){
+ const pane=root.querySelector('.choice-page');
+ const check={...(c.requiresItem?{item:c.requiresItem}:{}),...(c.requiresAnyItem?{anyItems:c.requiresAnyItem}:{}),...(c.requiresHero?{hero:c.requiresHero}:{})};
+ pane.className='choice-page page-paper hero-check-page';
+ pane.setAttribute('aria-label','Renvoi conditionnel : 1 ou 2 pages');
+ pane.innerHTML=conditionalPageMarkup(check);
+ pane.querySelector('[data-hero-page]:not([disabled])').onclick=e=>turnChoice(allowed(c)?c:{...c.otherwise},e.currentTarget);
+ Feedback.turn();
+}
 function renderScene(){
  const s=book.scenes[state.scene];if(!s){root.innerHTML='<section class="tutorial card"><h1>Scène introuvable</h1><button class="primary" id="home">Retour</button></section>';document.getElementById("home").onclick=home;return}
  apply(s);if(s.end)return ending(s);
@@ -124,7 +147,7 @@ function renderScene(){
  }
  const txt=resolve(s.text);
  const interlude=s.next!==undefined;
- const check=s.heroCheck;
+ const check=s.heroCheck||s.itemCheck;
  root.innerHTML=`<section class="book-frame adventure-frame">
    <div class="spiral"></div>
    <article class="scene-page page-paper">
@@ -132,20 +155,20 @@ function renderScene(){
      <div class="narrative-box"><h2>${esc(s.title)}</h2><p>${esc(txt)}</p>${s.event?`<div class="event-line">${esc(s.event)}</div>`:""}${s.guide?`<div class="page-guide">${esc(resolve(s.guide))}</div>`:""}<strong>${check?"Tourne la page de ton personnage.":"Que veux-tu faire ?"}</strong></div>
    </article>
    <aside class="choice-page page-paper ${interlude?"interlude-page":""} ${check?"hero-check-page":""}" aria-label="${interlude?"La suite de l'histoire":check?"Les pages du personnage":"Les trois volets de l'histoire"}">
-     ${interlude?`<div class="interlude-illustration">${ART.scene(book.id,s)}</div><div class="interlude-copy"><span>La suite de l'histoire</span><h3>${esc(s.title)}</h3><p>${s.giveItem?`Sur la roue : ${esc(item(s.giveItem).name)}.`:"Ton aventure continue."}</p><button id="continue-page" class="continue-page" type="button">Tourner la page <b aria-hidden="true">↗</b></button></div>`:check?heroCheckMarkup(check):s.choices.map((c,i)=>choiceFlap(c,i,s)).join("")}
+     ${interlude?`<div class="interlude-illustration">${ART.scene(book.id,s)}</div><div class="interlude-copy"><span>La suite de l'histoire</span><h3>${esc(s.title)}</h3><p>${s.giveItem?`Sur la roue : ${esc(item(s.giveItem).name)}.`:"Ton aventure continue."}</p><button id="continue-page" class="continue-page" type="button">Tourner la page <b aria-hidden="true">↗</b></button></div>`:check?conditionalPageMarkup(check):s.choices.map((c,i)=>choiceFlap(c,i,s)).join("")}
    </aside>
    ${wheelMarkup(0,"top-left")}${wheelMarkup(1,"top-right")}${wheelMarkup(2,"bottom-left")}${heroWheel()}
    <button class="book-menu" id="menu" aria-label="Menu">☰</button>
  </section>`;
- if(check)document.querySelector("[data-hero-page]:not([disabled])").onclick=e=>turnChoice({next:state.hero===check.hero?check.yes:check.no},e.currentTarget);
- else if(!interlude)document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.choice]),x));
+ if(check)document.querySelector("[data-hero-page]:not([disabled])").onclick=e=>turnChoice({next:checkTarget(check)},e.currentTarget);
+ else if(!interlude)document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>{const c=s.choices[+x.dataset.choice];needsPageGate(c)?openChoiceGate(c):turnChoice(choiceFor(c),x)});
  if(interlude)document.getElementById("continue-page").onclick=e=>turnChoice({next:s.next},e.currentTarget);
  document.getElementById("menu").onclick=menu
 }
-function heroCheckMarkup(check){
- const active=state.hero===check.hero?1:2,heroName=book.heroes[check.hero].name;
- return [1,2].map(n=>`<button class="hero-page-option ${n===active?"":"unavailable"}" data-hero-page="${n}" type="button" ${n===active?"":"disabled"} aria-label="${n===active?`Tourner ${n} page${n>1?"s":""}`:`Page ${n} accessible avec ${esc(n===1?heroName:book.heroes[Object.keys(book.heroes).find(id=>id!==check.hero)].name)}`}" >
-   <span class="hero-page-number">${n}</span><strong>${n===active?`Tourne ${n} page${n>1?"s":""}`:`Accessible avec ${esc(n===1?heroName:book.heroes[Object.keys(book.heroes).find(id=>id!==check.hero)].name)}`}</strong>
+function conditionalPageMarkup(check){
+ const active=checkMet(check)?1:2,name=checkName(check);
+ return [1,2].map(n=>`<button class="hero-page-option ${n===active?"":"unavailable"}" data-hero-page="${n}" type="button" ${n===active?"":"disabled"} aria-label="${n===active?`Tourner ${n} page${n>1?"s":""}`:`Page ${n} accessible ${n===1?"avec":"sans"} ${esc(name)}`}" >
+   <span class="hero-page-number">${n}</span><strong>${n===active?`Tourne ${n} page${n>1?"s":""}`:`Accessible ${n===1?"avec":"sans"} ${esc(name)}`}</strong>
    <small>${n===active?"Découvre la suite de ton chemin":"Page cachée · sans indice"}</small>
  </button>`).join("");
 }
@@ -159,15 +182,15 @@ function renderBookStrips(s){
    return `<section class="story-strip strip-left" data-row="${i}"><div class="strip-art">${ART.scene(book.id,current)}</div>${detail?`<div class="strip-story"><span>${esc(current.chapter||"Aventure")}</span><h2>${esc(current.title)}</h2><p>${esc(resolve(current.text))}</p></div>`:""}</section>`;
  };
  const rowRight=i=>{
-   if(!base.choices&&active===null)return `<section class="story-strip strip-right ${i===0?"active-strip":"strip-static"}" data-row="${i}">${i===0?`<button class="strip-continue" type="button" data-continue>Tourne la page <b>↗</b></button>`:`<div class="strip-art">${ART.scene(book.id,base)}</div>`}</section>`;
+   if(!base.choices&&active===null)return `<section class="story-strip strip-right ${i===0?"active-strip":"strip-static"}" data-row="${i}">${i===0?`<button class="strip-continue" type="button" data-continue>Tourne 1 page <b>↗</b></button>`:`<div class="strip-art">${ART.scene(book.id,base)}</div>`}</section>`;
    if(i!==active){
      const c=base.choices[i],disabled=active!==null;
      return `<section class="story-strip strip-right ${disabled?"waiting-strip":""}" data-row="${i}">${choiceFlap(c,i,base).replace('data-choice="'+i+'"',`data-choice="${i}" ${disabled?"disabled":""}`)}</section>`;
    }
    let content;
-   if(s.heroCheck)content=`<div class="strip-actions strip-hero-check">${heroCheckMarkup(s.heroCheck)}</div>`;
-   else if(s.choices)content=`<div class="strip-actions">${s.choices.map((c,n)=>`<button class="strip-action" type="button" data-inner="${n}"><span>${esc(c.icon||"✦")}</span>${esc(resolve(choiceFor(c).label))}</button>`).join("")}</div>`;
-   else content=`<button class="strip-continue" type="button" data-continue>Tourne la page <b>↗</b>${s.giveItem?`<small>Sur la roue : ${esc(item(s.giveItem).name)}</small>`:""}</button>`;
+   if(s.heroCheck||s.itemCheck)content=`<div class="strip-actions strip-hero-check">${conditionalPageMarkup(s.heroCheck||s.itemCheck)}</div>`;
+   else if(s.choices)content=`<div class="strip-actions">${s.choices.map((c,n)=>`<button class="strip-action" type="button" data-inner="${n}"><span>${esc(c.icon||"✦")}</span>${esc(resolve(choiceFor(c).label))}<em class="strip-page-count">📖 1 page</em></button>`).join("")}</div>`;
+   else content=`<button class="strip-continue" type="button" data-continue>Tourne 1 page <b>↗</b>${s.giveItem?`<small>Sur la roue : ${esc(item(s.giveItem).name)}</small>`:""}</button>`;
    return `<section class="story-strip strip-right active-strip" data-row="${i}">${content}</section>`;
  };
  const existing=root.querySelector('.strip-book');
@@ -190,17 +213,17 @@ function renderBookStrips(s){
  if(active!==null)root.querySelectorAll('.strip-book .strip-right').forEach((row,i)=>{if(i!==active){row.classList.add('waiting-strip');row.querySelector('.page-flap').disabled=true}});
  root.querySelectorAll('.strip-book [data-choice]:not([disabled])').forEach(x=>x.onclick=()=>turnChoice(choiceFor(base.choices[+x.dataset.choice]),x));
  root.querySelectorAll('.strip-book [data-inner]').forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.inner]),x));
- root.querySelectorAll('.strip-book [data-hero-page]:not([disabled])').forEach(x=>x.onclick=e=>turnChoice({next:state.hero===s.heroCheck.hero?s.heroCheck.yes:s.heroCheck.no},e.currentTarget));
+ root.querySelectorAll('.strip-book [data-hero-page]:not([disabled])').forEach(x=>x.onclick=e=>turnChoice({next:checkTarget(s.heroCheck||s.itemCheck)},e.currentTarget));
  const cont=root.querySelector('.strip-book [data-continue]');if(cont)cont.onclick=e=>turnChoice({next:s.next},e.currentTarget);
  document.getElementById("menu").onclick=menu;
 }
 function choiceFlap(c,i,s){
- c=choiceFor(c);
- const ok=allowed(c),labels=["Haut","Milieu","Bas"],label=resolve(c.label),hint=resolve(c.hint);
+ const gated=needsPageGate(c);c=gated?c:choiceFor(c);
+ const ok=gated||allowed(c),labels=["Haut","Milieu","Bas"],label=resolve(c.label),hint=gated?"Selon ta roue : 1 ou 2 pages":resolve(c.hint);
  return `<button class="page-flap flap-${i+1} ${ok?"":"locked"}" data-choice="${i}" aria-label="Volet ${labels[i]} : ${esc(label)}">
    <div class="flap-art">${ART.scene(book.id,s)}<span class="flap-emblem" aria-hidden="true">${esc(c.icon||"✦")}</span></div>
    <div class="flap-copy"><span class="flap-number">${labels[i]}</span><strong>${esc(label)}</strong><small>${esc(ok?(hint||"Tourne ce volet"):lock(c))}</small></div>
-   <span class="page-turn-icon">↗</span>
+   <span class="page-turn-icon">📖 1</span>
  </button>`
 }
 function menu(){

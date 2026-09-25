@@ -12,13 +12,13 @@ Référence : photos 6254.jpg à 6289.jpg de « La Bibliothèque Infinie », re�
 
 ## Adaptation numérique décidée pour Sunstrader/doc
 
-- Au renvoi conditionnel, afficher les deux emplacements « 1 page » et « 2 pages » ; seule la page correspondant au héros sélectionné est active. L'autre est grisée, indique quel héros y aurait accès et ne révèle ni son illustration ni son texte.
+- Au renvoi conditionnel sur un héros **ou un objet**, afficher les deux emplacements « 1 page » et « 2 pages » ; seule la page correspondant au personnage ou à l'inventaire est active. L'autre est grisée, indique sa condition d'accès et ne révèle ni son illustration ni son texte.
 - Trois pistes initiales distinctes peuvent rejoindre une même scène commune après leurs conséquences. Ne pas renvoyer le joueur vers le premier carrefour pour essayer une piste écartée ; rejouer depuis le début reste possible.
 - Le premier livre applique cette structure à Londres : petite fille, horloge ou boutique ; résultats et objets distincts, puis retour commun dans le TARDIS avant le musée.
 
 ## Écart du jeu actuel
 
-Dans le premier livre, `app.js` dispose trois paires de bandes à gauche et à droite. Après un choix, seul le contenu de la paire active est remplacé ; les deux autres paires restent dans le DOM et conservent leur position. La page du héros non sélectionné est grisée sans contenu révélé. Quand les branches se rejoignent, une nouvelle double page commune réinitialise les trois pistes. Les roues d'inventaire démarrent vides et chaque livre propose deux personnages sans objet de départ. Les autres livres utilisent encore l'ancien affichage simplifié ; les animations ne simulent pas encore l'épaisseur des feuilles physiques.
+Dans le premier livre, `app.js` dispose trois paires de bandes à gauche et à droite. Après un choix, seul le contenu de la paire active est remplacé ; les deux autres paires restent dans le DOM et conservent leur position. Les renvois sur héros et objets proposent une page 1 ou 2 ; la page inaccessible est grisée sans contenu révélé. Quand les branches se rejoignent, une nouvelle double page commune réinitialise les trois pistes. Les roues d'inventaire démarrent vides et chaque livre propose deux personnages sans objet de départ. Le premier livre apparaît en tête de bibliothèque. Les autres livres utilisent encore l'ancien affichage des trois volets, mais les choix qui exigent un objet avec issue alternative montrent un renvoi 1/2. Les animations ne simulent pas encore l'épaisseur des feuilles physiques.
 
 ## Règles encore à vérifier pour une adaptation entièrement fidèle
 

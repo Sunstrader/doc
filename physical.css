@@ -146,6 +146,8 @@ body{background:radial-gradient(ellipse at 50% 12%,#23435a 0,#101e2a 56%,#09131e
 .strip-actions{height:100%;padding:12px 16px;display:flex;flex-direction:column;justify-content:center;gap:7px;background:linear-gradient(115deg,#f9eed5,#e8d6ae)}
 .strip-action{flex:1;min-height:0;display:flex;align-items:center;gap:12px;padding:7px 13px;text-align:left;font:700 clamp(.77rem,1.2vw,.99rem) Georgia,serif;background:#fff8e8;color:#1b3a4d;border:1px solid #b99767;border-radius:6px;cursor:pointer}
 .strip-action span{font-size:1.2rem}.strip-action:hover,.strip-continue:hover{background:#e0eee7}
+.strip-page-count{margin-left:auto;white-space:nowrap;font:800 .72rem sans-serif;color:#315875}
+.page-turn-icon{width:62px;font-size:.8rem;white-space:nowrap}
 .strip-action.turning,.strip-continue.turning,.strip-hero-check .hero-page-option.turning{animation:pageTurn .34s ease forwards}
 .strip-hero-check{flex-direction:row}.strip-hero-check .hero-page-option{flex:1;min-width:0;min-height:0;padding:10px;gap:5px}
 .strip-hero-check .hero-page-option strong{font-size:clamp(.73rem,1.15vw,.98rem)}
@@ -193,7 +195,7 @@ body{background:radial-gradient(ellipse at 50% 12%,#23435a 0,#101e2a 56%,#09131e
  .flap-copy{max-width:78%;padding:14px 8px 14px 20px}.flap-copy strong{font-size:1.04rem}.flap-copy small{font-size:.69rem}
  .flap-number{padding:4px 8px;margin-bottom:5px;font-size:.63rem}
  .flap-emblem{width:66px;height:66px;font-size:1.9rem;right:7%}
- .page-turn-icon{width:27px;height:25px;font-size:.8rem}
+ .page-turn-icon{width:49px;height:27px;font-size:.69rem}
  .book-wheel,.hero-wheel-select{width:68px;height:68px}.top-left{left:-14px;top:-18px}.top-right{right:-14px;top:-18px}.bottom-left{left:-14px;bottom:-18px}.bottom-right{right:-14px;bottom:-18px}
  .wheel-face{border-width:5px}.wheel-icon{font-size:1.2rem}.wheel-name{font-size:.44rem;max-width:45px}.hero-face .avatar-svg{width:32px;height:38px}
  .hero-wheel-select .avatar-svg{width:36px;height:42px}
