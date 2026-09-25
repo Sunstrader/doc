@@ -163,9 +163,14 @@ body{background:radial-gradient(ellipse at 50% 12%,#23435a 0,#101e2a 56%,#09131e
  .choice-page,.setup-right{border-radius:0 0 13px 13px;margin:0;min-height:0}
  .choice-page{display:grid;grid-template-rows:repeat(3,minmax(160px,auto));box-shadow:inset 0 18px 24px -24px #573c27}
  .choice-page.interlude-page{display:flex;min-height:320px}
- .strip-book .strip-page{min-height:0;grid-template-rows:repeat(3,minmax(175px,auto))}
- .strip-book .left-strips,.strip-book .right-strips{border-radius:12px 12px 0 0}
- .strip-book .right-strips{border-radius:0 0 12px 12px}
+ /* Sur petit écran, placer chaque moitié gauche juste avant son volet droit. */
+ .strip-book .strip-page{display:contents}
+ .strip-book .strip-left[data-row="0"]{order:0}.strip-book .strip-right[data-row="0"]{order:1}
+ .strip-book .strip-left[data-row="1"]{order:2}.strip-book .strip-right[data-row="1"]{order:3}
+ .strip-book .strip-left[data-row="2"]{order:4}.strip-book .strip-right[data-row="2"]{order:5}
+ .strip-book .story-strip{min-height:175px}
+ .strip-book .strip-left{border-radius:10px 10px 0 0}
+ .strip-book .strip-right{border-radius:0 0 10px 10px;margin-bottom:4px}
  .strip-story p{font-size:.82rem}
  .choice-page.hero-check-page{grid-template-rows:repeat(2,minmax(150px,auto));min-height:320px}
  .page-flap{min-height:160px}
@@ -188,7 +193,7 @@ body{background:radial-gradient(ellipse at 50% 12%,#23435a 0,#101e2a 56%,#09131e
  .narrative-box{padding:19px 20px 24px}.narrative-box h2{font-size:1.4rem}.narrative-box p{font-size:1rem}
  .choice-page{grid-template-rows:repeat(3,minmax(148px,auto))}.page-flap{min-height:148px}
  .choice-page.interlude-page{min-height:290px}.interlude-copy{padding:24px 22px 34px}
- .strip-book .strip-page{grid-template-rows:repeat(3,minmax(155px,auto))}
+ .strip-book .story-strip{min-height:155px}
  .strip-story{inset:auto 7px 7px;padding:7px 9px}.strip-story p{font-size:.75rem}
  .strip-actions{padding:8px;gap:4px}.strip-action{padding:5px 8px;font-size:.78rem}
  .strip-hero-check .hero-page-option{padding:6px}.strip-hero-check .hero-page-option strong{font-size:.72rem}.strip-hero-check .hero-page-option small{font-size:.59rem}

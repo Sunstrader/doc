@@ -29,11 +29,22 @@
     chapter:"Le début",title:"La minute immobile",art:"london",
     text:s=>`${book.heroes[s.hero].short} sort du TARDIS à Londres. La pluie reste immobile et le Docteur a disparu ! Une petite fille attend, l'horloge est arrêtée et une boutique est ouverte. Où vas-tu ?`,
     choices:[
-      choice("👧","Parler à la petite fille","girl_meeting","Elle a vu quelque chose tomber de l'horloge."),
-      choice("🕰️","Aller à la grande horloge","clock_tower","Les aiguilles sont coincées."),
-      choice("⌚","Entrer dans la boutique","watch_shop","Un horloger cherche une pièce.")
+      choice("👧","Parler à la petite fille","girl_entry","Elle a vu quelque chose tomber de l'horloge."),
+      choice("🕰️","Aller à la grande horloge","tower_entry","Les aiguilles sont coincées."),
+      choice("⌚","Entrer dans la boutique","shop_entry","Un horloger cherche une pièce.")
     ]
   };
+  // Une seule rangée avance : chacun des trois choix initiaux ouvre aussitôt
+  // un renvoi 1/2. Les deux pages mènent ensuite à la même rencontre locale.
+  S.girl_entry={chapter:"Londres · la petite fille",title:"Une rencontre sous la pluie",art:"girl",text:"La petite fille serre un dessin contre elle. Elle hésite à raconter ce qu'elle a vu. Es-tu Rose ?",heroCheck:{hero:"rose",yes:"girl_rose_page",no:"girl_clara_page"}};
+  S.girl_rose_page=result("Londres","Une voix rassurante","Rose s'accroupit et demande doucement : « Tu as vu le Docteur ? » La petite fille lui montre son dessin.","girl","girl_meeting");
+  S.girl_clara_page=result("Londres","Le dessin mouillé","Clara remarque une aiguille dessinée à l'envers. La petite fille la laisse regarder de plus près.","girl","girl_meeting");
+  S.tower_entry={chapter:"Londres · la tour",title:"La grande horloge",art:"tower",text:"Les aiguilles se sont arrêtées et une petite roue brille derrière le cadran. Es-tu Clara ?",heroCheck:{hero:"clara",yes:"tower_clara_page",no:"tower_rose_page"}};
+  S.tower_clara_page=result("Londres","Trois marques","Clara aperçoit trois marques presque cachées près des aiguilles. Elle appelle le gardien pour entrer.","tower","clock_tower");
+  S.tower_rose_page=result("Londres","Un gardien inquiet","Rose demande au gardien ce qui est arrivé à l'horloge. Il lui ouvre la porte pour qu'ils cherchent ensemble.","tower","clock_tower");
+  S.shop_entry={chapter:"Londres · la boutique",title:"Les montres endormies",art:"shop",text:"Dans la boutique, les montres ne bougent plus. L'horloger attend de l'aide. Es-tu Rose ?",heroCheck:{hero:"rose",yes:"shop_rose_page",no:"shop_clara_page"}};
+  S.shop_rose_page=result("Londres","Bonjour, monsieur l'horloger","Rose écoute l'horloger. Il lui montre ses outils et lui propose de chercher avec lui.","shop","watch_shop");
+  S.shop_clara_page=result("Londres","La petite vis","Clara aperçoit une vis brillante au bord de la vitrine. L'horloger la laisse inspecter les montres.","shop","watch_shop");
   // Chaque chemin d'ouverture se résout puis rejoint tardis_between ; aucune
   // option ne ramène au carrefour du début pour visiter les voies écartées.
   S.girl_meeting={
@@ -87,13 +98,14 @@
     chapter:"Le musée · futur",title:"La carte qui bouge",art:"museum",
     text:"Dans le futur, un musée flotte parmi les étoiles. Une carte lumineuse tourne, un petit robot cherche sa pile et une gardienne surveille les vitrines.",
     choices:[
-      choice("🗺️","Étudier la carte des étoiles",s=>s.hero==="clara"?"museum_map":"museum_lines","Clara suit facilement les signes."),
+      choice("🗺️","Étudier la carte des étoiles","museum_gear_check","La petite roue trouvée à Londres pourrait faire tourner la carte."),
       choice("🤖","Aider le petit robot",s=>s.hero==="clara"?"museum_robot":"museum_robot_help",s=>s.hero==="clara"?"Clara voit où se trouve sa pile.":"La gardienne peut le soulever."),
       choice("👩","Parler à la gardienne",s=>s.hero==="rose"?"museum_guard":"museum_ticket",s=>s.hero==="rose"?"Rose sait la rassurer.":"Elle connaît peut-être le chemin.")
     ]
   };
-  S.museum_map=result("Le musée","Les étoiles de Clara","Clara relie trois étoiles avec son doigt. La carte montre où le Docteur attend ! Elle peut emporter une petite copie.","museum","tardis_to_dalek","starMap",{piece2:true,clues:1});
-  S.museum_lines=result("Le musée","Une étoile à suivre","La carte tourne trop vite. Tu suis une seule étoile bleue du regard. Elle montre la direction du Docteur ; tu la gardes en mémoire.","museum","tardis_to_dalek",null,{piece2:true,clues:1});
+  S.museum_gear_check={chapter:"Le musée",title:"La carte lumineuse",art:"museum",text:"La carte ne bouge plus. Regarde la roue verte : as-tu trouvé une roue d'horloge à Londres ?",itemCheck:{item:"clockGear",yes:"museum_map",no:"museum_lines"}};
+  S.museum_map=result("Le musée","La carte se réveille","Tu places ta petite roue dans la carte. Elle tourne et montre où le Docteur attend ! La gardienne te donne une copie pour le retrouver.","museum","tardis_to_dalek","starMap",{piece2:true,clues:1});
+  S.museum_lines=result("Le musée","Une étoile à suivre","Tu n'as pas la petite roue. La gardienne fait tourner la carte pour toi. Tu suis une étoile bleue du regard et gardes sa direction en mémoire.","museum","tardis_to_dalek",null,{piece2:true,clues:1});
   S.museum_robot=result("Le musée","Merci, Clara !","Clara repère le compartiment ouvert du petit robot. Elle y replace sa pile. Ravi, il lui offre une pile de secours et indique où se trouve le Docteur.","museum","tardis_to_dalek","dalekCell",{piece2:true,kind:true});
   S.museum_robot_help=result("Le musée","Le robot réparé","Tu appelles la gardienne. Elle soulève le robot pour que tu puisses le réparer. Il clignote joyeusement et indique le bon chemin.","museum","tardis_to_dalek",null,{piece2:true,kind:true});
   S.museum_guard=result("Le musée","La confiance de la gardienne","Rose explique qu'elle cherche un ami. La gardienne lui confie une copie de la carte des étoiles et lui montre le chemin.","museum","tardis_to_dalek","starMap",{piece2:true,kind:true});

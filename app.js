@@ -59,7 +59,7 @@ function tutorial(){
      <article><b class="tutorial-num">1</b><h2>Choisis ton héros</h2><p>Tourne la roue rouge. Le personnage choisi peut changer certaines rencontres.</p></article>
      <article><b class="tutorial-num">2</b><h2>Commence les mains vides</h2><p>Les roues verte, bleue et jaune sont vides. Elles se remplissent avec des objets, indices ou états.</p></article>
      <article><b class="tutorial-num">3</b><h2>Choisis un volet</h2><p>Choisis l'une des trois bandes. Le chemin choisi mène à la suite ; tu ne reviens pas essayer les deux autres pendant cette partie.</p></article>
-     <article><b class="tutorial-num">4</b><h2>Regarde tes roues</h2><p>À une question sur ton personnage, tourne une ou deux pages. L'autre page reste grisée et cachée.</p></article>
+     <article><b class="tutorial-num">4</b><h2>Regarde tes roues</h2><p>À une question sur ton personnage ou un objet, tourne une ou deux pages. L'autre page reste grisée et cachée.</p></article>
    </div><button class="primary" id="ok">J'ai compris</button>
  </section>`;
  document.getElementById("ok").onclick=home
