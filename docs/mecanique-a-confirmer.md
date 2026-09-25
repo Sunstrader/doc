@@ -7,14 +7,15 @@ Référence : photos 6254.jpg à 6289.jpg de « La Bibliothèque Infinie », re�
 - Une double page reliée au centre, avec trois feuilles horizontales pouvant former des combinaisons différentes à gauche et à droite.
 - Trois choix sur les rangées et quatre roues aux coins : une pour le personnage, trois pour les objets ou les états du parcours.
 - Les trois choix initiaux (photo 6257) indiquent chacun de tourner **une page** dans la rangée choisie. Après le choix du bas, la photo 6258 montre « Es-tu Lilon l'elfe des airs ? » : **oui → une page ; non → deux pages**. La photo 6285 montre le même mécanisme dans la rangée du haut : « Es-tu Lucien le pyromancien ? » : oui → une page ; non → deux pages. La photo 6264 montre une autre condition, sur le recours à la magie, avec les mêmes renvois 1/2.
-- Le chiffre est le nombre de pages à tourner **à l'endroit du renvoi** : la photo 6258 conserve les deux autres rangées en place pendant que la rangée du bas est manipulée (6259–6260). De même, 6262–6264 parcourent la rangée du milieu. Les roues suivent le parcours ; la photo 6259 demande d'ajouter la clé sur la roue verte.
+- Le chiffre est le nombre de pages à tourner **à l'endroit du renvoi** : la photo 6258 conserve les deux autres rangées en place pendant que la rangée du bas est manipulée (6259–6260). La rangée du milieu avance en 6261–6263 ; le test sur la magie en 6264 appartient à la rangée du **haut**. Les roues suivent le parcours ; la photo 6259 demande d'ajouter la clé sur la roue verte.
 - Les photos 6259–6266 montrent des expériences et récompenses différentes selon la rangée et le personnage ; la photo 6267 montre la nouvelle mission commune et trois nouveaux choix. La jonction conserve les objets et rencontres du chemin choisi : elle ne rouvre pas les autres pistes initiales.
+- Partie test reconstituée : Lilon → gardien → oui, 1 page → clé Tourne-Monde (6257–6259) → maison commune (6267) → grille inondée → non, Camille absente, 2 pages → plastron miroir (6268–6271) → intérieur de la maison (6278). Plus tard, dans la bibliothèque, la clé Tourne-Monde déclenche le retournement du livre pour lire la suite (6288–6289). Les photos ne permettent pas de terminer cette partie. Le parcours démontre qu'un objet acquis sur une rangée initiale peut être utile après plusieurs jonctions.
 
 ## Adaptation numérique décidée pour Sunstrader/doc
 
 - Au renvoi conditionnel sur un héros **ou un objet**, afficher les deux emplacements « 1 page » et « 2 pages » ; seule la page correspondant au personnage ou à l'inventaire est active. L'autre est grisée, indique sa condition d'accès et ne révèle ni son illustration ni son texte.
 - Trois pistes initiales distinctes peuvent rejoindre une même scène commune après leurs conséquences. Ne pas renvoyer le joueur vers le premier carrefour pour essayer une piste écartée ; rejouer depuis le début reste possible.
-- Le premier livre applique cette structure à Londres : petite fille, horloge ou boutique ; résultats et objets distincts, puis retour commun dans le TARDIS avant le musée.
+- Le premier livre applique cette structure à Londres : petite fille, horloge ou boutique ; immédiatement après chaque volet initial, un renvoi sur le personnage montre la page 1 ou 2. Chaque piste conserve ensuite ses rencontres et objets avant de rejoindre le TARDIS et le musée. La roue d'horloge trouvée sur certaines pistes y permet de réveiller la carte, avec une autre issue si elle manque.
 
 ## Écart du jeu actuel
 
