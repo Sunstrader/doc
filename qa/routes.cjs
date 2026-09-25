@@ -17,6 +17,14 @@ for (const book of books) {
   for (const [id, scene] of Object.entries(book.scenes)) {
     sceneCount++;
     if (scene.end) continue;
+    if (scene.heroCheck) {
+      const {hero,yes,no}=scene.heroCheck;
+      assert(book.heroes[hero], `${book.id}/${id}: héros du renvoi absent`);
+      assert(book.scenes[yes] && book.scenes[no], `${book.id}/${id}: pages 1/2 absentes`);
+      assert.notEqual(yes,no, `${book.id}/${id}: la page sautée doit différer`);
+      assert(!scene.choices && scene.next===undefined, `${book.id}/${id}: un renvoi ne comporte que les deux pages conditionnelles`);
+      continue;
+    }
     if (scene.next !== undefined) {
       assert(book.scenes[scene.next], `${book.id}/${id} mène vers ${scene.next}`);
       assert(!scene.choices, `${book.id}/${id} est une page de résultat, pas un choix`);
@@ -48,22 +56,32 @@ for (const hero of Object.keys(first.heroes)) {
   for (const id of ['girl_meeting', 'watch_shop', 'clock_tower', 'museum_arrival', 'dalek_approach']) {
     assert.equal(new Set(routes(id,scene)).size, 3, `${hero}/${id}: les trois volets doivent avoir trois résultats`);
   }
-  for (const id of ['london_arrival','girl_meeting', 'watch_shop', 'clock_tower', 'museum_arrival', 'dalek_approach', 'final_console']) {
+  for (const id of ['intro','girl_meeting', 'watch_shop', 'clock_tower', 'museum_arrival', 'dalek_approach', 'final_console']) {
     for (const choice of first.scenes[id].choices) {
       assert(!choice.requiresItem && !choice.requiresHero, `${hero}: ${id} ne doit pas montrer de volet inaccessible`);
       assert(first.scenes[typeof choice.next === 'function' ? choice.next(scene) : choice.next]);
     }
   }
-  for (const resultId of routes('girl_meeting',scene)) {
-    assert.equal(first.scenes[resultId].next,'tardis_between',`${hero}: la petite fille doit faire avancer le récit`);
-  }
+  assert.deepEqual(Array.from(routes('intro',scene)),['girl_meeting','clock_tower','watch_shop'],`${hero}: trois parcours de départ`);
+  for (const resultId of routes('girl_meeting',scene).slice(1)) assert.equal(first.scenes[resultId].next,'tardis_between');
   assert.equal(first.scenes.tardis_between.next,'museum_arrival');
 }
-assert.equal(routes('girl_meeting', state('rose'))[0], 'girl_gear');
+assert.equal(routes('girl_meeting', state('rose'))[0], 'girl_check');
 assert.equal(routes('girl_meeting', state('clara'))[1], 'girl_feather');
 assert.equal(routes('girl_meeting', state('clara'))[2], 'girl_pattern');
 assert.equal(routes('clock_tower', state('rose'))[0], 'tower_stairs');
-assert.equal(routes('watch_shop', state('clara'))[1], 'shop_sonic');
+assert.equal(routes('watch_shop', state('clara'))[1], 'shop_check');
+for (const [id,chosen] of [['girl_check','rose'],['tower_check','clara'],['shop_check','clara']]) {
+  const check=first.scenes[id].heroCheck;
+  assert.equal(check.hero,chosen);
+  assert.equal(first.scenes[check.yes].next,'tardis_between');
+  assert.equal(first.scenes[check.no].next,'tardis_between');
+  for (const hero of Object.keys(first.heroes)) {
+    const pageCount=hero===check.hero?1:2;
+    const target=pageCount===1?check.yes:check.no;
+    assert(first.scenes[target],`${hero}/${id}: renvoi ${pageCount} page(s)`);
+  }
+}
 assert.equal(routes('museum_arrival', state('rose'))[2], 'museum_guard');
 assert.equal(routes('final_console', state('rose', ['clockGear']))[0], 'ending_clock');
 assert.equal(routes('final_console', state('rose'))[0], 'ending_improvise');
@@ -71,18 +89,36 @@ assert.equal(routes('final_console', state('rose', [null, 'starMap']))[1], 'endi
 assert.equal(routes('final_console', state('rose', [null, null, 'dalekCell']))[2], 'ending_cell');
 assert.equal(routes('final_console', state('rose'))[2], 'ending_kind');
 // Aucun choix ne doit ramener à un lieu déjà résolu. Toutes les routes terminent.
+const firstReachable=new Set();
 for (const hero of Object.keys(first.heroes)) {
   function walk(id, visited, inventory) {
     assert(!visited.has(id), `${hero}: boucle depuis ${id}`);
+    firstReachable.add(id);
     const scene=first.scenes[id];
     if(scene.end)return;
     const items=inventory.slice();
     if(scene.giveItem){const slot={clockGear:0,feather:1,starMap:1,dalekCell:2,blueCrystal:2}[scene.giveItem];items[slot]=scene.giveItem}
-    const nextSet=scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(state(hero,items)):c.next);
+    const nextSet=scene.heroCheck?[hero===scene.heroCheck.hero?scene.heroCheck.yes:scene.heroCheck.no]:scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(state(hero,items)):c.next);
     for(const next of nextSet)walk(next,new Set([...visited,id]),items);
   }
   walk(first.start,new Set(),[]);
+  const openings=Array.from(routes('intro',state(hero)));
+  for(const opening of openings){
+    const reachable=new Set();
+    function fromOpening(id){
+      if(reachable.has(id))return;
+      reachable.add(id);
+      const scene=first.scenes[id];
+      if(scene.end)return;
+      const next=scene.heroCheck?[hero===scene.heroCheck.hero?scene.heroCheck.yes:scene.heroCheck.no]:scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(state(hero)):c.next);
+      next.forEach(fromOpening);
+    }
+    fromOpening(opening);
+    for(const other of openings.filter(id=>id!==opening))assert(!reachable.has(other),`${hero}: ${opening} retourne vers la piste écartée ${other}`);
+    assert(reachable.has('tardis_between'),`${hero}: ${opening} ne rejoint pas la suite commune`);
+  }
 }
+assert.deepEqual(Object.keys(first.scenes).filter(id=>!firstReachable.has(id)),[],"Scènes inaccessibles dans le premier livre");
 assert.equal(books[1].scenes.room17_door.choices[0].otherwise.next, 'angel_clock');
 assert.equal(books[2].scenes.meet_dino.choices[0].otherwise.next, 'blue_glow');
 assert.equal(books[3].scenes.zero_door.choices[0].otherwise.next, 'zero_knock');

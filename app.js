@@ -2,7 +2,7 @@
 "use strict";
 const books=[window.BOOK_06,window.BOOK_01,window.BOOK_02,window.BOOK_03,window.BOOK_04,window.BOOK_05].filter(Boolean);
 const root=document.getElementById("app");let book=books[0],heroCursor=0;
-const state={hero:null,inventory:[null,null,null],flags:{},scene:null,history:[],changed:-1};
+const state={hero:null,inventory:[null,null,null],flags:{},scene:null,history:[],changed:-1,flapOrigin:null,flapRow:null};
 const meta={"book-06":["Victoria · 1879","Une nuit de lune à Torchwood."],"book-01":["Boucle temporelle","Le temps s'est cassé."],"book-02":["Mystère","Ne détourne pas les yeux."],"book-03":["Aventure","Un dinosaure est perdu à Londres."],"book-04":["Exploration","Le TARDIS a mélangé ses pièces."],"book-05":["Épopée","Un Dalek demande de l'aide."]};
 const slots={
  "book-01":{clockGear:0,feather:1,starMap:1,dalekCell:2,blueCrystal:2},
@@ -23,7 +23,7 @@ const Feedback={enabled:localStorage.getItem("dw_sound")!=="off",ctx:null,
  toggle(){this.enabled=!this.enabled;localStorage.setItem("dw_sound",this.enabled?"on":"off");soundButton()}
 };
 function soundButton(){const b=document.getElementById("global-sound-toggle");if(b){b.textContent=Feedback.enabled?"🔊":"🔇";b.title=Feedback.enabled?"Couper les sons":"Activer les sons"}}
-function reset(){state.hero=null;state.inventory=[null,null,null];state.flags={};state.scene=null;state.history=[];state.changed=-1}
+function reset(){state.hero=null;state.inventory=[null,null,null];state.flags={};state.scene=null;state.history=[];state.changed=-1;state.flapOrigin=null;state.flapRow=null}
 function item(id){return id?(book.items[id]||{name:id,icon:"?"}):{name:"Vide",icon:"○"}}
 function has(id){return state.inventory.includes(id)}
 function slotFor(id){const m=slots[book.id]||{};if(Number.isInteger(m[id]))return m[id];return Math.abs([...id].reduce((a,c)=>a+c.charCodeAt(0),0))%3}
@@ -58,8 +58,8 @@ function tutorial(){
    <div class="tutorial-grid">
      <article><b class="tutorial-num">1</b><h2>Choisis ton héros</h2><p>Tourne la roue rouge. Le personnage choisi peut changer certaines rencontres.</p></article>
      <article><b class="tutorial-num">2</b><h2>Commence les mains vides</h2><p>Les roues verte, bleue et jaune sont vides. Elles se remplissent avec des objets, indices ou états.</p></article>
-     <article><b class="tutorial-num">3</b><h2>Choisis un volet</h2><p>À chaque grande scène, choisis une seule des trois bandes de la page de droite et tourne-la.</p></article>
-     <article><b class="tutorial-num">4</b><h2>Regarde tes roues</h2><p>Un personnage ou un objet peut ouvrir une solution différente. La fin dépend aussi de ce que tu as gardé.</p></article>
+     <article><b class="tutorial-num">3</b><h2>Choisis un volet</h2><p>Choisis l'une des trois bandes. Le chemin choisi mène à la suite ; tu ne reviens pas essayer les deux autres pendant cette partie.</p></article>
+     <article><b class="tutorial-num">4</b><h2>Regarde tes roues</h2><p>À une question sur ton personnage, tourne une ou deux pages. L'autre page reste grisée et cachée.</p></article>
    </div><button class="primary" id="ok">J'ai compris</button>
  </section>`;
  document.getElementById("ok").onclick=home
@@ -102,7 +102,10 @@ function turnChoice(c,btn){
  if(root.dataset.turning)return;
  root.dataset.turning="yes";
  btn.classList.add("turning");Feedback.turn();
- setTimeout(()=>{if(c.setItem!==undefined)add(c.setItem);flags(c.flags);const next=resolve(c.next);if(c.removeItem)remove(c.removeItem);state.history.push(state.scene);state.scene=next;delete root.dataset.turning;renderScene()},330)
+ setTimeout(()=>{if(c.setItem!==undefined)add(c.setItem);flags(c.flags);const next=resolve(c.next);if(c.removeItem)remove(c.removeItem);if(book.id==="book-01"){
+   if(book.scenes[state.scene].common&&book.scenes[state.scene].next!==undefined){state.flapOrigin=null;state.flapRow=null}
+   else if(state.flapRow===null&&btn.dataset.choice!==undefined)state.flapRow=+btn.dataset.choice;
+ }state.history.push(state.scene);state.scene=next;delete root.dataset.turning;renderScene()},330)
 }
 function wheelMarkup(i,pos,forceEmpty=false){
  const id=forceEmpty?null:state.inventory[i],it=item(id),color=["green","blue","yellow"][i];
@@ -115,23 +118,81 @@ function heroWheel(){
 function renderScene(){
  const s=book.scenes[state.scene];if(!s){root.innerHTML='<section class="tutorial card"><h1>Scène introuvable</h1><button class="primary" id="home">Retour</button></section>';document.getElementById("home").onclick=home;return}
  apply(s);if(s.end)return ending(s);
+ if(book.id==="book-01"){
+   if(s.common){state.flapOrigin=null;state.flapRow=null;delete root.dataset.stripOrigin}
+   return renderBookStrips(s)
+ }
  const txt=resolve(s.text);
  const interlude=s.next!==undefined;
+ const check=s.heroCheck;
  root.innerHTML=`<section class="book-frame adventure-frame">
    <div class="spiral"></div>
    <article class="scene-page page-paper">
      <div class="scene-picture">${ART.scene(book.id,s)}<div class="chapter-chip">${esc(s.chapter||"Aventure")}</div></div>
-     <div class="narrative-box"><h2>${esc(s.title)}</h2><p>${esc(txt)}</p>${s.event?`<div class="event-line">${esc(s.event)}</div>`:""}${s.guide?`<div class="page-guide">${esc(resolve(s.guide))}</div>`:""}<strong>Que veux-tu faire ?</strong></div>
+     <div class="narrative-box"><h2>${esc(s.title)}</h2><p>${esc(txt)}</p>${s.event?`<div class="event-line">${esc(s.event)}</div>`:""}${s.guide?`<div class="page-guide">${esc(resolve(s.guide))}</div>`:""}<strong>${check?"Tourne la page de ton personnage.":"Que veux-tu faire ?"}</strong></div>
    </article>
-   <aside class="choice-page page-paper ${interlude?"interlude-page":""}" aria-label="${interlude?"La suite de l'histoire":"Les trois volets de l'histoire"}">
-     ${interlude?`<div class="interlude-illustration">${ART.scene(book.id,s)}</div><div class="interlude-copy"><span>La suite de l'histoire</span><h3>${esc(s.title)}</h3><p>${s.giveItem?`Sur la roue : ${esc(item(s.giveItem).name)}.`:"Ton aventure continue."}</p><button id="continue-page" class="continue-page" type="button">Tourner la page <b aria-hidden="true">↗</b></button></div>`:s.choices.map((c,i)=>choiceFlap(c,i,s)).join("")}
+   <aside class="choice-page page-paper ${interlude?"interlude-page":""} ${check?"hero-check-page":""}" aria-label="${interlude?"La suite de l'histoire":check?"Les pages du personnage":"Les trois volets de l'histoire"}">
+     ${interlude?`<div class="interlude-illustration">${ART.scene(book.id,s)}</div><div class="interlude-copy"><span>La suite de l'histoire</span><h3>${esc(s.title)}</h3><p>${s.giveItem?`Sur la roue : ${esc(item(s.giveItem).name)}.`:"Ton aventure continue."}</p><button id="continue-page" class="continue-page" type="button">Tourner la page <b aria-hidden="true">↗</b></button></div>`:check?heroCheckMarkup(check):s.choices.map((c,i)=>choiceFlap(c,i,s)).join("")}
    </aside>
    ${wheelMarkup(0,"top-left")}${wheelMarkup(1,"top-right")}${wheelMarkup(2,"bottom-left")}${heroWheel()}
    <button class="book-menu" id="menu" aria-label="Menu">☰</button>
  </section>`;
- document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.choice]),x));
+ if(check)document.querySelector("[data-hero-page]:not([disabled])").onclick=e=>turnChoice({next:state.hero===check.hero?check.yes:check.no},e.currentTarget);
+ else if(!interlude)document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.choice]),x));
  if(interlude)document.getElementById("continue-page").onclick=e=>turnChoice({next:s.next},e.currentTarget);
  document.getElementById("menu").onclick=menu
+}
+function heroCheckMarkup(check){
+ const active=state.hero===check.hero?1:2,heroName=book.heroes[check.hero].name;
+ return [1,2].map(n=>`<button class="hero-page-option ${n===active?"":"unavailable"}" data-hero-page="${n}" type="button" ${n===active?"":"disabled"} aria-label="${n===active?`Tourner ${n} page${n>1?"s":""}`:`Page ${n} accessible avec ${esc(n===1?heroName:book.heroes[Object.keys(book.heroes).find(id=>id!==check.hero)].name)}`}" >
+   <span class="hero-page-number">${n}</span><strong>${n===active?`Tourne ${n} page${n>1?"s":""}`:`Accessible avec ${esc(n===1?heroName:book.heroes[Object.keys(book.heroes).find(id=>id!==check.hero)].name)}`}</strong>
+   <small>${n===active?"Découvre la suite de ton chemin":"Page cachée · sans indice"}</small>
+ </button>`).join("");
+}
+// Les trois bandes sont de vraies zones distinctes : seule la paire gauche/droite
+// de la rangée choisie est remplacée tant que les chemins ne se rejoignent pas.
+function renderBookStrips(s){
+ if(state.flapOrigin===null)state.flapOrigin=state.scene;
+ const base=book.scenes[state.flapOrigin],active=state.flapRow;
+ const rowLeft=i=>{
+   const current=i===active? s:base,detail=i===active||i===0;
+   return `<section class="story-strip strip-left" data-row="${i}"><div class="strip-art">${ART.scene(book.id,current)}</div>${detail?`<div class="strip-story"><span>${esc(current.chapter||"Aventure")}</span><h2>${esc(current.title)}</h2><p>${esc(resolve(current.text))}</p></div>`:""}</section>`;
+ };
+ const rowRight=i=>{
+   if(!base.choices&&active===null)return `<section class="story-strip strip-right ${i===0?"active-strip":"strip-static"}" data-row="${i}">${i===0?`<button class="strip-continue" type="button" data-continue>Tourne la page <b>↗</b></button>`:`<div class="strip-art">${ART.scene(book.id,base)}</div>`}</section>`;
+   if(i!==active){
+     const c=base.choices[i],disabled=active!==null;
+     return `<section class="story-strip strip-right ${disabled?"waiting-strip":""}" data-row="${i}">${choiceFlap(c,i,base).replace('data-choice="'+i+'"',`data-choice="${i}" ${disabled?"disabled":""}`)}</section>`;
+   }
+   let content;
+   if(s.heroCheck)content=`<div class="strip-actions strip-hero-check">${heroCheckMarkup(s.heroCheck)}</div>`;
+   else if(s.choices)content=`<div class="strip-actions">${s.choices.map((c,n)=>`<button class="strip-action" type="button" data-inner="${n}"><span>${esc(c.icon||"✦")}</span>${esc(resolve(choiceFor(c).label))}</button>`).join("")}</div>`;
+   else content=`<button class="strip-continue" type="button" data-continue>Tourne la page <b>↗</b>${s.giveItem?`<small>Sur la roue : ${esc(item(s.giveItem).name)}</small>`:""}</button>`;
+   return `<section class="story-strip strip-right active-strip" data-row="${i}">${content}</section>`;
+ };
+ const existing=root.querySelector('.strip-book');
+ if(existing&&root.dataset.stripOrigin===state.flapOrigin&&active!==null){
+   existing.querySelector(`.strip-left[data-row="${active}"]`).outerHTML=rowLeft(active);
+   existing.querySelector(`.strip-right[data-row="${active}"]`).outerHTML=rowRight(active);
+   for(let i=0;i<3;i++){
+     const wheel=existing.querySelector(`.book-wheel.${["top-left","top-right","bottom-left"][i]}`);
+     wheel.outerHTML=wheelMarkup(i,["top-left","top-right","bottom-left"][i]);
+   }
+ }else{
+   root.innerHTML=`<section class="book-frame adventure-frame strip-book">
+     <div class="spiral"></div><article class="strip-page left-strips page-paper">${[0,1,2].map(rowLeft).join("")}</article>
+     <aside class="strip-page right-strips page-paper" aria-label="Trois volets indépendants">${[0,1,2].map(rowRight).join("")}</aside>
+     ${wheelMarkup(0,"top-left")}${wheelMarkup(1,"top-right")}${wheelMarkup(2,"bottom-left")}${heroWheel()}
+     <button class="book-menu" id="menu" aria-label="Menu">☰</button>
+   </section>`;
+   root.dataset.stripOrigin=state.flapOrigin;
+ }
+ if(active!==null)root.querySelectorAll('.strip-book .strip-right').forEach((row,i)=>{if(i!==active){row.classList.add('waiting-strip');row.querySelector('.page-flap').disabled=true}});
+ root.querySelectorAll('.strip-book [data-choice]:not([disabled])').forEach(x=>x.onclick=()=>turnChoice(choiceFor(base.choices[+x.dataset.choice]),x));
+ root.querySelectorAll('.strip-book [data-inner]').forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.inner]),x));
+ root.querySelectorAll('.strip-book [data-hero-page]:not([disabled])').forEach(x=>x.onclick=e=>turnChoice({next:state.hero===s.heroCheck.hero?s.heroCheck.yes:s.heroCheck.no},e.currentTarget));
+ const cont=root.querySelector('.strip-book [data-continue]');if(cont)cont.onclick=e=>turnChoice({next:s.next},e.currentTarget);
+ document.getElementById("menu").onclick=menu;
 }
 function choiceFlap(c,i,s){
  c=choiceFor(c);
