@@ -15,7 +15,7 @@ Référence : photos 6254.jpg à 6289.jpg de « La Bibliothèque Infinie », re�
 
 - Au renvoi conditionnel sur un héros **ou un objet**, afficher les deux emplacements « 1 page » et « 2 pages » ; seule la page correspondant au personnage ou à l'inventaire est active. L'autre est grisée, indique sa condition d'accès et ne révèle ni son illustration ni son texte.
 - Trois pistes initiales distinctes peuvent rejoindre une même scène commune après leurs conséquences. Ne pas renvoyer le joueur vers le premier carrefour pour essayer une piste écartée ; rejouer depuis le début reste possible.
-- Le premier livre applique cette structure à Londres : petite fille, horloge ou boutique ; immédiatement après chaque volet initial, un renvoi sur le personnage montre la page 1 ou 2. Chaque piste conserve ensuite ses rencontres et objets avant de rejoindre le TARDIS et le musée. La roue d'horloge trouvée sur certaines pistes y permet de réveiller la carte, avec une autre issue si elle manque.
+- Le premier livre applique cette structure à Londres : petite fille, horloge ou boutique ; immédiatement après chaque volet initial, un renvoi sur le personnage montre la page 1 ou 2. Chacune des deux pages raconte une conséquence différente et mène directement à la scène commune du TARDIS, sans sous-quête supplémentaire dans la piste choisie. La roue d'horloge trouvée sur certaines pistes peut réveiller la carte au musée, avec une autre issue si elle manque.
 
 ## Écart du jeu actuel
 

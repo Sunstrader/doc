@@ -32,7 +32,7 @@ Sur ordinateur/tablette : double page ouverte avec reliure centrale et quatre ro
 
 Sur mobile : les deux pages restent dans le même livre vertical, avec les roues à ses quatre coins.
 
-Dans Le Docteur a disparu !, chacun des trois premiers volets ouvre immédiatement un renvoi « personnage : page 1 ou 2 ». Seule la rangée choisie avance ; les deux autres restent en place. Les chemins rejoignent ensuite une scène commune. Une roue d'horloge obtenue à Londres peut réveiller la carte du musée ; sans elle, la gardienne propose une autre issue. La Nuit de Torchwood conserve son affichage de trois volets, avec une autre conséquence écrite si un objet manque.
+Dans Le Docteur a disparu !, chacun des trois premiers volets ouvre immédiatement un renvoi « personnage : page 1 ou 2 ». Chaque page donne une conséquence propre, puis les chemins rejoignent la scène commune, sans nouveau choix à trois volets dans la piste initiale. Seule la rangée choisie avance ; les deux autres restent en place. Une roue d'horloge obtenue à Londres peut réveiller la carte du musée ; sans elle, la gardienne propose une autre issue. La Nuit de Torchwood conserve son affichage de trois volets, avec une autre conséquence écrite si un objet manque.
 
 L'histoire de Victoria suit les repères de *Tooth and Claw* : le dixième Docteur et Rose, la reine Victoria, un loup-garou, les recherches d'Albert et la création de Torchwood. La menace est racontée avec douceur pour les petits. Les autres compagnons de la série depuis 2005 pourront être répartis dans de futurs livres, toujours deux par histoire.
 
