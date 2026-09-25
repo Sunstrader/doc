@@ -6,15 +6,15 @@
 
 | Livre | Scènes | Liens absents |
 |---|---:|---:|
-| Le Docteur a disparu ! | 48 | 0 |
+| Le Docteur a disparu ! | 44 | 0 |
 | Les Anges du Musée | 39 | 0 |
 | Le Dinosaure de Londres | 48 | 0 |
 | Panique dans le TARDIS | 61 | 0 |
 | Le Dernier Dalek | 50 | 0 |
 | La Nuit de Torchwood | 38 | 0 |
-| **Total** | **284** | **0** |
+| **Total** | **280** | **0** |
 
-Le Docteur a disparu ! évite le retour artificiel au lieu choisi précédemment. À Londres, petite fille, tour et boutique donnent des résultats propres. Les pages de résultat avancent ensuite l'histoire avec un bouton « Tourner la page », sans imposer trois faux choix. Les parcours Rose et Clara ont des résultats distincts. La vérification parcourt leurs branches : aucune boucle ni impasse.
+Le Docteur a disparu ! évite le retour artificiel au lieu choisi précédemment. À Londres, petite fille, tour et boutique donnent des résultats propres. Les pages de résultat avancent ensuite l'histoire avec un bouton « Tourner la page », sans imposer trois faux choix. Les parcours Rose et Clara ont des résultats distincts. La vérification parcourt leurs branches : aucune boucle, impasse ou scène inaccessible. Clara n'emploie plus un tournevis qu'elle n'a pas trouvé ; les anciennes scènes exclusivement liées à Amy ont été retirées.
 
 La Nuit de Torchwood propose deux personnages jouables, Rose et le dixième Docteur. Les routes du manoir, les solutions avec ou sans objet, et les quatre fins où Victoria crée Torchwood sont parcourues pour chacun d'eux : aucune boucle ni impasse. Les roues d'inventaire sont vides au départ.
 
@@ -25,3 +25,5 @@ Dans les livres 2 à 5, les pages qui exigent un objet proposent une issue écri
 L'aventure de Victoria a ses propres décors SVG ; Le Docteur a disparu ! conserve ses illustrations du TARDIS, de Londres, de la boutique, du musée et du Dalek. Le livre relié contient quatre roues à ses coins ; sur mobile les deux pages restent dans un même cadre vertical.
 
 Une revue éditoriale complète des quatre anciennes histoires 2 à 5 reste à mener : elles disposent d'issues pour objets absents, mais conservent des retours de lieux issus de leur première version.
+
+La reproduction physique des feuilles indépendantes demande encore les photos/règles décrites dans `docs/mecanique-a-confirmer.md` : le moteur actuel remplace toute la double page après un clic.

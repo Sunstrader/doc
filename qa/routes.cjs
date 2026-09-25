@@ -71,9 +71,11 @@ assert.equal(routes('final_console', state('rose', [null, 'starMap']))[1], 'endi
 assert.equal(routes('final_console', state('rose', [null, null, 'dalekCell']))[2], 'ending_cell');
 assert.equal(routes('final_console', state('rose'))[2], 'ending_kind');
 // Aucun choix ne doit ramener à un lieu déjà résolu. Toutes les routes terminent.
+const firstReachable=new Set();
 for (const hero of Object.keys(first.heroes)) {
   function walk(id, visited, inventory) {
     assert(!visited.has(id), `${hero}: boucle depuis ${id}`);
+    firstReachable.add(id);
     const scene=first.scenes[id];
     if(scene.end)return;
     const items=inventory.slice();
@@ -83,6 +85,7 @@ for (const hero of Object.keys(first.heroes)) {
   }
   walk(first.start,new Set(),[]);
 }
+assert.deepEqual(Object.keys(first.scenes).filter(id=>!firstReachable.has(id)),[],"Scènes inaccessibles dans le premier livre");
 assert.equal(books[1].scenes.room17_door.choices[0].otherwise.next, 'angel_clock');
 assert.equal(books[2].scenes.meet_dino.choices[0].otherwise.next, 'blue_glow');
 assert.equal(books[3].scenes.zero_door.choices[0].otherwise.next, 'zero_knock');
