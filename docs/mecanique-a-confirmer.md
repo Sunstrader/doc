@@ -18,11 +18,11 @@ Référence : photos 6254.jpg à 6289.jpg de « La Bibliothèque Infinie », re�
 
 ## Écart du jeu actuel
 
-`app.js` présente une grande illustration unique à gauche et trois bandes de choix à droite. Les renvois « 1 ou 2 pages » du premier livre masquent maintenant l'autre page et vérifient le héros. Le clic sur un volet remplace encore toute la double page : les deux autres bandes ne restent pas physiquement en place. Le bouton « Tourner la page » des résultats est une navigation simplifiée. Les roues d'inventaire démarrent vides, et chaque livre propose deux personnages sans objet de départ.
+Dans le premier livre, `app.js` dispose trois paires de bandes à gauche et à droite. Après un choix, seul le contenu de la paire active est remplacé ; les deux autres paires restent dans le DOM et conservent leur position. La page du héros non sélectionné est grisée sans contenu révélé. Quand les branches se rejoignent, une nouvelle double page commune réinitialise les trois pistes. Les roues d'inventaire démarrent vides et chaque livre propose deux personnages sans objet de départ. Les autres livres utilisent encore l'ancien affichage simplifié ; les animations ne simulent pas encore l'épaisseur des feuilles physiques.
 
 ## Règles encore à vérifier pour une adaptation entièrement fidèle
 
 1. Le comportement précis des roues lorsqu'un objet est perdu ou remplacé et les éventuelles règles de retour en arrière.
 2. La configuration complète du livre après une vraie sélection de personnage et la règle des fins.
 
-Le renvoi conditionnel 1/2, la jonction après trois chemins différents et l'indépendance des rangées sont **établis** ; ne plus demander de photos pour ces points. Il reste à rendre les trois rangées persistantes au retournement dans l'interface. Ne pas inventer un ordre bas → milieu → haut ni publier le moteur actuel comme reproduction fidèle des volets.
+Le renvoi conditionnel 1/2, la jonction après trois chemins différents et l'indépendance des rangées sont **établis** ; ne plus demander de photos pour ces points. Dans le premier livre, les deux rangées non choisies restent affichées et inchangées pendant les conséquences du choix. Ne pas inventer un ordre bas → milieu → haut ; ne pas étendre cette mécanique aux autres livres sans adapter et vérifier leurs parcours.

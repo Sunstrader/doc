@@ -82,6 +82,7 @@
   S.shop_window=result("Londres","Le reflet dans la vitre","La vitrine ne s'ouvre pas. Mais dans son reflet, tu vois la bonne position des aiguilles. L'horloger les remet en place ; le temps repart.","shop","tardis_between",null,{piece1:true,clues:1});
   S.shop_floor=result("Londres","Le tiroir d'en bas","Tu ne peux pas atteindre l'étagère. En bas, un tiroir contient une vieille plume. Elle chatouille le nez de l'horloger, qui rit et répare enfin l'horloge.","shop","tardis_between","feather",{piece1:true,kind:true});
   S.tardis_between=result("Le TARDIS","Une nouvelle lumière","Londres bouge de nouveau ! Dans le TARDIS, un point lumineux montre maintenant le musée des étoiles. Le Docteur est peut-être là-bas.","tardis","museum_arrival");
+  S.tardis_between.common=true;
   S.museum_arrival={
     chapter:"Le musée · futur",title:"La carte qui bouge",art:"museum",
     text:"Dans le futur, un musée flotte parmi les étoiles. Une carte lumineuse tourne, un petit robot cherche sa pile et une gardienne surveille les vitrines.",
@@ -98,6 +99,7 @@
   S.museum_guard=result("Le musée","La confiance de la gardienne","Rose explique qu'elle cherche un ami. La gardienne lui confie une copie de la carte des étoiles et lui montre le chemin.","museum","tardis_to_dalek","starMap",{piece2:true,kind:true});
   S.museum_ticket=result("Le musée","Un billet étoilé","La gardienne ne peut pas donner la carte. Elle te montre pourtant une étoile dessinée sur un billet. Ce dessin suffit à guider le TARDIS.","museum","tardis_to_dalek",null,{piece2:true,clues:1});
   S.tardis_to_dalek=result("Le TARDIS","Presque arrivés","Le TARDIS suit la piste trouvée au musée. Une petite voix de métal appelle à l'aide. Le Docteur est tout près !","tardis","dalek_approach");
+  S.tardis_to_dalek.common=true;
   S.dalek_approach={
     chapter:"Tout près du Docteur",title:"Le Dalek et la bulle de temps",art:"dalek",
     text:"Le Docteur attend dans une bulle brillante. Un Dalek garde la machine, mais sa lumière bleue clignote : lui aussi a besoin d'aide. Que fais-tu ?",
@@ -121,6 +123,7 @@
       choice("💎","Allumer la lumière bleue",s=>s.inventory.includes("blueCrystal")?"ending_energy":s.inventory.includes("dalekCell")?"ending_cell":"ending_kind",s=>s.inventory.includes("blueCrystal")||s.inventory.includes("dalekCell")?"La roue jaune a de quoi l'allumer.":"Sans objet, demande de l'aide au Dalek.")
     ]
   };
+  S.final_console.common=true;
   S.ending_clock=end("Le grand tic-tac","Tu places la roue dans la machine. Tic, tac ! La bulle s'ouvre. « Tu as retrouvé le temps ! », dit le Docteur. Le Dalek fait clignoter sa lampe de joie.","Le temps retrouvé","dalek","clockGear");
   S.ending_improvise=end("Une idée à deux","Tu n'as pas la roue. Tu comptes « un, deux, trois » avec le Docteur et le Dalek. Au troisième tic, ils ouvrent la bulle ensemble !","Une fin à inventer ensemble","dalek");
   S.ending_map=end("Le chemin des étoiles","Tu poses la carte sur la machine. Les étoiles dessinent une porte et le Docteur en sort. « Bien joué, exploratrice ! »","Le chemin retrouvé","dalek","starMap");
