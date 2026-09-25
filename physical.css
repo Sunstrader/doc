@@ -122,6 +122,11 @@ body{background:radial-gradient(ellipse at 50% 12%,#23435a 0,#101e2a 56%,#09131e
 .interlude-copy p{font-size:1.02rem;line-height:1.5}
 .continue-page{margin-top:16px;padding:18px 25px;border:2px solid #315875;background:#315875;color:white;border-radius:6px;font-weight:900;font-size:1rem;cursor:pointer;box-shadow:6px 6px 0 #b89a67}
 .continue-page:hover{background:#22445f;transform:translate(2px,2px);box-shadow:4px 4px 0 #b89a67}
+.choice-page.hero-check-page{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));padding:20px;gap:14px}
+.hero-page-option{appearance:none;position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px;text-align:left;padding:24px 30px;border:3px solid #9d845b;border-radius:12px;background:linear-gradient(125deg,#fff4d8,#e5d2a8);color:#18314c;box-shadow:5px 7px 0 #b89a67;cursor:pointer;font-family:inherit}
+.hero-page-option strong{font:700 clamp(1.2rem,2vw,1.65rem) Georgia,serif}.hero-page-option small{font-size:.9rem}.hero-page-number{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#315875;color:#fff;font-weight:900}
+.hero-page-option.unavailable{background:repeating-linear-gradient(135deg,#d8d8d8,#d8d8d8 14px,#cfcfcf 14px,#cfcfcf 28px);border-color:#999;color:#4d4d4d;box-shadow:none;cursor:default;filter:grayscale(1)}
+.hero-page-option.unavailable .hero-page-number{background:#777}
 
 @media(max-width:900px){
  .app-shell{padding:14px}
@@ -131,6 +136,7 @@ body{background:radial-gradient(ellipse at 50% 12%,#23435a 0,#101e2a 56%,#09131e
  .choice-page,.setup-right{border-radius:0 0 13px 13px;margin:0;min-height:0}
  .choice-page{display:grid;grid-template-rows:repeat(3,minmax(160px,auto));box-shadow:inset 0 18px 24px -24px #573c27}
  .choice-page.interlude-page{display:flex;min-height:320px}
+ .choice-page.hero-check-page{grid-template-rows:repeat(2,minmax(150px,auto));min-height:320px}
  .page-flap{min-height:160px}
  .spiral{display:none}
  .choice-page{position:relative}

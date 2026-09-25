@@ -26,41 +26,26 @@
     chapter:"La fin",title,text,end:true,endLabel:label,art,...(removeItem?{removeItem}:{})
   });
   S.intro={
-    chapter:"Le début",title:"Où est le Docteur ?",art:"tardis",
-    text:s=>`${book.heroes[s.hero].short} entre dans le TARDIS. La grande machine brille, mais le Docteur a disparu ! Trois petites lumières montrent trois voyages. Où partir ?`,
+    chapter:"Le début",title:"La minute immobile",art:"london",
+    text:s=>`${book.heroes[s.hero].short} sort du TARDIS à Londres. La pluie reste immobile et le Docteur a disparu ! Une petite fille attend, l'horloge est arrêtée et une boutique est ouverte. Où vas-tu ?`,
     choices:[
-      choice("🕰️","Dans le Londres d'autrefois","london_arrival","Une horloge s'est arrêtée."),
-      choice("🌠","Dans le musée des étoiles","museum_arrival","Une carte brille dans le futur."),
-      choice("🌀","Dans le passage secret du temps","rift_room","Une porte bleue tremble.")
-    ]
-  };
-  S.rift_room={
-    chapter:"Le passage du temps",title:"La porte aux trois lumières",art:"tardis",
-    text:"Une petite porte s'ouvre dans le TARDIS. Derrière elle, trois lumières dansent. Choisis celle que tu veux suivre.",
-    choices:[
-      choice("🕰️","La lumière dorée","london_arrival","Elle mène à Londres."),
-      choice("🌠","La lumière violette","museum_arrival","Elle mène au musée."),
-      choice("🤖","La lumière bleue","dalek_approach","Elle mène tout près du Docteur.")
-    ]
-  };
-  S.london_arrival={
-    chapter:"Londres · autrefois",title:"La minute immobile",art:"london",
-    text:"À Londres, la pluie reste suspendue en l'air. Le grand cadran ne bouge plus. Une petite fille attend près d'une boutique de montres. Qui veux-tu aider ?",
-    choices:[
-      choice("👧","Parler à la petite fille","girl_meeting","Elle semble savoir ce qui s'est passé."),
-      choice("🕰️","Aller directement à l'horloge","clock_tower","Les aiguilles sont coincées."),
+      choice("👧","Parler à la petite fille","girl_meeting","Elle a vu quelque chose tomber de l'horloge."),
+      choice("🕰️","Aller à la grande horloge","clock_tower","Les aiguilles sont coincées."),
       choice("⌚","Entrer dans la boutique","watch_shop","Un horloger cherche une pièce.")
     ]
   };
+  // Chaque chemin d'ouverture se résout puis rejoint tardis_between ; aucune
+  // option ne ramène au carrefour du début pour visiter les voies écartées.
   S.girl_meeting={
     chapter:"Londres · la petite fille",title:"Un secret dans sa poche",art:"girl",
     text:"« Le Docteur m'a dit que chaque seconde compte », chuchote la petite fille. Elle a vu quelque chose tomber de l'horloge.",
     choices:[
-      choice("🤝","Écouter son secret",s=>s.hero==="rose"?"girl_gear":"girl_hint",s=>s.hero==="rose"?"Rose sait mettre les gens en confiance.":"Écoute doucement ce qu'elle raconte."),
+      choice("🤝","Écouter son secret","girl_check","Rose sait mettre les gens en confiance."),
       choice("🎈","Attraper le ballon perché","girl_feather","Une longue branche peut aider."),
       choice("🔍","Regarder son dessin",s=>s.hero==="clara"?"girl_pattern":"girl_drawing",s=>s.hero==="clara"?"Clara voit les détails cachés.":"Le dessin peut montrer un indice.")
     ]
   };
+  S.girl_check={chapter:"Londres",title:"Le secret de la petite fille",art:"girl",text:"Elle garde une petite roue dans sa poche. Es-tu Rose Tyler ?",heroCheck:{hero:"rose",yes:"girl_gear",no:"girl_hint"}};
   S.girl_gear=result("Londres","Une roue dans la poche","Rose écoute la petite fille. Elle lui confie une petite roue dorée. Ensemble, elles la remettent dans l'horloge : tic, tac ! La pluie recommence à tomber.","girl","tardis_between","clockGear",{piece1:true,kind:true});
   S.girl_hint=result("Londres","Le rythme retrouvé","La petite fille fredonne « tic, tac ». En suivant son rythme, tu aides l'horloger à relancer la pendule. Le temps repart, même sans emporter de roue.","girl","tardis_between",null,{piece1:true,kind:true});
   S.girl_feather=result("Londres","Le cadeau du ballon","Tu fais descendre le ballon avec une longue branche. La petite fille te donne la plume argentée attachée à sa ficelle, puis montre à l'horloger comment réparer la pendule.","girl","tardis_between","feather",{piece1:true,kind:true});
@@ -71,10 +56,11 @@
     text:"Tu arrives devant la grande horloge. Une petite roue brille derrière le cadran. Comment atteindre le mécanisme ?",
     choices:[
       choice("🧗","Grimper jusqu'au cadran","tower_stairs","Le gardien connaît un escalier secret."),
-      choice("🔍","Observer les petites aiguilles",s=>s.hero==="clara"?"tower_pattern":"tower_ticks","Clara remarque un détail."),
+      choice("🔍","Observer les petites aiguilles","tower_check","Clara remarque un détail."),
       choice("💬","Demander de l'aide au gardien",s=>s.hero==="rose"?"tower_friend":"tower_hand",s=>s.hero==="rose"?"Rose sait trouver les bons mots.":"Le gardien peut t'aider à tenir l'aiguille.")
     ]
   };
+  S.tower_check={chapter:"Londres",title:"Les marques de l'horloge",art:"tower",text:"Trois petites marques brillent près des aiguilles. Es-tu Clara Oswald ?",heroCheck:{hero:"clara",yes:"tower_pattern",no:"tower_ticks"}};
   S.tower_stairs=result("Londres","L'escalier du gardien","Le mur est trop haut. Un gardien t'ouvre un escalier secret. Ensemble, vous redressez une aiguille et l'horloge repart.","tower","tardis_between",null,{piece1:true,kind:true});
   S.tower_pattern=result("Londres","Les trois petits traits","Clara repère trois marques sur le cadran. Elle montre au gardien où appuyer. Ensemble, ils libèrent la roue coincée. L'horloge sonne ; le gardien lui confie la roue de rechange.","tower","tardis_between","clockGear",{piece1:true,clues:1});
   S.tower_ticks=result("Londres","Tic... tac !","Les aiguilles avancent dans le mauvais ordre. Tu comptes doucement avec le gardien : une, deux, trois ! Elles reprennent leur place.","tower","tardis_between",null,{piece1:true,clues:1});
@@ -85,10 +71,11 @@
     text:"Dans la boutique, toutes les montres sont arrêtées. Une roue brille sous verre. L'horloger te regarde avec espoir.",
     choices:[
       choice("💬","Parler à l'horloger",s=>s.hero==="rose"?"shop_friend":"shop_clue",s=>s.hero==="rose"?"Rose sait rassurer les gens.":"Il pourra te montrer la bonne montre."),
-      choice("🔍","Observer la vitrine bleue",s=>s.hero==="clara"?"shop_sonic":"shop_window",s=>s.hero==="clara"?"Clara remarque son petit mécanisme.":"Son reflet peut révéler un indice."),
+      choice("🔍","Observer la vitrine bleue","shop_check","Clara remarque son petit mécanisme."),
       choice("🧗","Atteindre la plus haute étagère","shop_floor","Un tiroir se trouve juste en bas.")
     ]
   };
+  S.shop_check={chapter:"Londres",title:"La vitrine de l'horloger",art:"shop",text:"La vitrine a une petite vis et un reflet étrange. Es-tu Clara Oswald ?",heroCheck:{hero:"clara",yes:"shop_sonic",no:"shop_window"}};
   S.shop_friend=result("Londres","Le cadeau de l'horloger","Rose écoute l'horloger. Soulagé, il lui confie la roue sous verre. Il la place lui-même dans la grande horloge. Tic, tac !","shop","tardis_between","clockGear",{piece1:true,kind:true});
   S.shop_clue=result("Londres","La bonne montre","L'horloger montre la montre qui marche encore. Grâce à elle, vous réglez ensemble la grande horloge. La rue reprend vie.","shop","tardis_between",null,{piece1:true,clues:1});
   S.shop_sonic=result("Londres","Le mécanisme caché","Clara remarque une petite vis sous la vitrine. L'horloger lui prête un outil pour l'ouvrir. Il prend une roue pour réparer l'horloge et lui confie celle de rechange.","shop","tardis_between","clockGear",{piece1:true,clues:1});

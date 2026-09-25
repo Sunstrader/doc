@@ -58,8 +58,8 @@ function tutorial(){
    <div class="tutorial-grid">
      <article><b class="tutorial-num">1</b><h2>Choisis ton héros</h2><p>Tourne la roue rouge. Le personnage choisi peut changer certaines rencontres.</p></article>
      <article><b class="tutorial-num">2</b><h2>Commence les mains vides</h2><p>Les roues verte, bleue et jaune sont vides. Elles se remplissent avec des objets, indices ou états.</p></article>
-     <article><b class="tutorial-num">3</b><h2>Choisis un volet</h2><p>À chaque grande scène, choisis une seule des trois bandes de la page de droite et tourne-la.</p></article>
-     <article><b class="tutorial-num">4</b><h2>Regarde tes roues</h2><p>Un personnage ou un objet peut ouvrir une solution différente. La fin dépend aussi de ce que tu as gardé.</p></article>
+     <article><b class="tutorial-num">3</b><h2>Choisis un volet</h2><p>Choisis l'une des trois bandes. Le chemin choisi mène à la suite ; tu ne reviens pas essayer les deux autres pendant cette partie.</p></article>
+     <article><b class="tutorial-num">4</b><h2>Regarde tes roues</h2><p>À une question sur ton personnage, tourne une ou deux pages. L'autre page reste grisée et cachée.</p></article>
    </div><button class="primary" id="ok">J'ai compris</button>
  </section>`;
  document.getElementById("ok").onclick=home
@@ -117,21 +117,30 @@ function renderScene(){
  apply(s);if(s.end)return ending(s);
  const txt=resolve(s.text);
  const interlude=s.next!==undefined;
+ const check=s.heroCheck;
  root.innerHTML=`<section class="book-frame adventure-frame">
    <div class="spiral"></div>
    <article class="scene-page page-paper">
      <div class="scene-picture">${ART.scene(book.id,s)}<div class="chapter-chip">${esc(s.chapter||"Aventure")}</div></div>
-     <div class="narrative-box"><h2>${esc(s.title)}</h2><p>${esc(txt)}</p>${s.event?`<div class="event-line">${esc(s.event)}</div>`:""}${s.guide?`<div class="page-guide">${esc(resolve(s.guide))}</div>`:""}<strong>Que veux-tu faire ?</strong></div>
+     <div class="narrative-box"><h2>${esc(s.title)}</h2><p>${esc(txt)}</p>${s.event?`<div class="event-line">${esc(s.event)}</div>`:""}${s.guide?`<div class="page-guide">${esc(resolve(s.guide))}</div>`:""}<strong>${check?"Tourne la page de ton personnage.":"Que veux-tu faire ?"}</strong></div>
    </article>
-   <aside class="choice-page page-paper ${interlude?"interlude-page":""}" aria-label="${interlude?"La suite de l'histoire":"Les trois volets de l'histoire"}">
-     ${interlude?`<div class="interlude-illustration">${ART.scene(book.id,s)}</div><div class="interlude-copy"><span>La suite de l'histoire</span><h3>${esc(s.title)}</h3><p>${s.giveItem?`Sur la roue : ${esc(item(s.giveItem).name)}.`:"Ton aventure continue."}</p><button id="continue-page" class="continue-page" type="button">Tourner la page <b aria-hidden="true">↗</b></button></div>`:s.choices.map((c,i)=>choiceFlap(c,i,s)).join("")}
+   <aside class="choice-page page-paper ${interlude?"interlude-page":""} ${check?"hero-check-page":""}" aria-label="${interlude?"La suite de l'histoire":check?"Les pages du personnage":"Les trois volets de l'histoire"}">
+     ${interlude?`<div class="interlude-illustration">${ART.scene(book.id,s)}</div><div class="interlude-copy"><span>La suite de l'histoire</span><h3>${esc(s.title)}</h3><p>${s.giveItem?`Sur la roue : ${esc(item(s.giveItem).name)}.`:"Ton aventure continue."}</p><button id="continue-page" class="continue-page" type="button">Tourner la page <b aria-hidden="true">↗</b></button></div>`:check?heroCheckMarkup(check):s.choices.map((c,i)=>choiceFlap(c,i,s)).join("")}
    </aside>
    ${wheelMarkup(0,"top-left")}${wheelMarkup(1,"top-right")}${wheelMarkup(2,"bottom-left")}${heroWheel()}
    <button class="book-menu" id="menu" aria-label="Menu">☰</button>
  </section>`;
- document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.choice]),x));
+ if(check)document.querySelector("[data-hero-page]:not([disabled])").onclick=e=>turnChoice({next:state.hero===check.hero?check.yes:check.no},e.currentTarget);
+ else if(!interlude)document.querySelectorAll("[data-choice]").forEach(x=>x.onclick=()=>turnChoice(choiceFor(s.choices[+x.dataset.choice]),x));
  if(interlude)document.getElementById("continue-page").onclick=e=>turnChoice({next:s.next},e.currentTarget);
  document.getElementById("menu").onclick=menu
+}
+function heroCheckMarkup(check){
+ const active=state.hero===check.hero?1:2,heroName=book.heroes[check.hero].name;
+ return [1,2].map(n=>`<button class="hero-page-option ${n===active?"":"unavailable"}" data-hero-page="${n}" type="button" ${n===active?"":"disabled"} aria-label="${n===active?`Tourner ${n} page${n>1?"s":""}`:`Page ${n} accessible avec ${esc(n===1?heroName:book.heroes[Object.keys(book.heroes).find(id=>id!==check.hero)].name)}`}" >
+   <span class="hero-page-number">${n}</span><strong>${n===active?`Tourne ${n} page${n>1?"s":""}`:`Accessible avec ${esc(n===1?heroName:book.heroes[Object.keys(book.heroes).find(id=>id!==check.hero)].name)}`}</strong>
+   <small>${n===active?"Découvre la suite de ton chemin":"Page cachée · sans indice"}</small>
+ </button>`).join("");
 }
 function choiceFlap(c,i,s){
  c=choiceFor(c);
