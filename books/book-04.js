@@ -3,22 +3,9 @@ window.BOOK_04 = {
   title:"Panique dans le TARDIS",
   subtitle:"Le TARDIS a perdu le contrôle de ses propres pièces. La bibliothèque mène à une plage, la cuisine flotte dans l'espace et la salle de contrôle disparaît derrière chaque porte.",
   start:"intro",
-  heroes:{
-    rose:{
-      name:"Rose Tyler",short:"Rose",icon:"🌹",
-      trait:"Elle connaît bien le TARDIS et lui fait confiance même quand il devient bizarre.",
-      item:{id:"tardisKey",name:"Clé du TARDIS",icon:"🔑"}
-    },
-    amy:{
-      name:"Amy Pond",short:"Amy",icon:"⭐",
-      trait:"Elle garde la tête froide dans les endroits impossibles.",
-      item:{id:"notebook",name:"Petit carnet",icon:"📓"}
-    },
-    donna:{
-      name:"Donna Noble",short:"Donna",icon:"💫",
-      trait:"Elle ne se laisse pas impressionner, même par un vaisseau plus grand à l'intérieur.",
-      item:{id:"handbag",name:"Sac rouge",icon:"👜"}
-    }
+  heroes: {
+    amy:{name:"Amy Pond",short:"Amy",icon:"⭐",trait:"Elle garde la tête froide dans les endroits impossibles."},
+    donna:{name:"Donna Noble",short:"Donna",icon:"💫",trait:"Elle ne se laisse pas impressionner par le TARDIS."}
   },
   items:{
     tardisKey:{name:"Clé du TARDIS",icon:"🔑"},

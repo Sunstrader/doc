@@ -1,15 +1,16 @@
 (() => {
 "use strict";
-const books=[window.BOOK_01,window.BOOK_02,window.BOOK_03,window.BOOK_04,window.BOOK_05].filter(Boolean);
+const books=[window.BOOK_06,window.BOOK_01,window.BOOK_02,window.BOOK_03,window.BOOK_04,window.BOOK_05].filter(Boolean);
 const root=document.getElementById("app");let book=books[0],heroCursor=0;
 const state={hero:null,inventory:[null,null,null],flags:{},scene:null,history:[],changed:-1};
-const meta={"book-01":["Boucle temporelle","Le temps s'est cassé."],"book-02":["Mystère","Ne détourne pas les yeux."],"book-03":["Aventure","Un dinosaure est perdu à Londres."],"book-04":["Exploration","Le TARDIS a mélangé ses pièces."],"book-05":["Épopée","Un Dalek demande de l'aide."]};
+const meta={"book-06":["Victoria · 1879","Une nuit de lune à Torchwood."],"book-01":["Boucle temporelle","Le temps s'est cassé."],"book-02":["Mystère","Ne détourne pas les yeux."],"book-03":["Aventure","Un dinosaure est perdu à Londres."],"book-04":["Exploration","Le TARDIS a mélangé ses pièces."],"book-05":["Épopée","Un Dalek demande de l'aide."]};
 const slots={
  "book-01":{clockGear:0,feather:1,starMap:1,dalekCell:2,blueCrystal:2},
  "book-02":{camera:0,keycard:0,mirror:1,chalk:1,battery:2,postcard:2},
  "book-03":{whistle:0,rope:0,key:0,leaf:1,eggShell:1,tracker:2},
  "book-04":{blueThread:0,compass:0,roomKey:0,libraryCard:1,teaCup:1,crystal:2},
- "book-05":{starKey:0,shieldBadge:0,memoryChip:1,seed:1,powerCell:2,prism:2}
+ "book-05":{starKey:0,shieldBadge:0,memoryChip:1,seed:1,powerCell:2,prism:2},
+ "book-06":{key:0,ribbon:0,drawing:1,note:1,lantern:2,prism:2}
 };
 const esc=(v="")=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
 const ART=window.DW_ART||{scene:()=>"",cover:()=>"",avatar:()=>""};
@@ -24,8 +25,7 @@ const Feedback={enabled:localStorage.getItem("dw_sound")!=="off",ctx:null,
 function soundButton(){const b=document.getElementById("global-sound-toggle");if(b){b.textContent=Feedback.enabled?"🔊":"🔇";b.title=Feedback.enabled?"Couper les sons":"Activer les sons"}}
 function reset(){state.hero=null;state.inventory=[null,null,null];state.flags={};state.scene=null;state.history=[];state.changed=-1}
 function item(id){return id?(book.items[id]||{name:id,icon:"?"}):{name:"Vide",icon:"○"}}
-function sig(){return state.hero?book.heroes[state.hero].item.id:null}
-function has(id){return state.inventory.includes(id)||sig()===id}
+function has(id){return state.inventory.includes(id)}
 function slotFor(id){const m=slots[book.id]||{};if(Number.isInteger(m[id]))return m[id];return Math.abs([...id].reduce((a,c)=>a+c.charCodeAt(0),0))%3}
 function add(id){if(!id||has(id))return;const i=slotFor(id);state.inventory[i]=id;state.changed=i;Feedback.item()}
 function remove(id){if(id){const i=state.inventory.indexOf(id);if(i>=0){state.inventory[i]=null;state.changed=i}}}
@@ -45,7 +45,7 @@ function coverCard(b,i){
 function home(){
  reset();
  root.innerHTML=`<section class="library-screen">
-   <header class="library-head"><div class="series-mark">DOCTOR WHO</div><h1>Choisis ton livre</h1><p>Cinq aventures à lire, rejouer et explorer autrement.</p></header>
+   <header class="library-head"><div class="series-mark">DOCTOR WHO</div><h1>Choisis ton livre</h1><p>Six aventures à lire, rejouer et explorer autrement.</p></header>
    <div class="cover-shelf">${books.map(coverCard).join("")}</div>
    <div class="library-actions"><button class="secondary" id="how">Comment jouer ?</button></div>
  </section>`;
@@ -83,7 +83,7 @@ function heroPage(){
      <div class="setup-note">Choisis bien : ton personnage peut changer la suite de l'histoire.</div>
    </div>
    ${wheelMarkup(0,"top-left",true)}${wheelMarkup(1,"top-right",true)}${wheelMarkup(2,"bottom-left",true)}
-   <button class="hero-wheel-select bottom-right" id="confirm">${ART.avatar(id,h.name)}<span>${esc(h.short)}</span><small>${h.item.icon} talent</small></button>
+   <button class="hero-wheel-select bottom-right" id="confirm">${ART.avatar(id,h.name)}<span>${esc(h.short)}</span><small>Choisir</small></button>
  </section>`;
  document.querySelectorAll("[data-hero-index]").forEach(x=>x.onclick=()=>{heroCursor=+x.dataset.heroIndex;Feedback.turn();heroPage()});
  document.getElementById("confirm").onclick=()=>start(id)
@@ -92,7 +92,7 @@ function start(id){reset();state.hero=id;state.flags={courage:0,brave:0,clues:0,
 function allowed(c){if(c.requiresItem&&!has(c.requiresItem))return false;if(c.requiresHero&&state.hero!==c.requiresHero)return false;if(c.requiresFlag&&!state.flags[c.requiresFlag])return false;return true}
 function choiceFor(c){return !allowed(c)&&c.otherwise?{icon:c.icon,...c.otherwise}:c}
 function lock(c){
- if(c.requiresItem&&!has(c.requiresItem)){const owner=Object.values(book.heroes).find(h=>h.item.id===c.requiresItem);return owner?`Talent de ${owner.name}`:`Il faut ${item(c.requiresItem).name}`}
+ if(c.requiresItem&&!has(c.requiresItem))return `Il faut ${item(c.requiresItem).name}`;
  if(c.requiresHero&&state.hero!==c.requiresHero)return"Un autre héros ferait autrement";
  if(c.requiresFlag&&!state.flags[c.requiresFlag])return"Il te manque un indice";return""
 }

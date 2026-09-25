@@ -1,6 +1,6 @@
 # Doctor Who — Petites Aventures
 
-Collection fan-made de cinq livres-jeux interactifs pour jeunes enfants, pensée comme un **album physique transposé au navigateur**.
+Collection fan-made de six livres-jeux interactifs pour enfants de 3 à 4 ans, pensée comme un **album physique transposé au navigateur**.
 
 ## Principe
 
@@ -10,27 +10,31 @@ Collection fan-made de cinq livres-jeux interactifs pour jeunes enfants, pensée
 - chaque grande scène est présentée comme un **livre ouvert** ;
 - la page gauche contient l'illustration et le texte court ;
 - la page droite est découpée en **trois volets** : un seul est choisi et tourné ;
-- certains résultats dépendent du personnage, des objets conservés ou des événements précédents ;
+- exactement **deux personnages jouables par histoire** ; le choix d'un personnage n'attribue aucun objet ;
+- certains résultats dépendent du personnage, des objets trouvés pendant l'aventure ou des événements précédents ;
 - lorsqu'un objet manque, le même volet raconte une autre issue et continue l'histoire ; les talents des héros ouvrent des passages différents ;
 - les fins utilisent aussi l'état final des roues.
 
 ## Collection
 
-1. Le Docteur a disparu !
-2. Les Anges du Musée
-3. Le Dinosaure de Londres
-4. Panique dans le TARDIS
-5. Le Dernier Dalek
+1. **La Nuit de Torchwood** — Rose Tyler / le dixième Docteur ; reine Victoria, Écosse, 1879 ; loup-garou et fondation de Torchwood. Priorité de la collection.
+2. Le Docteur a disparu ! — Rose / Clara.
+3. Les Anges du Musée — Donna / Clara.
+4. Le Dinosaure de Londres — Amy / Bill.
+5. Panique dans le TARDIS — Amy / Donna.
+6. Le Dernier Dalek — Martha / Yasmin.
 
 ## Interface
 
-Le premier livre dispose d'illustrations originales du TARDIS, de Londres, du musée, du Dalek et des trois héroïnes. Les autres livres utilisent des décors SVG. Aucun visuel des livres de référence n'est intégré.
+La Nuit de Torchwood dispose de décors SVG propres à ses lieux (lande, manoir, bibliothèque, chambre de Victoria, observatoire et aube). L'aventure du Docteur disparu dispose d'illustrations originales du TARDIS, de Londres, du musée et du Dalek. Les autres livres utilisent des décors SVG. Aucun visuel du livre de référence n'est intégré.
 
 Sur ordinateur/tablette : double page ouverte avec reliure centrale et quatre roues aux coins.
 
 Sur mobile : les deux pages restent dans le même livre vertical, avec les roues à ses quatre coins.
 
-Dans le livre 1, un volet ouvre une page de résultat puis avance vers le prochain chapitre : aucun retour artificiel à la petite fille, à la tour ou à la boutique. Les pages de décision ont trois volets ; les pages de résultat proposent simplement de tourner la page.
+Dans La Nuit de Torchwood et Le Docteur a disparu !, un volet ouvre une page de résultat puis avance : les pages de décision ont trois volets ; les pages de résultat proposent simplement de tourner la page. Un objet manquant donne une autre conséquence écrite dans l'aventure de Victoria.
+
+L'histoire de Victoria suit les repères de *Tooth and Claw* : le dixième Docteur et Rose, la reine Victoria, un loup-garou, les recherches d'Albert et la création de Torchwood. La menace est racontée avec douceur pour les petits. Les autres compagnons de la série depuis 2005 pourront être répartis dans de futurs livres, toujours deux par histoire.
 
 ## Fichiers principaux
 
@@ -39,6 +43,6 @@ Dans le livre 1, un volet ouvre une page de résultat puis avance vers le procha
 - `art.js` : illustrations vectorielles originales
 - `styles.css`
 - `physical.css` : mise en page livre physique
-- `books/book-01.js` à `book-05.js`
+- `books/book-01.js` à `book-06.js`
 
 Projet fan-made non officiel. Doctor Who et les éléments associés appartiennent à leurs ayants droit.

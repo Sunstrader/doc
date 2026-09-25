@@ -189,7 +189,29 @@
     <circle cx="500" cy="520" r="76" fill="#7ed5e4" opacity=".65"/>
   `;
 
+  // Décors dessinés pour l'aventure de Victoria : chaque lieu garde ses repères.
+  const victorian = (place) => {
+    const moon=`<circle cx="813" cy="125" r="71" fill="#fff1c4"/><circle cx="813" cy="125" r="112" fill="#fff2cf" opacity=".12"/>`;
+    const firs=Array.from({length:12},(_,i)=>{const x=i*96-30,h=130+(i*71)%155;return `<path d="M${x} 485l42 -${h} 42 ${h}Z" fill="${i%2?'#123445':'#0c2738'}"/><rect x="${x+37}" y="480" width="10" height="150" fill="#123445"/>`}).join("");
+    const manor=`<path d="M140 505V282H300V205H720V282H875V505Z" fill="#344056" stroke="#a99175" stroke-width="9"/><path d="M130 286l97 -104 94 104M280 207l215 -122 260 122M715 286l75 -104 94 104" fill="#503d4b" stroke="#a99175" stroke-width="9"/><rect x="459" y="350" width="99" height="155" rx="44" fill="#1a2636" stroke="#c7a977" stroke-width="9"/>${[202,315,665,788].map(x=>`<path d="M${x} 313v84h51v-84z" fill="#e3ba77" stroke="#182a3a" stroke-width="7"/><path d="M${x+25} 313v84" stroke="#182a3a" stroke-width="5"/>`).join("")}`;
+    const sky=`<path d="M0 0H1000V650H0Z" fill="#14283b"/><path d="M0 490Q270 406 500 475T1000 442V650H0Z" fill="#31495a"/>${stars()}${moon}`;
+    const interior=(base,wall)=>`<rect width="1000" height="650" fill="${base}"/><path d="M0 495L500 388 1000 495V650H0Z" fill="#745544"/><path d="M0 70H1000M0 470H1000" stroke="#b89470" stroke-width="21"/><rect x="88" y="92" width="204" height="326" fill="${wall}" stroke="#b89470" stroke-width="18"/><path d="M190 91v326" stroke="#b89470" stroke-width="11"/><rect x="700" y="92" width="204" height="326" fill="${wall}" stroke="#b89470" stroke-width="18"/><path d="M800 91v326" stroke="#b89470" stroke-width="11"/>`;
+    const telescope=`<path d="M540 298l240 -74 29 80 -240 69Z" fill="#b78956" stroke="#e3cf9b" stroke-width="12"/><circle cx="795" cy="262" r="60" fill="#748ba2" stroke="#e8cf94" stroke-width="16"/><path d="M615 348l-75 222m75 -222 122 222" stroke="#bd916a" stroke-width="21"/><circle cx="813" cy="124" r="45" fill="#fff6cf"/>`;
+    const wolf=`<path d="M190 465q95 -194 282 -90l92 -37 81 -90 12 91 85 -47 -35 130 54 134H235Z" fill="#253447" stroke="#94a9b2" stroke-width="9"/><path d="M372 386l38 -38 31 40M575 360l35 -26 30 30" fill="#32455a"/><circle cx="612" cy="392" r="9" fill="#bce9ed"/><path d="M662 423q-42 28 -80 9" fill="none" stroke="#9faeb7" stroke-width="8"/>`;
+    if(place==="moor")return `${sky}${firs}<path d="M0 565Q460 487 1000 560V650H0Z" fill="#536268"/>${tardis(91,345,.5)}<path d="M425 500h305l-38 67H472Z" fill="#654b43" stroke="#b39267" stroke-width="10"/><circle cx="490" cy="565" r="30" fill="#282b31"/><circle cx="675" cy="565" r="30" fill="#282b31"/>`;
+    if(place==="manor")return `${sky}${firs}${manor}<path d="M0 540Q500 470 1000 545V650H0Z" fill="#31465a"/>`;
+    if(place==="hall")return `${interior('#55495c','#9c7080')}<path d="M345 470V160q155 -169 310 0v310Z" fill="#263448" stroke="#d0ae76" stroke-width="18"/><path d="M500 86v382" stroke="#d0ae76" stroke-width="8"/><circle cx="500" cy="124" r="28" fill="#e6c67d"/><circle cx="500" cy="124" r="10" fill="#fff2c0"/>`;
+    if(place==="library")return `${interior('#413e55','#6e6070')}${[365,475,585].map(x=>`<rect x="${x}" y="145" width="47" height="284" fill="#be866d" stroke="#e4b881" stroke-width="7"/>`).join("")}<path d="M350 430H650L680 545H320Z" fill="#997255"/><path d="M415 440q85 -56 170 0l-18 38q-68 -29 -135 0z" fill="#ead2a0"/>`;
+    if(place==="queen")return `${interior('#74526a','#955770')}<path d="M355 410V166q145 -150 290 0v244Z" fill="#24394b" stroke="#d4b077" stroke-width="22"/><path d="M465 535q0 -155 57 -171 60 13 60 171Z" fill="#644675"/><circle cx="523" cy="327" r="39" fill="#e7bd9a"/><path d="M473 292q46 -72 99 0" fill="#292e40"/><path d="M482 280l40 -44 42 44" fill="none" stroke="#edc85d" stroke-width="10"/>`;
+    if(place==="corridor")return `${interior('#3d4354','#46516a')}<path d="M377 492V135h228v357Z" fill="#233344" stroke="#c0a179" stroke-width="20"/><circle cx="560" cy="340" r="12" fill="#f9d888"/><path d="M0 510L490 409 1000 510" fill="none" stroke="#9d8067" stroke-width="10"/>`;
+    if(place==="observatory"||place==="moonlight")return `<rect width="1000" height="650" fill="#273a54"/>${stars()}<path d="M0 390Q500 -170 1000 390" fill="none" stroke="#b8a386" stroke-width="35"/><path d="M120 490V180m760 0v310" stroke="#b8a386" stroke-width="21"/><path d="M0 510H1000V650H0Z" fill="#6a584f"/>${telescope}<ellipse cx="485" cy="540" rx="98" ry="24" fill="#f9eab7" opacity=".45"/>${place==="moonlight"?'<path d="M813 125 495 525 325 535 813 125Z" fill="#fff6ca" opacity=".3"/>':''}`;
+    if(place==="roof")return `${sky}<path d="M0 530l570 -215 430 215v120H0Z" fill="#57434f" stroke="#b49b83" stroke-width="16"/>${manor}`;
+    if(place==="wolf")return `${interior('#38445a','#46566b')}${wolf}<path d="M0 540H1000V650H0Z" fill="#554b56" opacity=".7"/>`;
+    return `<rect width="1000" height="650" fill="#f2c994"/><circle cx="785" cy="172" r="106" fill="#fff4c5"/><path d="M0 426Q410 347 1000 440V650H0Z" fill="#89a899"/>${manor}<path d="M0 555Q500 520 1000 555V650H0Z" fill="#7b9f89"/>`;
+  };
+
   function keyFor(bookId, scene={}) {
+    if(bookId==="book-06") return scene.art||"manor";
     if(bookId==="book-01" && scene.art) return scene.art;
     const s=((scene.chapter||"")+" "+(scene.title||"")).toLowerCase();
     if(bookId==="book-01"){
@@ -227,6 +249,7 @@
 
   function scene(bookId, scene) {
     const k=keyFor(bookId,scene);
+    if(bookId==="book-06")return wrap("#14283b",victorian(k));
     const illustrated={
       tardis:"book-01-tardis-v2.webp",london:"book-01-london-v2.webp",
       girl:"book-01-london-v2.webp",tower:"book-01-london-v2.webp",
@@ -243,8 +266,9 @@
   function cover(bookId) {
     const fake={chapter:"",art:bookId==="book-01"?"tardis":undefined,title:{
       "book-01":"Londres horloge","book-02":"musée ange","book-03":"Hyde Park dinosaure",
-      "book-04":"bibliothèque TARDIS","book-05":"station étoile"
+      "book-04":"bibliothèque TARDIS","book-05":"station étoile","book-06":"manoir Torchwood"
     }[bookId]||""};
+    if(bookId==="book-06")fake.art="manor";
     return scene(bookId,fake);
   }
 
@@ -255,7 +279,10 @@
       amy:["#e2a47d","#d2956c","#9b4a2d","#9c3d57"],
       clara:["#d9a27e","#dfac83","#543a30","#3d6b75"],
       donna:["#e1a47d","#e1a47d","#b45b38","#3b6c75"],
-      bill:["#8b5e45","#8b5e45","#28211f","#6b4c8b"]
+      bill:["#8b5e45","#8b5e45","#28211f","#6b4c8b"],
+      doctor:["#d9a881","#d9a881","#4a3229","#574667"],
+      martha:["#9c6c50","#9c6c50","#261e25","#457383"],
+      yaz:["#bc886a","#bc886a","#24292c","#586b90"]
     };
     const p=palette[key]||["#d4a27f","#d4a27f","#4a342d","#4f7080"];
     return `<svg class="avatar-svg" viewBox="0 0 180 210" aria-hidden="true">

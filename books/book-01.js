@@ -6,9 +6,8 @@
     subtitle:"Le TARDIS t'emmène à travers le temps. Qui aidera le Docteur à retrouver son chemin ?",
     start:"intro",
     heroes:{
-      rose:{name:"Rose Tyler",short:"Rose",icon:"🌹",trait:"Rose sait écouter et gagner la confiance des autres.",item:{id:"psychic",name:"Papier psychique",icon:"🪪"}},
-      amy:{name:"Amy Pond",short:"Amy",icon:"⭐",trait:"Amy grimpe haut et atteint les endroits difficiles.",item:{id:"tardisKey",name:"Clé du TARDIS",icon:"🔑"}},
-      clara:{name:"Clara Oswald",short:"Clara",icon:"🍃",trait:"Clara remarque les petits détails et comprend les machines.",item:{id:"sonic",name:"Tournevis sonique",icon:"🪛"}}
+      rose:{name:"Rose Tyler",short:"Rose",icon:"🌹",trait:"Rose sait écouter et gagner la confiance des autres."},
+      clara:{name:"Clara Oswald",short:"Clara",icon:"🍃",trait:"Clara remarque les petits détails et comprend les machines."}
     },
     items:{
       psychic:{name:"Papier psychique",icon:"🪪"},tardisKey:{name:"Clé du TARDIS",icon:"🔑"},sonic:{name:"Tournevis sonique",icon:"🪛"},
@@ -59,7 +58,7 @@
     text:"« Le Docteur m'a dit que chaque seconde compte », chuchote la petite fille. Elle a vu quelque chose tomber de l'horloge.",
     choices:[
       choice("🤝","Écouter son secret",s=>s.hero==="rose"?"girl_gear":"girl_hint","Rose sait mettre les gens en confiance."),
-      choice("🎈","Attraper le ballon perché",s=>s.hero==="amy"?"girl_balloon":"girl_feather","Amy peut grimper très haut."),
+      choice("🎈","Attraper le ballon perché","girl_feather","Une longue branche peut aider."),
       choice("🔍","Regarder son dessin",s=>s.hero==="clara"?"girl_pattern":"girl_drawing","Clara voit les détails cachés.")
     ]
   };
@@ -73,7 +72,7 @@
     chapter:"Londres · la tour",title:"Tout en haut de l'horloge",art:"tower",
     text:"Tu arrives devant la grande horloge. Une petite roue brille derrière le cadran. Comment atteindre le mécanisme ?",
     choices:[
-      choice("🧗","Grimper jusqu'au cadran",s=>s.hero==="amy"?"tower_roof":"tower_stairs","Amy est une excellente grimpeuse."),
+      choice("🧗","Grimper jusqu'au cadran","tower_stairs","Le gardien connaît un escalier secret."),
       choice("🔍","Observer les petites aiguilles",s=>s.hero==="clara"?"tower_pattern":"tower_ticks","Clara remarque un détail."),
       choice("💬","Demander de l'aide au gardien",s=>s.hero==="rose"?"tower_friend":"tower_hand","Rose sait trouver les bons mots.")
     ]
@@ -90,7 +89,7 @@
     choices:[
       choice("💬","Parler à l'horloger",s=>s.hero==="rose"?"shop_friend":"shop_clue","Rose sait rassurer les gens."),
       choice("🪛","Ouvrir la vitrine bleue",s=>s.hero==="clara"?"shop_sonic":"shop_window","Clara comprend cette serrure."),
-      choice("🧗","Atteindre la plus haute étagère",s=>s.hero==="amy"?"shop_high":"shop_floor","Amy grimpe sans difficulté.")
+      choice("🧗","Atteindre la plus haute étagère","shop_floor","Un tiroir se trouve juste en bas.")
     ]
   };
   S.shop_friend=result("Londres","Le cadeau de l'horloger","Rose écoute l'horloger. Soulagé, il lui confie la roue sous verre. Il la place lui-même dans la grande horloge. Tic, tac !","shop","tardis_between","clockGear",{piece1:true,kind:true});
@@ -105,7 +104,7 @@
     text:"Dans le futur, un musée flotte parmi les étoiles. Une carte lumineuse tourne, un petit robot cherche sa pile et une gardienne surveille les vitrines.",
     choices:[
       choice("🗺️","Étudier la carte des étoiles",s=>s.hero==="clara"?"museum_map":"museum_lines","Clara suit facilement les signes."),
-      choice("🤖","Aider le petit robot",s=>s.hero==="amy"?"museum_robot":"museum_robot_help","Amy atteint sa pile en hauteur."),
+      choice("🤖","Aider le petit robot","museum_robot_help","La gardienne peut le soulever."),
       choice("👩","Parler à la gardienne",s=>s.hero==="rose"?"museum_guard":"museum_ticket","Rose sait la rassurer.")
     ]
   };
@@ -121,7 +120,7 @@
     text:"Le Docteur attend dans une bulle brillante. Un Dalek garde la machine, mais sa lumière bleue clignote : lui aussi a besoin d'aide. Que fais-tu ?",
     choices:[
       choice("💬","Demander au Dalek ce qui ne va pas",s=>s.hero==="rose"?"dalek_listens":"dalek_echo","Rose trouve des mots gentils."),
-      choice("🧗","Monter à la passerelle",s=>s.hero==="amy"?"dalek_roof":"dalek_ground","Amy peut atteindre un cristal."),
+      choice("🧗","Monter à la passerelle","dalek_ground","Un bouton se trouve près du sol."),
       choice("🪛","Regarder les fils bleus",s=>s.hero==="clara"?"dalek_console":"dalek_button","Clara sait lire la machine.")
     ]
   };

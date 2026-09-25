@@ -4,21 +4,8 @@ window.BOOK_03 = {
   subtitle: "Un jeune dinosaure apparaît au beau milieu de Londres. Il n'est pas dangereux… seulement perdu, affamé et beaucoup trop grand pour passer inaperçu.",
   start: "intro",
   heroes: {
-    amy: {
-      name:"Amy Pond", short:"Amy", icon:"⭐",
-      trait:"Rapide, audacieuse et toujours prête à improviser.",
-      item:{id:"redScarf",name:"Grande écharpe rouge",icon:"🧣"}
-    },
-    clara: {
-      name:"Clara Oswald", short:"Clara", icon:"🍃",
-      trait:"Très observatrice. Elle trouve souvent une solution que personne n'avait vue.",
-      item:{id:"phone",name:"Téléphone avec appareil photo",icon:"📱"}
-    },
-    bill: {
-      name:"Bill Potts", short:"Bill", icon:"🌈",
-      trait:"Curieuse, drôle et excellente pour parler aux gens sans paniquer.",
-      item:{id:"snack",name:"Sac de pommes",icon:"🍎"}
-    }
+    amy:{name:"Amy Pond",short:"Amy",icon:"⭐",trait:"Audacieuse et prête à improviser."},
+    bill:{name:"Bill Potts",short:"Bill",icon:"🌈",trait:"Curieuse et toujours prête à écouter."}
   },
   items: {
     redScarf:{name:"Grande écharpe rouge",icon:"🧣"},

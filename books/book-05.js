@@ -3,22 +3,9 @@ window.BOOK_05 = {
   title:"Le Dernier Dalek",
   subtitle:"Un Dalek isolé envoie un appel de détresse depuis une station au bord d'une étoile mourante. Est-ce un piège… ou quelqu'un demande-t-il vraiment de l'aide ?",
   start:"intro",
-  heroes:{
-    rose:{
-      name:"Rose Tyler",short:"Rose",icon:"🌹",
-      trait:"Elle cherche toujours la personne derrière le monstre.",
-      item:{id:"psychic",name:"Papier psychique",icon:"🪪"}
-    },
-    donna:{
-      name:"Donna Noble",short:"Donna",icon:"💫",
-      trait:"Elle pose les questions que tout le monde évite et ne se laisse pas impressionner.",
-      item:{id:"comm",name:"Communicateur",icon:"📟"}
-    },
-    clara:{
-      name:"Clara Oswald",short:"Clara",icon:"🍃",
-      trait:"Elle réfléchit vite et repère les contradictions.",
-      item:{id:"sonic",name:"Tournevis sonique",icon:"🪛"}
-    }
+  heroes: {
+    martha:{name:"Martha Jones",short:"Martha",icon:"🩺",trait:"Elle soigne et observe avant d'agir."},
+    yaz:{name:"Yasmin Khan",short:"Yaz",icon:"🔍",trait:"Elle enquête avec calme et pose les bonnes questions."}
   },
   items:{
     psychic:{name:"Papier psychique",icon:"🪪"},
