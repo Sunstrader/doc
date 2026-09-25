@@ -85,8 +85,8 @@
   S.queen_safe=page("Sous le toit","Victoria tient bon","La reine te suit sur l'escalier. Elle reconnaît aussitôt l'installation d'Albert et t'indique le miroir à déplacer.","queen","light_choice",null,{trust:1});
 
   S.light_choice=decision("L'observatoire","Une lumière à guider","Le loup arrive sur le seuil. La lune éclaire le télescope. Il suffit d'une bonne idée pour guider son rayon vers le miroir et aider le jeune invité.","observatory",[
-    choice("🔷","Placer le prisme, si tu l'as",s=>s.inventory.includes("prism")?"prism_beam":"empty_prism","Sans prisme, on peut utiliser le miroir."),
-    choice("🪞","Suivre le dessin, si tu l'as",s=>s.inventory.includes("drawing")||s.inventory.includes("note")?"mirror_beam":"ask_albert","Sans dessin, Victoria se souvient des mots d'Albert."),
+    {...choice("🔷","Placer le prisme, si tu l'as","prism_beam","Vérifie ta roue jaune."),requiresItem:"prism",otherwise:{label:"Utiliser le miroir sans prisme",next:"empty_prism"}},
+    {...choice("🪞","Suivre le dessin, si tu l'as","mirror_beam","Vérifie ta roue bleue."),requiresAnyItem:["drawing","note"],otherwise:{label:"Demander à Victoria ce qu'Albert disait",next:"ask_albert"}},
     choice("🤝","Demander à tous de tenir le miroir","shared_beam","Plusieurs mains peuvent le guider ensemble.")
   ]);
   S.prism_beam=page("La lumière","Les petites lunes dansent","Tu places le prisme dans le télescope. Ses reflets se rejoignent sur le grand miroir. Le loup s'immobilise dans une douce clarté.","moonlight","after_light",null,{guest:1,clue:1});

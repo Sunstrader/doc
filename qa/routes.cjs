@@ -17,11 +17,14 @@ for (const book of books) {
   for (const [id, scene] of Object.entries(book.scenes)) {
     sceneCount++;
     if (scene.end) continue;
-    if (scene.heroCheck) {
-      const {hero,yes,no}=scene.heroCheck;
-      assert(book.heroes[hero], `${book.id}/${id}: héros du renvoi absent`);
-      assert(book.scenes[yes] && book.scenes[no], `${book.id}/${id}: pages 1/2 absentes`);
-      assert.notEqual(yes,no, `${book.id}/${id}: la page sautée doit différer`);
+    if (scene.heroCheck || scene.itemCheck) {
+      const {hero,item,anyItems,yes,no}=scene.heroCheck||scene.itemCheck;
+      if(hero)assert(book.heroes[hero], `${book.id}/${id}: héros du renvoi absent`);
+      if(item)assert(book.items[item], `${book.id}/${id}: objet du renvoi absent`);
+      if(anyItems)for(const object of anyItems)assert(book.items[object], `${book.id}/${id}: objet du renvoi absent`);
+      const yesTargets=typeof yes==='function'?[...Object.keys(book.items)].map(object=>yes({inventory:[object]})):[yes];
+      for(const target of [...yesTargets,no])assert(book.scenes[target],`${book.id}/${id}: page 1/2 ${target} absente`);
+      assert(yesTargets.every(target=>target!==no), `${book.id}/${id}: la page sautée doit différer`);
       assert(!scene.choices && scene.next===undefined, `${book.id}/${id}: un renvoi ne comporte que les deux pages conditionnelles`);
       continue;
     }
@@ -43,6 +46,10 @@ for (const book of books) {
       }
       if(book.id !== 'book-01' && choice.requiresItem){
         assert(choice.otherwise, `${book.id}/${id} bloque un volet sans autre résultat`);
+      }
+      if(choice.requiresAnyItem){
+        assert(choice.requiresAnyItem.every(item=>book.items[item]),`${book.id}/${id} teste un objet inconnu`);
+        assert(choice.otherwise,`${book.id}/${id} manque la page sans objet`);
       }
     }
   }
@@ -83,11 +90,19 @@ for (const [id,chosen] of [['girl_check','rose'],['tower_check','clara'],['shop_
   }
 }
 assert.equal(routes('museum_arrival', state('rose'))[2], 'museum_guard');
-assert.equal(routes('final_console', state('rose', ['clockGear']))[0], 'ending_clock');
-assert.equal(routes('final_console', state('rose'))[0], 'ending_improvise');
-assert.equal(routes('final_console', state('rose', [null, 'starMap']))[1], 'ending_map');
-assert.equal(routes('final_console', state('rose', [null, null, 'dalekCell']))[2], 'ending_cell');
-assert.equal(routes('final_console', state('rose'))[2], 'ending_kind');
+assert.deepEqual(Array.from(routes('final_console',state('rose'))),['gear_check','map_check','light_check']);
+const itemPage=(id,inventory)=>{
+  const gate=first.scenes[id].itemCheck,items=inventory.filter(Boolean);
+  const yes=gate.item?items.includes(gate.item):gate.anyItems.some(x=>items.includes(x));
+  return {pages:yes?1:2,target:yes?(typeof gate.yes==='function'?gate.yes(state('rose',inventory)):gate.yes):gate.no};
+};
+assert.deepEqual(itemPage('gear_check',['clockGear']),{pages:1,target:'ending_clock'});
+assert.deepEqual(itemPage('gear_check',[]),{pages:2,target:'ending_improvise'});
+assert.deepEqual(itemPage('map_check',[null,'starMap']),{pages:1,target:'ending_map'});
+assert.deepEqual(itemPage('map_check',[]),{pages:2,target:'ending_signal'});
+assert.deepEqual(itemPage('light_check',[null,null,'blueCrystal']),{pages:1,target:'ending_energy'});
+assert.deepEqual(itemPage('light_check',[null,null,'dalekCell']),{pages:1,target:'ending_cell'});
+assert.deepEqual(itemPage('light_check',[]),{pages:2,target:'ending_kind'});
 // Aucun choix ne doit ramener à un lieu déjà résolu. Toutes les routes terminent.
 const firstReachable=new Set();
 for (const hero of Object.keys(first.heroes)) {
@@ -98,7 +113,9 @@ for (const hero of Object.keys(first.heroes)) {
     if(scene.end)return;
     const items=inventory.slice();
     if(scene.giveItem){const slot={clockGear:0,feather:1,starMap:1,dalekCell:2,blueCrystal:2}[scene.giveItem];items[slot]=scene.giveItem}
-    const nextSet=scene.heroCheck?[hero===scene.heroCheck.hero?scene.heroCheck.yes:scene.heroCheck.no]:scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(state(hero,items)):c.next);
+    const check=scene.heroCheck||scene.itemCheck;
+    const eligible=check&&(check.hero?hero===check.hero:check.item?items.includes(check.item):check.anyItems.some(x=>items.includes(x)));
+    const nextSet=check?[eligible?(typeof check.yes==='function'?check.yes(state(hero,items)):check.yes):check.no]:scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(state(hero,items)):c.next);
     for(const next of nextSet)walk(next,new Set([...visited,id]),items);
   }
   walk(first.start,new Set(),[]);
@@ -110,7 +127,8 @@ for (const hero of Object.keys(first.heroes)) {
       reachable.add(id);
       const scene=first.scenes[id];
       if(scene.end)return;
-      const next=scene.heroCheck?[hero===scene.heroCheck.hero?scene.heroCheck.yes:scene.heroCheck.no]:scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(state(hero)):c.next);
+      const check=scene.heroCheck||scene.itemCheck;
+      const next=check?[check.hero&&hero===check.hero?check.yes:check.no]:scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(state(hero)):c.next);
       next.forEach(fromOpening);
     }
     fromOpening(opening);
@@ -132,11 +150,15 @@ for(const hero of Object.keys(royal.heroes)){
     const held=inventory.slice(),nextFlags={...flags,...scene.flags};
     if(scene.giveItem){const slot={key:0,ribbon:0,drawing:1,note:1,lantern:2,prism:2}[scene.giveItem];held[slot]=scene.giveItem;}
     const current=state(hero,held,nextFlags);
-    const next=scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(current):c.next);
+    const next=scene.next!==undefined?[scene.next]:scene.choices.map(c=>{
+      const missing=c.requiresItem&&!held.includes(c.requiresItem)||c.requiresAnyItem&&!c.requiresAnyItem.some(item=>held.includes(item));
+      return missing?c.otherwise.next:typeof c.next==='function'?c.next(current):c.next;
+    });
     for(const id2 of next)royalWalk(id2,new Set([...visited,id]),held,nextFlags);
   }
   royalWalk(royal.start,new Set(),[],{});
 }
-assert.equal(royal.scenes.light_choice.choices[0].next(state('rose')), 'empty_prism');
-assert.equal(royal.scenes.light_choice.choices[0].next(state('rose',[null,null,'prism'])), 'prism_beam');
+assert.equal(royal.scenes.light_choice.choices[0].otherwise.next, 'empty_prism');
+assert.equal(royal.scenes.light_choice.choices[0].next, 'prism_beam');
+assert.equal(royal.scenes.light_choice.choices[1].otherwise.next, 'ask_albert');
 console.log(`${sceneCount} scènes vérifiées, livre 1 et aventure de Victoria sans retours ni impasses.`);
