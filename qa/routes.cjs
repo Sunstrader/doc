@@ -60,30 +60,26 @@ const state = (hero, inventory = [], flags = {}) => ({hero, inventory: [inventor
 const routes = (id, value) => first.scenes[id].choices.map(choice => typeof choice.next === 'function' ? choice.next(value) : choice.next);
 for (const hero of Object.keys(first.heroes)) {
   const scene = state(hero);
-  for (const id of ['girl_meeting', 'watch_shop', 'clock_tower', 'museum_arrival', 'dalek_approach']) {
+  for (const id of ['museum_arrival', 'dalek_approach']) {
     assert.equal(new Set(routes(id,scene)).size, 3, `${hero}/${id}: les trois volets doivent avoir trois résultats`);
   }
-  for (const id of ['intro','girl_meeting', 'watch_shop', 'clock_tower', 'museum_arrival', 'dalek_approach', 'final_console']) {
+  for (const id of ['intro','museum_arrival', 'dalek_approach', 'final_console']) {
     for (const choice of first.scenes[id].choices) {
       assert(!choice.requiresItem && !choice.requiresHero, `${hero}: ${id} ne doit pas montrer de volet inaccessible`);
       assert(first.scenes[typeof choice.next === 'function' ? choice.next(scene) : choice.next]);
     }
   }
   assert.deepEqual(Array.from(routes('intro',scene)),['girl_entry','tower_entry','shop_entry'],`${hero}: trois parcours de départ`);
-  for (const resultId of routes('girl_meeting',scene).slice(1)) assert.equal(first.scenes[resultId].next,'tardis_between');
   assert.equal(first.scenes.tardis_between.next,'museum_arrival');
 }
-assert.equal(routes('girl_meeting', state('rose'))[0], 'girl_check');
-assert.equal(routes('girl_meeting', state('clara'))[1], 'girl_feather');
-assert.equal(routes('girl_meeting', state('clara'))[2], 'girl_pattern');
-assert.equal(routes('clock_tower', state('rose'))[0], 'tower_stairs');
-assert.equal(routes('watch_shop', state('clara'))[1], 'shop_check');
-for (const [id,chosen] of [['girl_entry','rose'],['tower_entry','clara'],['shop_entry','rose'],['girl_check','rose'],['tower_check','clara'],['shop_check','clara']]) {
+for (const [id,chosen] of [['girl_entry','rose'],['tower_entry','clara'],['shop_entry','rose']]) {
   const check=first.scenes[id].heroCheck;
   assert.equal(check.hero,chosen);
-  const destination={girl_entry:'girl_meeting',tower_entry:'clock_tower',shop_entry:'watch_shop'}[id]||'tardis_between';
-  assert.equal(first.scenes[check.yes].next,destination);
-  assert.equal(first.scenes[check.no].next,destination);
+  assert.equal(first.scenes[check.yes].next,'tardis_between');
+  assert.equal(first.scenes[check.no].next,'tardis_between');
+  assert.notEqual(first.scenes[check.yes].text,first.scenes[check.no].text,`${id}: deux conséquences distinctes`);
+  assert.equal(first.scenes[check.yes].giveItem,'clockGear',`${id}: objet obtenu sur la page 1`);
+  assert.equal(first.scenes[check.no].giveItem,undefined,`${id}: pas d'objet sur la page 2`);
   for (const hero of Object.keys(first.heroes)) {
     const pageCount=hero===check.hero?1:2;
     const target=pageCount===1?check.yes:check.no;
@@ -117,7 +113,7 @@ for (const hero of Object.keys(first.heroes)) {
     const scene=first.scenes[id];
     if(scene.end)return;
     const items=inventory.slice();
-    if(scene.giveItem){const slot={clockGear:0,feather:1,starMap:1,dalekCell:2,blueCrystal:2}[scene.giveItem];items[slot]=scene.giveItem}
+    if(scene.giveItem){const slot={clockGear:0,starMap:1,dalekCell:2,blueCrystal:2}[scene.giveItem];items[slot]=scene.giveItem}
     const check=scene.heroCheck||scene.itemCheck;
     const eligible=check&&(check.hero?hero===check.hero:check.item?items.includes(check.item):check.anyItems.some(x=>items.includes(x)));
     const nextSet=check?[eligible?(typeof check.yes==='function'?check.yes(state(hero,items)):check.yes):check.no]:scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(state(hero,items)):c.next);

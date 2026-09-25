@@ -6,15 +6,15 @@
 
 | Livre | Scènes | Liens absents |
 |---|---:|---:|
-| Le Docteur a disparu ! | 58 | 0 |
+| Le Docteur a disparu ! | 37 | 0 |
 | Les Anges du Musée | 39 | 0 |
 | Le Dinosaure de Londres | 48 | 0 |
 | Panique dans le TARDIS | 61 | 0 |
 | Le Dernier Dalek | 50 | 0 |
 | La Nuit de Torchwood | 38 | 0 |
-| **Total** | **294** | **0** |
+| **Total** | **273** | **0** |
 
-Le Docteur a disparu ! évite le retour artificiel au lieu choisi précédemment. À Londres, petite fille, tour et boutique commencent chacun par un renvoi personnage 1/2 avec deux pages réellement distinctes. Les pages de résultat avancent ensuite l'histoire sans imposer trois faux choix. La roue d'horloge gagnée sur certaines routes débloque la carte du musée ; son absence mène à une autre page. Les parcours Rose et Clara ont des résultats distincts. La vérification parcourt leurs branches : aucune boucle, impasse ou scène inaccessible. Clara n'emploie plus un tournevis qu'elle n'a pas trouvé ; les anciennes scènes exclusivement liées à Amy ont été retirées.
+Le Docteur a disparu ! évite le retour artificiel au lieu choisi précédemment. À Londres, petite fille, tour et boutique commencent chacun par un renvoi personnage 1/2 avec deux pages réellement distinctes. Chaque résultat rejoint aussitôt la scène commune, sans sous-quête de trois nouveaux volets. La roue d'horloge gagnée sur certaines routes débloque la carte du musée ; son absence mène à une autre page. Les parcours Rose et Clara ont des résultats distincts. La vérification parcourt leurs branches : aucune boucle, impasse ou scène inaccessible. Clara n'emploie plus un tournevis qu'elle n'a pas trouvé ; les anciennes scènes exclusivement liées à Amy ont été retirées.
 
 La Nuit de Torchwood propose deux personnages jouables, Rose et le dixième Docteur. Les routes du manoir, les solutions avec ou sans objet, et les quatre fins où Victoria crée Torchwood sont parcourues pour chacun d'eux : aucune boucle ni impasse. Les roues d'inventaire sont vides au départ.
 

@@ -5,7 +5,7 @@ const root=document.getElementById("app");let book=books[0],heroCursor=0;
 const state={hero:null,inventory:[null,null,null],flags:{},scene:null,history:[],changed:-1,flapOrigin:null,flapRow:null};
 const meta={"book-06":["Victoria · 1879","Une nuit de lune à Torchwood."],"book-01":["Boucle temporelle","Le temps s'est cassé."],"book-02":["Mystère","Ne détourne pas les yeux."],"book-03":["Aventure","Un dinosaure est perdu à Londres."],"book-04":["Exploration","Le TARDIS a mélangé ses pièces."],"book-05":["Épopée","Un Dalek demande de l'aide."]};
 const slots={
- "book-01":{clockGear:0,feather:1,starMap:1,dalekCell:2,blueCrystal:2},
+ "book-01":{clockGear:0,starMap:1,dalekCell:2,blueCrystal:2},
  "book-02":{camera:0,keycard:0,mirror:1,chalk:1,battery:2,postcard:2},
  "book-03":{whistle:0,rope:0,key:0,leaf:1,eggShell:1,tracker:2},
  "book-04":{blueThread:0,compass:0,roomKey:0,libraryCard:1,teaCup:1,crystal:2},
