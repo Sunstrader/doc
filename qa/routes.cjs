@@ -5,13 +5,15 @@ const path = require('node:path');
 
 const window = {};
 const context = vm.createContext({window});
-for (let n = 1; n <= 5; n++) {
+for (let n = 1; n <= 6; n++) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, `../books/book-0${n}.js`), 'utf8'), context);
 }
 vm.runInContext(fs.readFileSync(path.join(__dirname, '../books/alternatives.js'), 'utf8'), context);
-const books = Array.from({length: 5}, (_, i) => window[`BOOK_0${i + 1}`]);
+const books = Array.from({length: 6}, (_, i) => window[`BOOK_0${i + 1}`]);
 let sceneCount = 0;
 for (const book of books) {
+  assert.equal(Object.keys(book.heroes).length, 2, `${book.id} doit proposer exactement deux personnages`);
+  assert(Object.values(book.heroes).every(hero => !hero.item), `${book.id} donne un objet au personnage avant le récit`);
   for (const [id, scene] of Object.entries(book.scenes)) {
     sceneCount++;
     if (scene.end) continue;
@@ -58,16 +60,16 @@ for (const hero of Object.keys(first.heroes)) {
   assert.equal(first.scenes.tardis_between.next,'museum_arrival');
 }
 assert.equal(routes('girl_meeting', state('rose'))[0], 'girl_gear');
-assert.equal(routes('girl_meeting', state('amy'))[1], 'girl_balloon');
+assert.equal(routes('girl_meeting', state('clara'))[1], 'girl_feather');
 assert.equal(routes('girl_meeting', state('clara'))[2], 'girl_pattern');
-assert.equal(routes('clock_tower', state('amy'))[0], 'tower_roof');
+assert.equal(routes('clock_tower', state('rose'))[0], 'tower_stairs');
 assert.equal(routes('watch_shop', state('clara'))[1], 'shop_sonic');
 assert.equal(routes('museum_arrival', state('rose'))[2], 'museum_guard');
-assert.equal(routes('final_console', state('amy', ['clockGear']))[0], 'ending_clock');
-assert.equal(routes('final_console', state('amy'))[0], 'ending_improvise');
-assert.equal(routes('final_console', state('amy', [null, 'starMap']))[1], 'ending_map');
-assert.equal(routes('final_console', state('amy', [null, null, 'dalekCell']))[2], 'ending_cell');
-assert.equal(routes('final_console', state('amy'))[2], 'ending_kind');
+assert.equal(routes('final_console', state('rose', ['clockGear']))[0], 'ending_clock');
+assert.equal(routes('final_console', state('rose'))[0], 'ending_improvise');
+assert.equal(routes('final_console', state('rose', [null, 'starMap']))[1], 'ending_map');
+assert.equal(routes('final_console', state('rose', [null, null, 'dalekCell']))[2], 'ending_cell');
+assert.equal(routes('final_console', state('rose'))[2], 'ending_kind');
 // Aucun choix ne doit ramener à un lieu déjà résolu. Toutes les routes terminent.
 for (const hero of Object.keys(first.heroes)) {
   function walk(id, visited, inventory) {
@@ -85,4 +87,20 @@ assert.equal(books[1].scenes.room17_door.choices[0].otherwise.next, 'angel_clock
 assert.equal(books[2].scenes.meet_dino.choices[0].otherwise.next, 'blue_glow');
 assert.equal(books[3].scenes.zero_door.choices[0].otherwise.next, 'zero_knock');
 assert.equal(books[4].scenes.dalek_final_role.choices[0].otherwise.next, 'shield_final');
-console.log(`${sceneCount} scènes vérifiées, livre 1 sans retours ni impasses.`);
+const royal=books[5];
+for(const hero of Object.keys(royal.heroes)){
+  function royalWalk(id,visited,inventory,flags){
+    assert(!visited.has(id),`${hero}: retour dans ${id}`);
+    const scene=royal.scenes[id];
+    if(scene.end){assert(/Torchwood/.test(scene.text),`${id} oublie la création de Torchwood`);return;}
+    const held=inventory.slice(),nextFlags={...flags,...scene.flags};
+    if(scene.giveItem){const slot={key:0,ribbon:0,drawing:1,note:1,lantern:2,prism:2}[scene.giveItem];held[slot]=scene.giveItem;}
+    const current=state(hero,held,nextFlags);
+    const next=scene.next!==undefined?[scene.next]:scene.choices.map(c=>typeof c.next==='function'?c.next(current):c.next);
+    for(const id2 of next)royalWalk(id2,new Set([...visited,id]),held,nextFlags);
+  }
+  royalWalk(royal.start,new Set(),[],{});
+}
+assert.equal(royal.scenes.light_choice.choices[0].next(state('rose')), 'empty_prism');
+assert.equal(royal.scenes.light_choice.choices[0].next(state('rose',[null,null,'prism'])), 'prism_beam');
+console.log(`${sceneCount} scènes vérifiées, livre 1 et aventure de Victoria sans retours ni impasses.`);

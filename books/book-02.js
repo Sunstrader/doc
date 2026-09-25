@@ -4,27 +4,8 @@ window.BOOK_02 = {
   subtitle: "Une nuit au musée, les statues changent de place quand personne ne les regarde. Pour retrouver le Docteur, il faudra garder les yeux ouverts… mais aussi savoir quand détourner le regard.",
   start: "intro",
   heroes: {
-    rose: {
-      name: "Rose Tyler",
-      short: "Rose",
-      icon: "🌹",
-      trait: "Elle fait confiance à son instinct et n'abandonne personne.",
-      item: { id:"phone", name:"Téléphone lumineux", icon:"📱" }
-    },
-    donna: {
-      name: "Donna Noble",
-      short: "Donna",
-      icon: "💫",
-      trait: "Franche, drôle et impossible à intimider.",
-      item: { id:"museumPass", name:"Pass visiteur", icon:"🎟️" }
-    },
-    clara: {
-      name: "Clara Oswald",
-      short: "Clara",
-      icon: "🍃",
-      trait: "Elle adore les énigmes et remarque les petits détails.",
-      item: { id:"torch", name:"Lampe torche", icon:"🔦" }
-    }
+    donna:{name:"Donna Noble",short:"Donna",icon:"💫",trait:"Elle parle franchement et garde son courage."},
+    clara:{name:"Clara Oswald",short:"Clara",icon:"🍃",trait:"Elle remarque les détails que les autres manquent."}
   },
   items: {
     phone: {name:"Téléphone lumineux",icon:"📱"},
