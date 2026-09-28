@@ -1,544 +1,189 @@
-window.BOOK_02 = {
-  id: "book-02",
-  title: "Les Anges du Musée",
-  subtitle: "Une nuit au musée, les statues changent de place quand personne ne les regarde. Pour retrouver le Docteur, il faudra garder les yeux ouverts… mais aussi savoir quand détourner le regard.",
-  start: "intro",
-  heroes: {
-    donna:{name:"Donna Noble",short:"Donna",icon:"💫",trait:"Elle parle franchement et garde son courage."},
-    clara:{name:"Clara Oswald",short:"Clara",icon:"🍃",trait:"Elle remarque les détails que les autres manquent."}
-  },
-  items: {
-    phone: {name:"Téléphone lumineux",icon:"📱"},
-    museumPass: {name:"Pass visiteur",icon:"🎟️"},
-    torch: {name:"Lampe torche",icon:"🔦"},
-    camera: {name:"Appareil photo",icon:"📷"},
-    mirror: {name:"Petit miroir",icon:"🪞"},
-    battery: {name:"Batterie de secours",icon:"🔋"},
-    keycard: {name:"Carte de sécurité",icon:"💳"},
-    chalk: {name:"Craie blanche",icon:"🖍️"},
-    postcard: {name:"Carte postale",icon:"💌"}
-  },
-  scenes: {
-    intro: {
-      chapter:"Prologue",
-      title:"Le musée ferme ses portes",
-      glyph:"🏛️",
-      tone:"blue",
-      text: state => {
-        const n = window.BOOK_02.heroes[state.hero].short;
-        return `${n} entre dans le Musée des Mondes avec le Docteur. Une voix annonce la fermeture. Le Docteur s'arrête devant une statue d'ange et fronce les sourcils. « Ne bouge pas. Je vais vérifier quelque chose. » Les lumières s'éteignent une seconde. Quand elles reviennent, le Docteur a disparu.`;
-      },
-      event:"La statue est maintenant plus proche.",
-      choices:[
-        {icon:"👀",label:"Garder les yeux sur la statue",next:"main_hall",flags:{careful:1}},
-        {icon:"📣",label:"Appeler le Docteur",next:"echo_hall",flags:{brave:1}},
-        {icon:"🚪",label:"Chercher une sortie éclairée",next:"security_door",flags:{clues:1}}
-      ]
+// Adaptation douce de « Partners in Crime » (2008) pour 3-4 ans.
+// Les Adipose = petits bébés tout mous qui cherchent une maman douce.
+(() => {
+  const book = {
+    id: "book-02",
+    title: "Les Petits Bébé-Nuages",
+    subtitle: "À Londres, Donna et le Docteur découvrent de tout petits bébés tout mous qui flottent. Ils ont besoin d’une maman douce.",
+    start: "street_adipose",
+    heroes: {
+      donna: { name: "Donna Noble", short: "Donna", icon: "🧡", trait: "Elle parle fort et protège les petits." },
+      doctor: { name: "Le Docteur", short: "Docteur", icon: "✦", trait: "Il comprend les machines et trouve les solutions." }
     },
-
-    main_hall: {
-      chapter:"Salle centrale",
-      title:"Ne cligne pas",
-      glyph:"👼",
-      tone:"danger",
-      text:"La statue d'ange reste immobile tant que tu la regardes. Sur le sol, une flèche à la craie pointe vers la galerie des horloges. À côté, une porte mène au poste de sécurité.",
-      choices:[
-        {icon:"🕰️",label:"Suivre la flèche vers les horloges",next:"clock_gallery",flags:{clues:1}},
-        {icon:"🛡️",label:"Reculer jusqu'au poste de sécurité",next:"security_door",flags:{careful:1}},
-        {icon:"🗿",label:"Observer le socle de la statue",next:"angel_plaque",flags:{clues:1}}
-      ]
+    items: {
+      softBlanket: { name: "Couverture douce", icon: "🛏️" },
+      milkBottle: { name: "Biberon magique", icon: "🍼" },
+      starLullaby: { name: "Berceuse des étoiles", icon: "🎵" },
+      warmHug: { name: "Gros câlin", icon: "🤗" },
+      blueRibbon: { name: "Ruban bleu", icon: "🎀" }
     },
+    scenes: {}
+  };
+  const S = book.scenes;
+  const choice = (icon, label, next, hint) => ({ icon, label, next, hint });
+  const page = (chapter, title, text, art, next, giveItem, flags) => ({
+    chapter, title, text, art, next,
+    ...(giveItem ? { giveItem } : {}),
+    ...(flags ? { flags } : {})
+  });
+  const decision = (chapter, title, text, art, choices) => ({ chapter, title, text, art, choices });
+  const ending = (title, text, endLabel, art) => ({
+    chapter: "La fin", title, text, end: true, endLabel, art
+  });
 
-    echo_hall: {
-      chapter:"Couloir des portraits",
-      title:"Une voix derrière le mur",
-      glyph:"🖼️",
-      tone:"danger",
-      text:"« Docteur ? » Ton appel revient en écho. Puis une autre voix répond, très faible : « Je suis là… enfin, pas exactement là. » Un portrait ancien tremble sur le mur.",
-      choices:[
-        {icon:"🖼️",label:"Décrocher le portrait",next:"portrait_back",flags:{clues:1}},
-        {icon:"👂",label:"Suivre la voix",next:"clock_gallery"},
-        {icon:"🏃",label:"Retourner dans la salle centrale",next:"main_hall"}
-      ]
-    },
+  S.street_adipose = decision(
+    "Londres · 2008",
+    "Les petits nuages qui flottent",
+    s => `${book.heroes[s.hero].short} regarde le ciel. De tout petits bébés tout mous flottent doucement. Ils ont l’air un peu perdus. Que fais-tu ?`,
+    "london",
+    [
+      choice("🤗", "Attraper un bébé-nuage tout doucement", "catch_baby", "Il a besoin d’un câlin."),
+      choice("🔍", "Regarder d’où ils viennent", "look_source", "Une lumière brille en haut d’un immeuble."),
+      choice("🗣️", "Parler aux bébés-nuages", "talk_babies", "Ils font des petits bruits mignons.")
+    ]
+  );
 
-    portrait_back: {
-      chapter:"Couloir des portraits",
-      title:"Le message du Docteur",
-      glyph:"✍️",
-      text:"Derrière le portrait, quelqu'un a écrit : « Les Anges ne bougent pas quand ils sont observés. Mais attention aux images. Trouve la salle 17. » Une petite craie blanche tombe du cadre.",
-      giveItem:"chalk",
-      event:"Objet obtenu : Craie blanche.",
-      flags:{clues:2},
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Chercher la salle 17",next:"room17_door"},
-        {icon:"🕰️",label:"Passer par la galerie des horloges",next:"clock_gallery"},
-        {icon:"🏛️",label:"Retourner dans la grande salle",next:"main_hall"}
-      ]
-    },
+  S.catch_baby = {
+    chapter: "Dans la rue",
+    title: "Un bébé tout mou",
+    art: "london",
+    text: "Le bébé-nuage est tout doux. Es-tu Donna ?",
+    heroCheck: { hero: "donna", yes: "catch_donna", no: "catch_doctor" }
+  };
+  S.catch_donna = page("Dans la rue", "Le câlin de Donna", "Donna serre le bébé-nuage contre elle. Il ronronne. Elle trouve une couverture toute douce pour le garder au chaud.", "london", "common_square", "softBlanket", { trust: 1 });
+  S.catch_doctor = page("Dans la rue", "Le Docteur observe", "Le Docteur regarde le bébé-nuage avec curiosité. Il découvre un petit ruban bleu accroché à son dos.", "london", "common_square", "blueRibbon", { clue: 1 });
 
-    angel_plaque: {
-      chapter:"Salle centrale",
-      title:"Une statue qui n'existe pas",
-      glyph:"📜",
-      text:"La plaque indique : « ANGE PLEUREUR — provenance inconnue — ajouté aujourd'hui ». Pourtant, la poussière autour du socle montre que la statue a été déplacée plusieurs fois cette nuit.",
-      flags:{clues:2},
-      choices:[
-        {icon:"🖍️",label:"Tracer une ligne autour du socle",requiresItem:"chalk",next:"chalk_circle"},
-        {icon:"🛡️",label:"Aller au poste de sécurité",next:"security_door"},
-        {icon:"🕰️",label:"Suivre la flèche vers les horloges",next:"clock_gallery"}
-      ]
-    },
+  S.look_source = {
+    chapter: "Dans la rue",
+    title: "La lumière en haut",
+    art: "london",
+    text: "Une fenêtre brille au dernier étage. Es-tu le Docteur ?",
+    heroCheck: { hero: "doctor", yes: "source_doctor", no: "source_donna" }
+  };
+  S.source_doctor = page("Dans la rue", "Le signal du Docteur", "Le Docteur comprend : c’est un appel. Il récupère une berceuse des étoiles qui sort d’une radio.", "london", "common_square", "starLullaby", { clue: 1 });
+  S.source_donna = page("Dans la rue", "Donna monte", "Donna décide d’aller voir. Elle trouve un biberon magique posé sur un banc.", "london", "common_square", "milkBottle", { trust: 1 });
 
-    chalk_circle: {
-      chapter:"Salle centrale",
-      title:"La preuve",
-      glyph:"⭕",
-      text:"Tu traces un cercle à la craie autour des pieds de l'Ange. Tu regardes ailleurs une demi-seconde puis reviens vers lui. Ses pieds dépassent déjà du cercle.",
-      event:"La statue bouge vraiment quand personne ne la regarde.",
-      flags:{proof:true,clues:1},
-      choices:[
-        {icon:"👀",label:"Reculer sans quitter l'Ange des yeux",next:"security_door",flags:{careful:1}},
-        {icon:"📷",label:"Chercher une caméra pour le surveiller",next:"security_room"},
-        {icon:"🕰️",label:"Partir vers les horloges",next:"clock_gallery"}
-      ]
-    },
+  S.talk_babies = {
+    chapter: "Dans la rue",
+    title: "Les petits bruits",
+    art: "london",
+    text: "Les bébés-nuages font « glooo ». Es-tu Donna ?",
+    heroCheck: { hero: "donna", yes: "talk_donna", no: "talk_doctor" }
+  };
+  S.talk_donna = page("Dans la rue", "Donna comprend", "Donna parle fort et doucement en même temps. Les bébés-nuages se calment. Un gros câlin apparaît.", "london", "common_square", "warmHug", { trust: 1 });
+  S.talk_doctor = page("Dans la rue", "Le Docteur traduit", "Le Docteur écoute. Les bébés cherchent une maman douce. Il trouve un ruban bleu.", "london", "common_square", "blueRibbon", { clue: 1 });
 
-    security_door: {
-      chapter:"Poste de sécurité",
-      title:"Accès réservé",
-      glyph:"🚪",
-      text:"La porte du poste de sécurité demande une autorisation. Derrière la vitre, plusieurs écrans montrent les galeries du musée. Sur l'un d'eux, le Docteur passe en courant… mais l'image date de 1963.",
-      choices:[
-        {icon:"🎟️",label:"Utiliser le pass visiteur",requiresItem:"museumPass",next:"pass_trick"},
-        {icon:"📱",label:"Éclairer le lecteur avec le téléphone",requiresItem:"phone",next:"reader_panel"},
-        {icon:"🔎",label:"Chercher une carte oubliée",next:"lost_keycard",flags:{clues:1}}
-      ]
-    },
+  S.common_square = decision(
+    "La place",
+    "Tous les bébés-nuages",
+    "Des dizaines de petits bébés-nuages flottent maintenant autour de vous. Ils ont l’air d’attendre quelque chose de doux.",
+    "park",
+    [
+      choice("🛏️", "Leur donner une couverture", "give_blanket", "Pour qu’ils aient chaud."),
+      choice("🍼", "Leur proposer un biberon", "give_bottle", "Ils ont peut-être faim."),
+      choice("🎵", "Chanter une berceuse", "sing_lullaby", "Pour les endormir un peu.")
+    ]
+  );
+  S.common_square.common = true;
 
-    pass_trick: {
-      chapter:"Poste de sécurité",
-      title:"Presque la bonne carte",
-      glyph:"🎟️",
-      text:"Le lecteur refuse le pass… puis affiche : « Visiteur spécial — accompagnateur du Docteur ». La porte s'ouvre. Visiblement, le Docteur a encore bricolé quelque chose.",
-      choices:[
-        {icon:"📺",label:"Regarder les caméras",next:"security_room",flags:{clues:1}},
-        {icon:"🔋",label:"Chercher l'alimentation de secours",next:"battery_cabinet"},
-        {icon:"📞",label:"Utiliser l'interphone",next:"intercom"}
-      ]
-    },
+  S.give_blanket = {
+    chapter: "La place",
+    title: "La couverture douce",
+    art: "park",
+    text: "Tu cherches une couverture. L’as-tu ?",
+    itemCheck: { item: "softBlanket", yes: "blanket_yes", no: "blanket_no" }
+  };
+  S.blanket_yes = page("La place", "Tout le monde au chaud", "Tu poses la couverture. Les bébés-nuages s’y blottissent. Ils te donnent un gros câlin en remerciement.", "park", "roof_garden", "warmHug", { trust: 1 });
+  S.blanket_no = page("La place", "Des vestes partagées", "Tu n’as pas la couverture. Donna et le Docteur prêtent leurs vestes. Les bébés sont quand même contents.", "park", "roof_garden", null, { trust: 1 });
 
-    reader_panel: {
-      chapter:"Poste de sécurité",
-      title:"Le fil caché",
-      glyph:"📱",
-      text:"La lumière du téléphone révèle un petit fil débranché sous le lecteur. Tu le remets en place et la porte s'ouvre avec un bip joyeux.",
-      flags:{clues:1},
-      choices:[
-        {icon:"📺",label:"Regarder les caméras",next:"security_room"},
-        {icon:"🔋",label:"Ouvrir l'armoire électrique",next:"battery_cabinet"},
-        {icon:"📞",label:"Appeler sur l'interphone",next:"intercom"}
-      ]
-    },
+  S.give_bottle = {
+    chapter: "La place",
+    title: "Le biberon magique",
+    art: "park",
+    text: "Tu cherches un biberon. L’as-tu ?",
+    itemCheck: { item: "milkBottle", yes: "bottle_yes", no: "bottle_no" }
+  };
+  S.bottle_yes = page("La place", "Les petits estomacs rassasiés", "Les bébés-nuages boivent. Ils deviennent un peu plus grands et sourient. Une berceuse apparaît.", "park", "roof_garden", "starLullaby", { trust: 1 });
+  S.bottle_no = page("La place", "De l’eau claire", "Tu n’as pas le biberon. Tu leur donnes de l’eau dans des coquilles. Ils sont contents quand même.", "park", "roof_garden", null, { trust: 1 });
 
-    lost_keycard: {
-      chapter:"Poste de sécurité",
-      title:"Sous le banc",
-      glyph:"💳",
-      text:"Sous un banc, tu trouves la carte d'un gardien. Juste à côté, des marques dans la poussière ressemblent à des empreintes de pierre.",
-      giveItem:"keycard",
-      event:"Objet obtenu : Carte de sécurité.",
-      flags:{clues:1},
-      choices:[
-        {icon:"💳",label:"Ouvrir le poste de sécurité",next:"security_room"},
-        {icon:"👣",label:"Suivre les marques de pierre",next:"clock_gallery"},
-        {icon:"🏛️",label:"Retourner à la salle centrale",next:"main_hall"}
-      ]
-    },
+  S.sing_lullaby = {
+    chapter: "La place",
+    title: "La berceuse",
+    art: "park",
+    text: "Tu veux chanter. As-tu la berceuse des étoiles ?",
+    itemCheck: { item: "starLullaby", yes: "lullaby_yes", no: "lullaby_no" }
+  };
+  S.lullaby_yes = page("La place", "Les yeux se ferment", "Tu chantes. Les bébés-nuages s’endorment presque. Un gros câlin flotte vers toi.", "park", "roof_garden", "warmHug", { trust: 1 });
+  S.lullaby_no = page("La place", "Une chanson inventée", "Tu inventes une chanson. Donna chante fort. Les bébés rient (un rire tout mou).", "park", "roof_garden", null, { trust: 1 });
 
-    security_room: {
-      chapter:"Poste de sécurité",
-      title:"Six écrans, sept Anges",
-      glyph:"📺",
-      tone:"danger",
-      text:"Les écrans montrent six statues d'anges. Tu les comptes : une, deux, trois… six. Puis tu regardes la salle derrière toi : un septième Ange se reflète dans la vitre.",
-      choices:[
-        {icon:"📺",label:"Garder l'Ange dans le reflet",next:"mirror_logic",flags:{careful:1}},
-        {icon:"🔦",label:"Allumer toutes les lampes de secours",next:"battery_cabinet"},
-        {icon:"📷",label:"Prendre l'appareil photo du gardien",next:"take_camera"}
-      ]
-    },
+  S.roof_garden = decision(
+    "Le toit",
+    "Le jardin sur le toit",
+    "Sur le toit d’un immeuble, une grande lumière douce attend. Les bébés-nuages flottent vers elle. C’est peut-être leur maman-vaisseau.",
+    "station",
+    [
+      choice("🤗", "Les accompagner avec un câlin", "accompany_hug", "Pour qu’ils ne soient pas seuls."),
+      choice("🎀", "Attacher un ruban pour les reconnaître", "tie_ribbon", "Comme ça on les retrouvera."),
+      choice("✦", "Demander au Docteur d’ouvrir le chemin", "doctor_path", "Il sait ouvrir les portes.")
+    ]
+  );
+  S.roof_garden.common = true;
 
-    take_camera: {
-      chapter:"Poste de sécurité",
-      title:"Une mauvaise photo",
-      glyph:"📷",
-      tone:"danger",
-      text:"L'appareil contient une photo d'un Ange. Au moment où l'image s'affiche, la statue sur la photo semble tourner la tête. Tu te souviens du message : attention aux images.",
-      giveItem:"camera",
-      event:"Objet obtenu : Appareil photo.",
-      choices:[
-        {icon:"🗑️",label:"Effacer la photo de l'Ange",next:"camera_safe",flags:{clues:1}},
-        {icon:"📷",label:"Garder la photo pour l'étudier",next:"image_trap"},
-        {icon:"🔌",label:"Retirer la batterie de l'appareil",next:"camera_safe",flags:{careful:1}}
-      ]
-    },
+  S.accompany_hug = {
+    chapter: "Le toit",
+    title: "Main dans la main (presque)",
+    art: "station",
+    text: "Tu cherches un gros câlin. L’as-tu ?",
+    itemCheck: { item: "warmHug", yes: "hug_yes", no: "hug_no" }
+  };
+  S.hug_yes = page("Le toit", "Ensemble jusqu’à la lumière", "Avec le gros câlin, les bébés-nuages se sentent en sécurité. Ils entrent dans la lumière en riant.", "station", "final_choice", null, { trust: 1 });
+  S.hug_no = page("Le toit", "Des mains tendues", "Tu n’as pas le câlin spécial. Tu tends quand même les bras. Les bébés viennent.", "station", "final_choice", null, { trust: 1 });
 
-    camera_safe: {
-      chapter:"Poste de sécurité",
-      title:"L'écran devient noir",
-      glyph:"📷",
-      text:"L'image disparaît. L'appareil peut maintenant servir sans montrer l'Ange. Avec son flash, tu pourrais éclairer une pièce pendant quelques secondes.",
-      flags:{safeCamera:true},
-      choices:[
-        {icon:"🕰️",label:"Aller vers la galerie des horloges",next:"clock_gallery"},
-        {icon:"1️⃣7️⃣",label:"Chercher la salle 17",next:"room17_door"},
-        {icon:"🔋",label:"Prendre une batterie de secours",next:"battery_cabinet"}
-      ]
-    },
+  S.tie_ribbon = {
+    chapter: "Le toit",
+    title: "Le ruban bleu",
+    art: "station",
+    text: "Tu cherches un ruban. L’as-tu ?",
+    itemCheck: { item: "blueRibbon", yes: "ribbon_yes", no: "ribbon_no" }
+  };
+  S.ribbon_yes = page("Le toit", "Tout le monde marqué", "Tu attaches le ruban. Les bébés-nuages sont fiers. Ils savent qu’on les aime.", "station", "final_choice", null, { clue: 1 });
+  S.ribbon_no = page("Le toit", "Des dessins dans le ciel", "Tu n’as pas le ruban. Tu dessines des cœurs dans l’air. Les bébés adorent.", "station", "final_choice", null, { trust: 1 });
 
-    image_trap: {
-      chapter:"Poste de sécurité",
-      title:"L'image cligne",
-      glyph:"⚠️",
-      tone:"danger",
-      text:"La photo change. L'Ange dessiné est maintenant beaucoup plus proche. L'écran se met à clignoter tout seul. Mieux vaut ne pas garder cette image.",
-      choices:[
-        {icon:"🗑️",label:"Effacer immédiatement la photo",next:"camera_safe",flags:{careful:1}},
-        {icon:"🔌",label:"Retirer la batterie",next:"camera_safe"},
-        {icon:"🏃",label:"Poser l'appareil et sortir",next:"clock_gallery",flags:{brave:1}}
-      ]
-    },
+  S.doctor_path = page("Le toit", "Le chemin du Docteur", "Le Docteur tourne un bouton invisible. La lumière s’ouvre comme une porte. Les bébés-nuages peuvent passer.", "station", "final_choice", null, { clue: 1 });
 
-    mirror_logic: {
-      chapter:"Poste de sécurité",
-      title:"Deux regards valent mieux qu'un",
-      glyph:"🪞",
-      text:"Grâce au reflet de la vitre, tu surveilles l'Ange sans lui tourner complètement le dos. Dans un tiroir, tu trouves un petit miroir de poche. Cela pourrait être utile.",
-      giveItem:"mirror",
-      event:"Objet obtenu : Petit miroir.",
-      flags:{clues:1,careful:1},
-      choices:[
-        {icon:"🕰️",label:"Partir vers les horloges",next:"clock_gallery"},
-        {icon:"1️⃣7️⃣",label:"Chercher la salle 17",next:"room17_door"},
-        {icon:"🔋",label:"Vérifier l'électricité",next:"battery_cabinet"}
-      ]
-    },
+  S.final_choice = decision(
+    "La grande lumière",
+    "Au revoir les petits",
+    "La lumière est prête. Les bébés-nuages vont retrouver leur vraie maman-vaisseau. Comment veux-tu leur dire au revoir ?",
+    "heart",
+    [
+      choice("🤗", "Un dernier gros câlin", "end_hug", "Le plus important."),
+      choice("🎵", "Une dernière berceuse", "end_song", "Pour le voyage."),
+      choice("👋", "Un grand au revoir tous ensemble", "end_wave", "Donna et le Docteur aussi.")
+    ]
+  );
+  S.final_choice.common = true;
 
-    battery_cabinet: {
-      chapter:"Sous-sol technique",
-      title:"Plus que dix minutes de lumière",
-      glyph:"🔋",
-      text:"L'ordinateur indique que le musée n'a presque plus d'électricité. Une batterie de secours peut alimenter soit les lumières, soit la porte de la salle 17.",
-      choices:[
-        {icon:"💡",label:"Brancher la batterie sur les lumières",next:"lights_on",flags:{careful:1}},
-        {icon:"1️⃣7️⃣",label:"Garder la batterie pour la salle 17",next:"take_battery"},
-        {icon:"📞",label:"Essayer l'interphone avant de choisir",next:"intercom",flags:{clues:1}}
-      ]
-    },
+  S.end_hug = {
+    chapter: "La fin",
+    title: "Le dernier câlin",
+    art: "heart",
+    text: "Tu cherches le gros câlin. L’as-tu ?",
+    itemCheck: { item: "warmHug", yes: "ending_warm", no: "ending_simple" }
+  };
+  S.end_song = {
+    chapter: "La fin",
+    title: "La dernière chanson",
+    art: "heart",
+    text: "Tu cherches la berceuse. L’as-tu ?",
+    itemCheck: { item: "starLullaby", yes: "ending_music", no: "ending_hum" }
+  };
+  S.end_wave = ending("Au revoir les amis", "Donna et le Docteur font de grands signes. Les bébés-nuages flottent dans la lumière en disant « glooo-bye ». Londres redevient calme et douce.", "Tous ensemble", "heart");
 
-    take_battery: {
-      chapter:"Sous-sol technique",
-      title:"Une batterie lourde",
-      glyph:"🔋",
-      text:"Tu décroches la batterie. Elle est lourde, mais encore pleine. Dès que tu la retires, la moitié des couloirs s'éteint.",
-      giveItem:"battery",
-      event:"Objet obtenu : Batterie de secours.",
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Aller à la salle 17",next:"room17_door"},
-        {icon:"🕰️",label:"Traverser la galerie des horloges",next:"clock_gallery"},
-        {icon:"🏛️",label:"Retourner à la grande salle",next:"main_hall"}
-      ]
-    },
+  S.ending_warm = ending("Le câlin qui reste", "Tu donnes le gros câlin. Les bébés-nuages le gardent pour toujours. Ils partent heureux. Donna a les yeux un peu brillants.", "Le plus beau cadeau", "heart");
+  S.ending_simple = ending("Des bras ouverts", "Tu n’as plus le câlin spécial, mais tu ouvres grand les bras. Les bébés comprennent. Ils partent en souriant.", "L’amour suffit", "heart");
+  S.ending_music = ending("La berceuse du voyage", "Tu chantes la berceuse des étoiles. Les bébés-nuages s’endorment un peu en flottant. Le voyage sera doux.", "Bonne nuit les petits", "heart");
+  S.ending_hum = ending("Un air inventé", "Tu inventes un air. Donna chante fort. Les bébés-nuages aiment. Ils partent en dansant un peu.", "Une chanson pour la route", "heart");
 
-    lights_on: {
-      chapter:"Musée",
-      title:"Tout s'allume",
-      glyph:"💡",
-      text:"Les lampes de secours éclairent chaque galerie. Plusieurs Anges sont figés en plein mouvement. Tu peux enfin voir un chemin sûr jusqu'à la salle 17.",
-      flags:{lights:true,clues:1},
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Suivre le chemin éclairé",next:"room17_door"},
-        {icon:"🕰️",label:"Examiner la galerie des horloges",next:"clock_gallery"},
-        {icon:"📺",label:"Retourner aux caméras",next:"security_room"}
-      ]
-    },
-
-    intercom: {
-      chapter:"Poste de sécurité",
-      title:"Le Docteur au téléphone",
-      glyph:"📞",
-      text:"L'interphone grésille. La voix du Docteur répond : « Salle 17 ! Et si tu vois un Ange… eh bien, continue de le voir ! » Puis une autre voix murmure derrière lui : « 1963… 1987… 2026… »",
-      event:"Le Docteur est coincé entre plusieurs années.",
-      flags:{clues:2},
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Chercher la salle 17",next:"room17_door"},
-        {icon:"🕰️",label:"Examiner les horloges",next:"clock_gallery"},
-        {icon:"📺",label:"Regarder où se trouve la salle 17",next:"security_room"}
-      ]
-    },
-
-    clock_gallery: {
-      chapter:"Galerie des horloges",
-      title:"Toutes les heures à la fois",
-      glyph:"🕰️",
-      tone:"warm",
-      text:"Des dizaines d'horloges montrent des heures différentes. L'une indique 1963, une autre 1987, une autre aujourd'hui. Tout au fond, une horloge affiche simplement « 17 ».",
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Toucher l'horloge marquée 17",next:"clock_portal",flags:{brave:1}},
-        {icon:"🔍",label:"Comparer les dates",next:"date_pattern",flags:{clues:1}},
-        {icon:"👼",label:"Regarder la statue entre les horloges",next:"angel_clock"}
-      ]
-    },
-
-    date_pattern: {
-      chapter:"Galerie des horloges",
-      title:"Le bon ordre",
-      glyph:"🔢",
-      text:"Tu remarques que les dates forment une suite : 1963, 1987, 2005, 2026… puis un espace vide. Ce ne sont pas des heures : ce sont des endroits où les Anges ont envoyé des gens dans le temps.",
-      flags:{clues:2},
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Chercher pourquoi la salle 17 manque",next:"room17_door"},
-        {icon:"🕰️",label:"Tourner l'horloge 17",next:"clock_portal"},
-        {icon:"👼",label:"Examiner l'Ange de la galerie",next:"angel_clock"}
-      ]
-    },
-
-    angel_clock: {
-      chapter:"Galerie des horloges",
-      title:"L'Ange tient une clé",
-      glyph:"👼",
-      tone:"danger",
-      text:"La statue cache quelque chose dans sa main : une petite carte métallique. Pour l'attraper, il faudrait s'approcher sans cesser de regarder son visage.",
-      choices:[
-        {icon:"🪞",label:"Utiliser le miroir pour surveiller l'Ange",requiresItem:"mirror",next:"angel_keycard"},
-        {icon:"📷",label:"Utiliser le flash de l'appareil",requiresItem:"camera",next:"angel_flash"},
-        {icon:"↩️",label:"Ne pas prendre de risque",next:"room17_door",flags:{careful:1}}
-      ]
-    },
-
-    angel_keycard: {
-      chapter:"Galerie des horloges",
-      title:"Pris sans cligner",
-      glyph:"💳",
-      text:"Avec le miroir, tu gardes le visage de l'Ange dans ton champ de vision et récupères la carte métallique. Elle porte le nombre 17.",
-      giveItem:"keycard",
-      event:"Objet obtenu : Carte de sécurité 17.",
-      flags:{clues:1},
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Aller à la salle 17",next:"room17_door"},
-        {icon:"🕰️",label:"Tester l'horloge 17",next:"clock_portal"},
-        {icon:"🏛️",label:"Revenir au hall",next:"main_hall"}
-      ]
-    },
-
-    angel_flash: {
-      chapter:"Galerie des horloges",
-      title:"FLASH !",
-      glyph:"📸",
-      text:"Le flash éclaire la salle. L'Ange est figé. Tu saisis la carte dans sa main juste avant que la lumière retombe.",
-      giveItem:"keycard",
-      flags:{brave:1},
-      event:"Objet obtenu : Carte de sécurité 17.",
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Courir vers la salle 17",next:"room17_door"},
-        {icon:"🕰️",label:"Examiner l'horloge 17",next:"clock_portal"},
-        {icon:"🔦",label:"Chercher plus de lumière",next:"battery_cabinet"}
-      ]
-    },
-
-    clock_portal: {
-      chapter:"Galerie des horloges",
-      title:"Une seconde en 1963",
-      glyph:"🌀",
-      tone:"danger",
-      text:"Le sol disparaît une seconde. Tu aperçois une rue de Londres en 1963 et le Docteur qui court au loin. Puis tu reviens au musée. L'horloge 17 vient de créer une fenêtre dans le temps.",
-      flags:{sawPortal:true,clues:2},
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Trouver la salle 17",next:"room17_door"},
-        {icon:"🖍️",label:"Marquer l'horloge à la craie",requiresItem:"chalk",next:"marked_clock"},
-        {icon:"🏛️",label:"Retourner au poste de sécurité",next:"security_room"}
-      ]
-    },
-
-    marked_clock: {
-      chapter:"Galerie des horloges",
-      title:"La marque reste",
-      glyph:"🖍️",
-      text:"Tu dessines une étoile sur l'horloge. Quand la fenêtre temporelle revient, l'étoile apparaît aussi sur une porte derrière le Docteur. La salle 17 existe dans plusieurs époques à la fois.",
-      flags:{portalMarked:true,clues:2},
-      choices:[
-        {icon:"1️⃣7️⃣",label:"Courir vers la salle 17",next:"room17_door"},
-        {icon:"📞",label:"Prévenir le Docteur par l'interphone",next:"intercom"},
-        {icon:"👼",label:"Vérifier où sont les Anges",next:"main_hall"}
-      ]
-    },
-
-    room17_door: {
-      chapter:"Salle 17",
-      title:"La porte qui n'aime pas aujourd'hui",
-      glyph:"1️⃣7️⃣",
-      tone:"danger",
-      text:"La porte 17 apparaît au bout d'un couloir que tu n'avais jamais vu. Son écran affiche : « ALIMENTATION ABSENTE — AUTORISATION OU ÉNERGIE REQUISE ».",
-      choices:[
-        {icon:"💳",label:"Utiliser la carte de sécurité",requiresItem:"keycard",next:"room17_open"},
-        {icon:"🔋",label:"Brancher la batterie de secours",requiresItem:"battery",next:"room17_open"},
-        {icon:"🕰️",label:"Chercher une entrée par l'horloge 17",next:"clock_portal"}
-      ]
-    },
-
-    room17_open: {
-      chapter:"Salle 17",
-      title:"Le piège des années",
-      glyph:"🌀",
-      tone:"danger",
-      text:"La salle 17 est immense à l'intérieur. Des portes flottent dans le noir : 1963, 1987, 2005, aujourd'hui. Le Docteur est coincé au centre, entouré de quatre Anges qui se regardent les uns les autres.",
-      choices:[
-        {icon:"🪞",label:"Placer le miroir entre les Anges",requiresItem:"mirror",next:"mirror_solution",flags:{clues:1}},
-        {icon:"💡",label:"Éclairer tous les Anges en même temps",next:"light_solution",flags:{brave:1}},
-        {icon:"🚪",label:"Ouvrir la porte marquée aujourd'hui",next:"today_door"}
-      ]
-    },
-
-    mirror_solution: {
-      chapter:"Salle 17",
-      title:"Les Anges se surveillent",
-      glyph:"🪞",
-      tone:"success",
-      text:"Tu poses le miroir au bon endroit. Chaque Ange voit maintenant un autre Ange ou son propre reflet. Aucun ne peut bouger. Le Docteur lève les pouces : « Très élégant ! »",
-      flags:{angelsLocked:true,smartSolution:true,clues:2},
-      choices:[
-        {icon:"🤝",label:"Rejoindre le Docteur",next:"doctor_center"},
-        {icon:"🚪",label:"Fermer les portes temporelles",next:"close_doors"},
-        {icon:"📷",label:"Utiliser le flash pour vérifier",requiresItem:"camera",next:"doctor_center"}
-      ]
-    },
-
-    light_solution: {
-      chapter:"Salle 17",
-      title:"Que la lumière soit !",
-      glyph:"💡",
-      tone:"success",
-      text:"Tu allumes tout ce qui peut briller. Les Anges se figent. Le Docteur profite de la lumière pour bondir hors du cercle.",
-      flags:{doctorFree:true,angelsLit:true},
-      choices:[
-        {icon:"🚪",label:"Fermer les portes temporelles",next:"close_doors"},
-        {icon:"🏃",label:"Courir vers le TARDIS",next:"museum_escape"},
-        {icon:"👀",label:"Rester et surveiller les Anges",next:"doctor_center",flags:{careful:1}}
-      ]
-    },
-
-    today_door: {
-      chapter:"Salle 17",
-      title:"La porte d'aujourd'hui",
-      glyph:"🚪",
-      text:"La porte s'ouvre sur le musée tel qu'il devrait être : lumières allumées, visiteurs partout, aucun Ange en mouvement. Mais le Docteur est encore derrière toi, coincé entre les années.",
-      choices:[
-        {icon:"↩️",label:"Revenir chercher le Docteur",next:"doctor_center",flags:{brave:1}},
-        {icon:"🏃",label:"Passer la porte et appeler de l'aide",next:"ending_escape"},
-        {icon:"🖍️",label:"Bloquer la porte ouverte avec la craie",requiresItem:"chalk",next:"door_wedge"}
-      ]
-    },
-
-    door_wedge: {
-      chapter:"Salle 17",
-      title:"Une toute petite cale",
-      glyph:"🖍️",
-      text:"La craie empêche la porte de se refermer. C'est ridicule… mais ça marche. Le Docteur peut maintenant voir clairement quelle porte mène à aujourd'hui.",
-      flags:{todayOpen:true,clues:1},
-      choices:[
-        {icon:"🤝",label:"Aller chercher le Docteur",next:"doctor_center"},
-        {icon:"🚪",label:"Fermer les autres portes",next:"close_doors"},
-        {icon:"👀",label:"Surveiller les Anges",next:"mirror_solution"}
-      ]
-    },
-
-    doctor_center: {
-      chapter:"Salle 17",
-      title:"Au milieu des secondes",
-      glyph:"🧥",
-      text:"Le Docteur explique vite : les Anges utilisent la salle 17 comme une gare. Chaque porte mène à une année différente. Pour arrêter le piège, il faut fermer toutes les portes sauf celle d'aujourd'hui.",
-      flags:{doctorFree:true,clues:1},
-      choices:[
-        {icon:"🚪",label:"Fermer les portes dans l'ordre",next:"close_doors"},
-        {icon:"🕰️",label:"Demander quelles années fermer d'abord",next:"door_order",flags:{clues:1}},
-        {icon:"🏃",label:"Partir immédiatement",next:"museum_escape"}
-      ]
-    },
-
-    door_order: {
-      chapter:"Salle 17",
-      title:"Du plus ancien au plus récent",
-      glyph:"🔢",
-      text:"« Commence par 1963, puis 1987, puis 2005. Garde aujourd'hui pour la fin. Et surtout, ne ferme pas la porte quand nous sommes encore du mauvais côté ! »",
-      flags:{knowsOrder:true,clues:2},
-      choices:[
-        {icon:"🚪",label:"Fermer les portes correctement",next:"close_doors"},
-        {icon:"👀",label:"Vérifier les Anges d'abord",next:"mirror_solution"},
-        {icon:"🏃",label:"Courir vers aujourd'hui",next:"museum_escape"}
-      ]
-    },
-
-    close_doors: {
-      chapter:"Final",
-      title:"Une seule année",
-      glyph:"🚪",
-      tone:"success",
-      text:"Les portes disparaissent l'une après l'autre. Les Anges restent figés, mais la dernière porte tremble. Il faut choisir comment la refermer sans rester coincé.",
-      choices:[
-        {icon:"🪞",label:"Faire regarder les Anges vers le miroir",requiresItem:"mirror",next: s => (s.flags.doctorFree && s.flags.clues >= 6) ? "ending_perfect" : "ending_escape"},
-        {icon:"💡",label:"Maintenir les lumières et fermer la porte",next: s => s.flags.doctorFree ? "ending_escape" : "ending_past"},
-        {icon:"🏃",label:"Sauter tous les deux par la porte aujourd'hui",next: s => s.flags.doctorFree ? "ending_escape" : "ending_past"}
-      ]
-    },
-
-    museum_escape: {
-      chapter:"Final",
-      title:"Course dans le musée",
-      glyph:"🏃",
-      tone:"danger",
-      text:"Le musée commence à changer autour de vous. Une galerie devient 1963, puis 1987, puis revient à aujourd'hui. La porte du TARDIS est au bout du hall.",
-      choices:[
-        {icon:"👀",label:"Avancer en surveillant les Anges",next:"ending_escape",flags:{careful:1}},
-        {icon:"📷",label:"Utiliser le flash pour gagner du temps",requiresItem:"camera",next:"ending_perfect"},
-        {icon:"🚪",label:"Foncer vers le TARDIS",next:"ending_escape",flags:{brave:1}}
-      ]
-    },
-
-    ending_perfect: {
-      end:true,
-      endLabel:"Fin parfaite",
-      title:"Le musée ouvre à neuf heures",
-      glyph:"🌅",
-      tone:"success",
-      text: state => {
-        const n = window.BOOK_02.heroes[state.hero].short;
-        return `À neuf heures précises, les portes du musée s'ouvrent normalement. Les Anges sont enfermés dans une salle où ils se regardent tous grâce à des miroirs. Le Docteur et ${n} sortent du TARDIS avec deux chocolats chauds. « Pas mal pour une visite de nuit. La prochaine fois, on choisit un musée avec des dinosaures. Les dinosaures, au moins, clignent des yeux. »`;
-      }
-    },
-
-    ending_escape: {
-      end:true,
-      endLabel:"Fin réussie",
-      title:"Dehors avant l'ouverture",
-      glyph:"🌙",
-      tone:"warm",
-      text: state => {
-        const n = window.BOOK_02.heroes[state.hero].short;
-        return `${n} et le Docteur atteignent le TARDIS juste avant que la dernière lumière s'éteigne. Les portes temporelles se ferment derrière eux. Les Anges restent dans le musée, immobiles pour le moment. Le Docteur programme une équipe de spécialistes pour sécuriser la salle 17 dès le matin. Mission accomplie… avec une petite surveillance à prévoir.`;
-      }
-    },
-
-    ending_past: {
-      end:true,
-      endLabel:"Fin temporelle",
-      title:"Une carte postale du passé",
-      glyph:"💌",
-      tone:"danger",
-      text: state => {
-        const n = window.BOOK_02.heroes[state.hero].short;
-        return `Une lumière blanche clignote. ${n} se retrouve devant le musée… mais les voitures sont anciennes et personne n'a de téléphone portable. Un facteur passe et tend une carte postale déjà adressée : « Ne t'inquiète pas. Je viens te chercher. Ne bouge pas de 1987 ! — Le Docteur. » Ce n'est pas la meilleure fin, mais l'aventure n'est certainement pas terminée.`;
-      }
-    }
-  }
-};
+  window.BOOK_02 = book;
+})();
