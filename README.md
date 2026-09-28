@@ -1,48 +1,33 @@
 # Doctor Who — Petites Aventures
 
-Collection fan-made de six livres-jeux interactifs pour enfants de 3 à 4 ans, pensée comme un **album physique transposé au navigateur**.
+Collection fan-made de six livres-jeux interactifs pour enfants de 3 à 4 ans, pensée comme un **album physique à trois volets** transposé au navigateur.
 
-## Principe
+## Les 3 rangées indépendantes (explication simple)
 
-- une **roue rouge** pour choisir le personnage ;
-- trois roues **verte, bleue et jaune** qui commencent vides ;
-- les objets, indices et certains états remplacent le contenu de ces roues au fil du récit ;
-- chaque grande scène est présentée comme un **livre ouvert** ;
-- la page gauche contient l'illustration et le texte court ;
-- la page droite est découpée en **trois volets** : un seul est choisi et tourné ;
-- exactement **deux personnages jouables par histoire** ; le choix d'un personnage n'attribue aucun objet ;
-- certains résultats dépendent du personnage, des objets trouvés pendant l'aventure ou des événements précédents ;
-- lorsqu'un objet manque, le même volet raconte une autre issue et continue l'histoire ; les talents des héros ouvrent des passages différents ;
-- les fins utilisent aussi l'état final des roues.
+Imagine un vrai livre découpé en trois bandes horizontales (haut / milieu / bas).  
+Quand tu choisis une action, **seule la bande que tu as choisie tourne**. Les deux autres restent exactement à la même page, visibles.  
+C’est le fonctionnement du livre physique de référence.
 
-## Collection
+- Une **roue rouge** pour le personnage (exactement 2 personnages jouables par histoire).
+- Trois roues (verte, bleue, jaune) qui commencent **vides**.
+- Les objets et états s’ajoutent uniquement s’ils ont été réellement obtenus.
+- Questions conditionnelles « Es-tu ce personnage ? / As-tu cet objet ? » → 1 page ou 2 pages (l’autre est grisée).
+- Les chemins rejoignent de vraies nouvelles doubles pages à trois volets.
 
-1. **La Nuit de Torchwood** — Rose Tyler / le dixième Docteur ; reine Victoria, Écosse, 1879 ; loup-garou et fondation de Torchwood. Priorité de la collection.
-2. Le Docteur a disparu ! — Rose / Clara.
-3. Les Anges du Musée — Donna / Clara.
-4. Le Dinosaure de Londres — Amy / Bill.
-5. Panique dans le TARDIS — Amy / Donna.
-6. Le Dernier Dalek — Martha / Yasmin.
+## Collection (à partir de 2005)
+
+1. **Les Mannequins de Londres** — adaptation douce de *Rose* (2005). Rose / le Docteur.
+2. **Les Petits Bébé-Nuages** — adaptation douce de *Partners in Crime* (2008). Donna / le Docteur.
+3. (en cours de réécriture)
+4. (en cours de réécriture)
+5. (en cours de réécriture)
+6. **La Nuit de Torchwood** — adaptation douce de *Tooth and Claw* (2006). Rose / le Docteur.
 
 ## Interface
 
-La Nuit de Torchwood dispose de décors SVG propres à ses lieux (lande, manoir, bibliothèque, chambre de Victoria, observatoire et aube). L'aventure du Docteur disparu dispose d'illustrations originales du TARDIS, de Londres, du musée et du Dalek. Les autres livres utilisent des décors SVG. Aucun visuel du livre de référence n'est intégré.
+- Ordinateur / tablette : double page avec reliure centrale et quatre roues aux coins.
+- Téléphone : même livre vertical, les trois rangées restent associées.
+- Sons de page et d’objet (activables / désactivables).
+- Illustrations SVG originales.
 
-Sur ordinateur/tablette : double page ouverte avec reliure centrale et quatre roues aux coins.
-
-Sur mobile : les deux pages restent dans le même livre vertical, avec les roues à ses quatre coins.
-
-La Nuit de Torchwood est le premier livre affiché. Ses trois volets d'ouverture mènent chacun à un renvoi sur Rose ou le Docteur : une page pour le héros indiqué, deux pages pour l'autre. Les conséquences et les objets diffèrent avant la nouvelle double page commune ; seule la rangée choisie avance jusque-là. Chaque nouveau choix triple (y compris dans la chambre de Victoria et à l'observatoire) occupe une nouvelle double page et trois volets entiers. L'observatoire vérifie réellement les objets portés par les roues, avec une suite écrite même s'ils manquent. Le Docteur a disparu ! conserve également ses trois pistes initiales et ses renvois sur le personnage et les objets.
-
-L'histoire de Victoria suit les repères de *Tooth and Claw* : le dixième Docteur et Rose, la reine Victoria, un loup-garou, les recherches d'Albert et la création de Torchwood. La menace est racontée avec douceur pour les petits. Les autres compagnons de la série depuis 2005 pourront être répartis dans de futurs livres, toujours deux par histoire.
-
-## Fichiers principaux
-
-- `index.html`
-- `app.js` : moteur
-- `art.js` : illustrations vectorielles originales
-- `styles.css`
-- `physical.css` : mise en page livre physique
-- `books/book-01.js` à `book-06.js`
-
-Projet fan-made non officiel. Doctor Who et les éléments associés appartiennent à leurs ayants droit.
+Projet fan-made non officiel. Doctor Who appartient à ses ayants droit.
