@@ -143,15 +143,19 @@ assert.equal(books[2].scenes.meet_dino.choices[0].otherwise.next, 'blue_glow');
 assert.equal(books[3].scenes.zero_door.choices[0].otherwise.next, 'zero_knock');
 assert.equal(books[4].scenes.dalek_final_role.choices[0].otherwise.next, 'shield_final');
 const royal=books[5];
+const royalReached=new Set();
 for(const hero of Object.keys(royal.heroes)){
   function royalWalk(id,visited,inventory,flags){
     assert(!visited.has(id),`${hero}: retour dans ${id}`);
     const scene=royal.scenes[id];
+    royalReached.add(id);
     if(scene.end){assert(/Torchwood/.test(scene.text),`${id} oublie la création de Torchwood`);return;}
     const held=inventory.slice(),nextFlags={...flags,...scene.flags};
     if(scene.giveItem){const slot={key:0,ribbon:0,drawing:1,note:1,lantern:2,prism:2}[scene.giveItem];held[slot]=scene.giveItem;}
     const current=state(hero,held,nextFlags);
-    const next=scene.next!==undefined?[scene.next]:scene.choices.map(c=>{
+    const check=scene.heroCheck||scene.itemCheck;
+    const yes=check&&(check.hero?hero===check.hero:check.item?held.includes(check.item):check.anyItems.some(item=>held.includes(item)));
+    const next=check?[yes?check.yes:check.no]:scene.next!==undefined?[scene.next]:scene.choices.map(c=>{
       const missing=c.requiresItem&&!held.includes(c.requiresItem)||c.requiresAnyItem&&!c.requiresAnyItem.some(item=>held.includes(item));
       return missing?c.otherwise.next:typeof c.next==='function'?c.next(current):c.next;
     });
@@ -159,7 +163,17 @@ for(const hero of Object.keys(royal.heroes)){
   }
   royalWalk(royal.start,new Set(),[],{});
 }
-assert.equal(royal.scenes.light_choice.choices[0].otherwise.next, 'empty_prism');
-assert.equal(royal.scenes.light_choice.choices[0].next, 'prism_beam');
-assert.equal(royal.scenes.light_choice.choices[1].otherwise.next, 'ask_albert');
-console.log(`${sceneCount} scènes vérifiées, livre 1 et aventure de Victoria sans retours ni impasses.`);
+assert.deepEqual(Object.keys(royal.scenes).filter(id=>!royalReached.has(id)),[],"Scènes inaccessibles dans La Nuit de Torchwood");
+for(const id of ['manor_gate','hall_choice','moon_howl','light_choice','after_light'])assert(royal.scenes[id].common,`${id} doit réunir les trois volets sur une nouvelle double page`);
+for(const [id,chosen] of [['queen_greeting','rose'],['tracks','doctor'],['road_lantern','rose']]){
+  const check=royal.scenes[id].heroCheck;
+  assert.equal(check.hero,chosen);
+  assert.equal(royal.scenes[check.yes].next,'manor_gate');
+  assert.equal(royal.scenes[check.no].next,'manor_gate');
+  assert.notEqual(royal.scenes[check.yes].text,royal.scenes[check.no].text);
+}
+assert.deepEqual(Array.from(royal.scenes.arrival.choices.map(c=>c.next)),['queen_greeting','tracks','road_lantern']);
+assert.deepEqual([royal.scenes.prism_check.itemCheck.yes,royal.scenes.prism_check.itemCheck.no],['prism_beam','empty_prism']);
+assert.deepEqual([royal.scenes.mirror_check.itemCheck.yes,royal.scenes.mirror_check.itemCheck.no],['mirror_beam','ask_albert']);
+assert.match(fs.readFileSync(path.join(__dirname,'../app.js'),'utf8'),/const books=\[window\.BOOK_06,window\.BOOK_01/,'Torchwood doit être le premier livre affiché');
+console.log(`${sceneCount} scènes vérifiées, Le Docteur a disparu ! et premier livre La Nuit de Torchwood sans retours ni impasses.`);

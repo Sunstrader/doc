@@ -23,20 +23,29 @@
   const page=(chapter,title,text,art,next,giveItem,flags)=>({chapter,title,text,art,next,...(giveItem?{giveItem}:{}),...(flags?{flags}:{})});
   const ending=(title,text,endLabel,art)=>({chapter:"Une nouvelle histoire commence",title,text,end:true,endLabel,art});
 
-  S.arrival=decision("Écosse · 1879","La voiture de la reine",s=>`${book.heroes[s.hero].short} sort du TARDIS avec ${s.hero==="rose"?"le Docteur":"Rose"}. Sur la route, une voiture s'arrête : la reine Victoria se rend au manoir de Torchwood. La nuit tombe et un drôle de hurlement vient des collines.`,"moor",[
-    choice("👑","Saluer la reine","queen_greeting","Elle aime les paroles franches."),
-    choice("👣","Observer les traces dans la boue","tracks","Elles mènent vers le manoir."),
-    choice("🏮","Aider à éclairer le chemin","road_lantern","La nuit arrive vite.")
+  S.arrival=decision("Écosse · 1879","La voiture de la reine",s=>`${book.heroes[s.hero].short} sort du TARDIS avec ${s.hero==="rose"?"le Docteur":"Rose"}. Une voiture s'arrête : la reine Victoria se rend au manoir de Torchwood. Un hurlement monte des collines. Qui aideras-tu d'abord ?`,"moor",[
+    choice("👑","Parler à Victoria","queen_greeting","Elle s'inquiète pour ses compagnons."),
+    choice("👣","Suivre les traces dans la boue","tracks","Des pas entourent la voiture."),
+    choice("🏮","Éclairer le chemin","road_lantern","Le brouillard cache la route.")
   ]);
-  S.queen_greeting=page("Sur la route","Une promesse à Victoria","Rose et le Docteur se présentent. Victoria leur demande de rester près de sa voiture. « Ce soir, personne ne marche seul. »","queen","manor_gate",null,{trust:1});
-  S.tracks=page("Sur la route","Des pas et des pattes","Près d'une roue, deux sortes de traces se croisent. Le Docteur dessine leur forme dans la terre. Elles vont toutes vers Torchwood.","moor","manor_gate",null,{clue:1});
-  S.road_lantern=page("Sur la route","Une lumière pour tous","Tu tiens une petite lanterne pendant que la voiture traverse le brouillard. Victoria te remercie. Plus loin, une grande maison apparaît.","moor","manor_gate","lantern",{trust:1});
+  // La rangée choisie avance seule : renvoi sur le héros, deux pages différentes,
+  // puis une nouvelle double page commune. Les autres pistes ne sont pas revisitées.
+  S.queen_greeting={chapter:"Sur la route",title:"La reine s'inquiète",art:"queen",text:"Victoria cherche un garde disparu derrière la voiture. Es-tu Rose ?",heroCheck:{hero:"rose",yes:"queen_rose",no:"queen_doctor"}};
+  S.queen_rose=page("Sur la route","Le ruban du garde","Rose écoute Victoria et retrouve le garde près des arbres. Il lui donne un ruban bleu pour repérer la voiture dans le brouillard. « Merci, Rose », souffle la reine.","queen","manor_gate","ribbon",{trust:1});
+  S.queen_doctor=page("Sur la route","Une lettre sous le siège","Le Docteur examine la voiture : une lettre d'Albert y est glissée. Elle parle d'un miroir au manoir. « Gardez-la », dit Victoria. Le garde les rejoint.","queen","manor_gate","note",{clue:1});
+  S.tracks={chapter:"Sur la route",title:"Deux sortes de traces",art:"moor",text:"Des bottes et de grandes pattes se croisent près d'une roue. Es-tu le Docteur ?",heroCheck:{hero:"doctor",yes:"tracks_doctor",no:"tracks_rose"}};
+  S.tracks_doctor=page("Sur la route","La clé dans la boue","Le Docteur suit les bottes jusqu'à une porte de service. Une petite clé de cuivre est tombée là. « Quelqu'un est entré avant nous ! »","moor","manor_gate","key",{clue:1});
+  S.tracks_rose=page("Sur la route","Le garde derrière l'arbre","Rose suit les pas et retrouve le garde caché. Il a vu des moines entrer au manoir. Ensemble, ils préviennent Victoria ; les grandes pattes vont dans la même direction.","moor","manor_gate",null,{trust:1,clue:1});
+  S.road_lantern={chapter:"Sur la route",title:"La route dans le brouillard",art:"moor",text:"La lumière de la voiture faiblit. Es-tu Rose ?",heroCheck:{hero:"rose",yes:"road_rose",no:"road_doctor"}};
+  S.road_rose=page("Sur la route","Une lumière à emporter","Rose aide Victoria à éclairer le sentier. « Garde cette petite lanterne pour la maison », dit la reine. Sa lumière rassure tout le monde.","moor","manor_gate","lantern",{trust:1});
+  S.road_doctor=page("Sur la route","Les fenêtres du manoir","Le Docteur regarde au-delà du brouillard. Une fenêtre s'éclaire en haut du manoir : quelqu'un y attend la lune. Il montre à tous un chemin sûr.","moor","manor_gate",null,{clue:1});
 
   S.manor_gate=decision("Torchwood","La maison aux grandes fenêtres","Le manoir semble calme. Mais les domestiques parlent tout bas, et une fenêtre s'ouvre puis se referme à l'étage. Où vas-tu en premier ?","manor",[
     choice("👩","Écouter les domestiques","servants","Ils connaissent les secrets de la maison."),
     choice("📚","Entrer dans la bibliothèque","library_arrival","Un vieux livre est resté ouvert."),
     choice("🪟","Regarder la fenêtre du haut","window_trace","Quelqu'un attendait la lune.")
   ]);
+  S.manor_gate.common=true;
   S.servants=page("Torchwood","Un secret murmuré","Les domestiques racontent qu'un invité est enfermé dans une pièce. Il a peur de la pleine lune, pas des gens. Tu promets de l'aider.","hall","hall_choice",null,{guest:1});
   S.library_arrival=page("Torchwood","Le livre d'Albert","Dans la bibliothèque, un dessin montre un grand télescope et un miroir sous le toit. Le prince Albert avait préparé quelque chose ici.","library","hall_choice",null,{clue:1});
   S.window_trace=page("Torchwood","Une ombre derrière la vitre","Une silhouette passe devant la fenêtre, puis disparaît. Tu remarques un couloir qui mène à l'étage et une petite porte de service.","manor","hall_choice",null,{clue:1});
@@ -46,6 +55,7 @@
     choice("🚪","Chercher l'invité effrayé","guest_room","Il pourrait raconter ce qu'il a vu."),
     choice("🔭","Monter voir le télescope","observatory_first","Le dessin du livre mène au toit.")
   ]);
+  S.hall_choice.common=true;
   S.queen_room=decision("Près de Victoria","La salle des portraits","Victoria garde son calme. Trois portraits montrent le prince Albert devant un miroir rond. Un petit coffre est posé sous la fenêtre.","queen",[
     choice("💬","Demander ce qu'Albert étudiait",s=>s.hero==="rose"?"rose_listens":"doctor_questions","Rose sait écouter ; le Docteur sait questionner."),
     choice("🎨","Dessiner la forme du miroir","mirror_drawing","Le dessin pourra servir plus tard."),
@@ -79,16 +89,20 @@
     choice("🔭","Aller régler le télescope","telescope_ready","La lune brille juste au-dessus du toit."),
     choice("👑","Aider Victoria à monter","queen_safe","La reine pourra voir la machine fonctionner.")
   ]);
+  S.moon_howl.common=true;
   S.rose_wolf=page("La pleine lune","La voix de Rose","Rose parle au jeune invité comme à un ami. Le loup s'arrête devant l'escalier, assez longtemps pour qu'ils passent sans courir.","wolf","light_choice",null,{guest:1,trust:1});
   S.doctor_wolf=page("La pleine lune","L'idée du Docteur","Le Docteur comprend que le loup suit les reflets sur le mur. Il l'attire vers l'observatoire avec une petite tache de lumière.","wolf","light_choice",null,{clue:1});
   S.telescope_ready=page("Sous le toit","Le cercle de lune","Le télescope pivote lentement. Un rond blanc apparaît sur le plafond. Il manque encore un réglage pour que la lumière touche le miroir.","observatory","light_choice",null,{clue:1});
   S.queen_safe=page("Sous le toit","Victoria tient bon","La reine te suit sur l'escalier. Elle reconnaît aussitôt l'installation d'Albert et t'indique le miroir à déplacer.","queen","light_choice",null,{trust:1});
 
   S.light_choice=decision("L'observatoire","Une lumière à guider","Le loup arrive sur le seuil. La lune éclaire le télescope. Il suffit d'une bonne idée pour guider son rayon vers le miroir et aider le jeune invité.","observatory",[
-    {...choice("🔷","Placer le prisme, si tu l'as","prism_beam","Vérifie ta roue jaune."),requiresItem:"prism",otherwise:{label:"Utiliser le miroir sans prisme",next:"empty_prism"}},
-    {...choice("🪞","Suivre le dessin, si tu l'as","mirror_beam","Vérifie ta roue bleue."),requiresAnyItem:["drawing","note"],otherwise:{label:"Demander à Victoria ce qu'Albert disait",next:"ask_albert"}},
+    choice("🔷","Chercher le prisme sur ta roue","prism_check","As-tu le prisme de verre ?"),
+    choice("🪞","Chercher un dessin ou une note","mirror_check","As-tu le dessin ou la note d'Albert ?"),
     choice("🤝","Demander à tous de tenir le miroir","shared_beam","Plusieurs mains peuvent le guider ensemble.")
   ]);
+  S.light_choice.common=true;
+  S.prism_check={chapter:"La lumière",title:"Le prisme de verre",art:"observatory",text:"Regarde ta roue jaune. As-tu trouvé le prisme de verre ?",itemCheck:{item:"prism",yes:"prism_beam",no:"empty_prism"}};
+  S.mirror_check={chapter:"La lumière",title:"Le plan du miroir",art:"observatory",text:"Regarde ta roue bleue. As-tu le dessin du miroir ou la note d'Albert ?",itemCheck:{anyItems:["drawing","note"],yes:"mirror_beam",no:"ask_albert"}};
   S.prism_beam=page("La lumière","Les petites lunes dansent","Tu places le prisme dans le télescope. Ses reflets se rejoignent sur le grand miroir. Le loup s'immobilise dans une douce clarté.","moonlight","after_light",null,{guest:1,clue:1});
   S.empty_prism=page("La lumière","Un reflet sur le mur","Le prisme manque. Tu tournes le miroir vers une fenêtre : un fin rayon de lune suffit à montrer la direction.","moonlight","after_light",null,{clue:1});
   S.mirror_beam=page("La lumière","Le dessin avait raison","Avec ton dessin ou la note d'Albert, tu règles le miroir. Une grande lune argentée éclaire la pièce sans effrayer le loup.","moonlight","after_light",null,{clue:1});
@@ -100,6 +114,7 @@
     choice("✉️","Lui montrer la note ou les indices",s=>s.inventory.includes("note")||s.flags.clue?"ending_archive":"ending_queen","Ses souvenirs formeront de nouvelles archives."),
     choice("🌅","Accompagner le garçon dehors","ending_guest","Il a besoin d'un nouveau départ.")
   ]);
+  S.after_light.common=true;
   S.ending_kind=ending("Une maison pour protéger","Victoria promet que le garçon ne sera plus seul. Elle fonde Torchwood pour comprendre l'inconnu et protéger son peuple. Puis elle dit au Docteur et à Rose qu'ils doivent repartir. Le TARDIS les attend.","La promesse tenue","dawn");
   S.ending_queen=ending("La décision de Victoria","Victoria remercie ses invités, mais elle se méfie de ce qu'elle ne comprend pas. Elle fonde Torchwood pour enquêter sur les mystères venus d'ailleurs. Rose et le Docteur repartent dans le TARDIS au petit matin.","La naissance de Torchwood","dawn");
   S.ending_archive=ending("Les dessins de Torchwood","La reine conserve le dessin et les notes d'Albert. Ils deviennent les premières archives de Torchwood, fondé pour étudier les dangers inconnus. Victoria prend congé de Rose et du Docteur ; le TARDIS s'éloigne.","Les premières archives","dawn");

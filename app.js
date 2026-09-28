@@ -1,6 +1,6 @@
 (() => {
 "use strict";
-const books=[window.BOOK_01,window.BOOK_02,window.BOOK_03,window.BOOK_04,window.BOOK_05,window.BOOK_06].filter(Boolean);
+const books=[window.BOOK_06,window.BOOK_01,window.BOOK_02,window.BOOK_03,window.BOOK_04,window.BOOK_05].filter(Boolean);
 const root=document.getElementById("app");let book=books[0],heroCursor=0;
 const state={hero:null,inventory:[null,null,null],flags:{},scene:null,history:[],changed:-1,flapOrigin:null,flapRow:null};
 const meta={"book-06":["Victoria · 1879","Une nuit de lune à Torchwood."],"book-01":["Boucle temporelle","Le temps s'est cassé."],"book-02":["Mystère","Ne détourne pas les yeux."],"book-03":["Aventure","Un dinosaure est perdu à Londres."],"book-04":["Exploration","Le TARDIS a mélangé ses pièces."],"book-05":["Épopée","Un Dalek demande de l'aide."]};
@@ -24,6 +24,7 @@ const Feedback={enabled:localStorage.getItem("dw_sound")!=="off",ctx:null,
 };
 function soundButton(){const b=document.getElementById("global-sound-toggle");if(b){b.textContent=Feedback.enabled?"🔊":"🔇";b.title=Feedback.enabled?"Couper les sons":"Activer les sons"}}
 function reset(){state.hero=null;state.inventory=[null,null,null];state.flags={};state.scene=null;state.history=[];state.changed=-1;state.flapOrigin=null;state.flapRow=null}
+const stripBook=()=>book.id==="book-01"||book.id==="book-06";
 function item(id){return id?(book.items[id]||{name:id,icon:"?"}):{name:"Vide",icon:"○"}}
 function has(id){return state.inventory.includes(id)}
 function slotFor(id){const m=slots[book.id]||{};if(Number.isInteger(m[id]))return m[id];return Math.abs([...id].reduce((a,c)=>a+c.charCodeAt(0),0))%3}
@@ -103,7 +104,7 @@ function turnChoice(c,btn){
  if(root.dataset.turning)return;
  root.dataset.turning="yes";
  btn.classList.add("turning");Feedback.turn();
- setTimeout(()=>{if(c.setItem!==undefined)add(c.setItem);flags(c.flags);const next=resolve(c.next);if(c.removeItem)remove(c.removeItem);if(book.id==="book-01"){
+ setTimeout(()=>{if(c.setItem!==undefined)add(c.setItem);flags(c.flags);const next=resolve(c.next);if(c.removeItem)remove(c.removeItem);if(stripBook()){
    if(book.scenes[state.scene].common&&book.scenes[state.scene].next!==undefined){state.flapOrigin=null;state.flapRow=null}
    else if(state.flapRow===null&&btn.dataset.choice!==undefined)state.flapRow=+btn.dataset.choice;
  }state.history.push(state.scene);state.scene=next;delete root.dataset.turning;renderScene()},330)
@@ -141,7 +142,7 @@ function openChoiceGate(c){
 function renderScene(){
  const s=book.scenes[state.scene];if(!s){root.innerHTML='<section class="tutorial card"><h1>Scène introuvable</h1><button class="primary" id="home">Retour</button></section>';document.getElementById("home").onclick=home;return}
  apply(s);if(s.end)return ending(s);
- if(book.id==="book-01"){
+ if(stripBook()){
    if(s.common){state.flapOrigin=null;state.flapRow=null;delete root.dataset.stripOrigin}
    return renderBookStrips(s)
  }
