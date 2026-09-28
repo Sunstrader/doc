@@ -164,7 +164,7 @@ for(const hero of Object.keys(royal.heroes)){
   royalWalk(royal.start,new Set(),[],{});
 }
 assert.deepEqual(Object.keys(royal.scenes).filter(id=>!royalReached.has(id)),[],"Scènes inaccessibles dans La Nuit de Torchwood");
-for(const id of ['manor_gate','hall_choice','moon_howl','light_choice','after_light'])assert(royal.scenes[id].common,`${id} doit réunir les trois volets sur une nouvelle double page`);
+for(const [id,scene] of Object.entries(royal.scenes))if(scene.choices)assert(id===royal.start||scene.common,`${id}: trois nouveaux choix doivent occuper trois volets entiers`);
 for(const [id,chosen] of [['queen_greeting','rose'],['tracks','doctor'],['road_lantern','rose']]){
   const check=royal.scenes[id].heroCheck;
   assert.equal(check.hero,chosen);

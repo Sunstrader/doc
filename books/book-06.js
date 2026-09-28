@@ -61,6 +61,7 @@
     choice("🎨","Dessiner la forme du miroir","mirror_drawing","Le dessin pourra servir plus tard."),
     choice("🗝️","Regarder sous le coffre","copper_key","Une clé brille par terre.")
   ]);
+  S.queen_room.common=true;
   S.rose_listens=page("Salle des portraits","Victoria se confie","Rose écoute Victoria parler d'Albert. Il espérait qu'un jour son télescope aiderait les gens. Victoria lui confie une petite note.","queen","moon_howl","note",{trust:1,clue:1});
   S.doctor_questions=page("Salle des portraits","La question du Docteur","« Pourquoi un miroir aussi grand ? » demande le Docteur. Victoria se souvient : Albert voulait guider la lumière de la lune jusque dans la salle du haut.","queen","moon_howl",null,{clue:1});
   S.mirror_drawing=page("Salle des portraits","Un cercle sur le papier","Tu dessines le miroir et une flèche vers le toit. Même dans le noir, tu sauras où diriger la lumière.","library","moon_howl","drawing",{clue:1});
@@ -71,6 +72,7 @@
     choice("👂","Écouter ce qui se passe au-dessus","wolf_sound","Le toit grince sous des pas."),
     choice("🎀","Attacher un ruban à la porte","ribbon_mark","On pourra retrouver la pièce.")
   ]);
+  S.guest_room.common=true;
   S.guest_promise=page("Le couloir","Une promesse douce","L'invité respire plus calmement. Il explique que les moines l'ont amené ici et que la lumière spéciale d'Albert pourrait l'aider.","corridor","moon_howl",null,{guest:1,trust:1});
   S.wolf_sound=page("Le couloir","Sur les tuiles","En écoutant, tu comprends que le loup cherche le télescope. Tu préviens Rose, le Docteur et Victoria avant qu'il n'arrive.","roof","moon_howl",null,{clue:1});
   S.ribbon_mark=page("Le couloir","Un fil pour retrouver la route","Le ruban bleu reste noué à la poignée. Tu pourras revenir aider l'invité si le couloir devient sombre.","corridor","moon_howl","ribbon",{guest:1});
@@ -80,6 +82,7 @@
     choice("🔷","Chercher la pièce de verre","glass_prism","Le télescope a une place vide."),
     choice("🚪","Fermer doucement la porte","safe_door","Cela donnera du temps à Victoria.")
   ]);
+  S.observatory_first.common=true;
   S.albert_note=page("Sous le toit","L'idée d'Albert","Un dessin explique comment faire passer un rayon de lune dans le prisme. Ce rayon peut apaiser la créature et protéger Victoria.","observatory","moon_howl","note",{clue:1});
   S.glass_prism=page("Sous le toit","Une pièce cachée","Sous un drap, tu trouves le prisme de verre. Ses faces font danser de petites lunes sur le mur.","observatory","moon_howl","prism",{clue:1});
   S.safe_door=page("Sous le toit","Une minute de plus","Tu fermes la porte sans bruit. En bas, la reine a le temps de se mettre à l'abri. Une lumière filtre encore sous le battant.","observatory","moon_howl",null,{trust:1});
