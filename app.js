@@ -3,14 +3,14 @@
 const books=[window.BOOK_06,window.BOOK_01,window.BOOK_02,window.BOOK_03,window.BOOK_04,window.BOOK_05].filter(Boolean);
 const root=document.getElementById("app");let book=books[0],heroCursor=0;
 const state={hero:null,inventory:[null,null,null],flags:{},scene:null,history:[],changed:-1,flapOrigin:null,flapRow:null};
-const meta={"book-06":["Victoria · 1879","Une nuit de lune à Torchwood."],"book-01":["Londres · 2005","Les mannequins veulent rentrer chez eux."],"book-02":["Londres · 2008","Les petits bébés-nuages cherchent une maman."],"book-03":["Aventure","Un dinosaure est perdu à Londres."],"book-04":["Exploration","Le TARDIS a mélangé ses pièces."],"book-05":["Épopée","Un Dalek demande de l'aide."]};
+const meta={"book-06":["Torchwood · 1879","Un grand chien doux est perdu sous la lune."],"book-01":["Londres · 2005","Les mannequins veulent rentrer chez eux."],"book-02":["Londres · 2008","Les petits bébés-nuages cherchent une maman."],"book-03":["Vaisseau · 2012","Un dinosaure doux a perdu sa maison."],"book-04":["Leadworth · 1996","Une fissure parle dans le mur d’Amy."],"book-05":["Musée secret","Un Dalek solitaire a besoin d’amis."]};
 const slots={
  "book-01":{blueButton:0,plasticKey:0,starMap:1,softLight:2,smileToken:1},
  "book-02":{softBlanket:0,milkBottle:0,starLullaby:1,warmHug:1,blueRibbon:2},
  "book-03":{whistle:0,rope:0,key:0,leaf:1,eggShell:1,tracker:2},
- "book-04":{blueThread:0,compass:0,roomKey:0,libraryCard:1,teaCup:1,crystal:2},
- "book-05":{starKey:0,shieldBadge:0,memoryChip:1,seed:1,powerCell:2,prism:2},
- "book-06":{key:0,ribbon:0,drawing:1,note:1,lantern:2,prism:2}
+ "book-04":{apple:0,yarn:0,keyCard:1,softVoice:1,starDust:2},
+ "book-05":{powerCell:0,photo:0,softCloth:1,songNote:1,friendshipToken:2},
+ "book-06":{key:0,ribbon:0,bone:0,drawing:1,note:1,lantern:2}
 };
 const esc=(v="")=>String(v).replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">","\"":""","'":"&#039;"}[c]));
 const ART=window.DW_ART||{scene:()=>"",cover:()=>"",avatar:()=>""};
@@ -224,20 +224,21 @@ function choiceFlap(c,i,s){
  const ok=gated||allowed(c),labels=["Haut","Milieu","Bas"],label=resolve(c.label),hint=gated?"Selon ta roue : 1 ou 2 pages":resolve(c.hint);
  return `<button class="page-flap flap-${i+1} ${ok?"":"locked"}" data-choice="${i}" aria-label="Volet ${labels[i]} : ${esc(label)}">
    <div class="flap-art">${ART.scene(book.id,s)}<span class="flap-emblem" aria-hidden="true">${esc(c.icon||"✦")}</span></div>
-   <div class="flap-copy"><span class="flap-number">${labels[i]}</span><strong>${esc(label)}</strong><small>${esc(ok?(hint||"Tourne ce volet"):lock(c))}</small></div>
-   <span class="page-turn-icon">📖 1</span>
+   <div class="flap-copy"><span class="flap-number">${labels[i]}</span><strong>${esc(label)}</strong><small>${esc(ok?(hint||"Tourne ce volet"):(lock(c)||"Pas encore accessible"))}</small></div>
  </button>`
 }
 function menu(){
- root.innerHTML+=`<div class="menu-overlay" id="overlay"><div class="menu-card"><h2>Menu</h2><button id="restart">Recommencer</button><button id="lib">Bibliothèque</button><button id="sound">Son</button><button id="close">Fermer</button></div></div>`;
+ root.innerHTML=`<section class="tutorial card"><div class="kicker">Menu</div><h1>${esc(book.title)}</h1>
+   <button class="primary" id="resume">Continuer</button>
+   <button class="secondary" id="restart">Recommencer</button>
+   <button class="secondary" id="lib">Bibliothèque</button>
+ </section>`;
+ document.getElementById("resume").onclick=()=>renderScene();
  document.getElementById("restart").onclick=()=>start(state.hero);
  document.getElementById("lib").onclick=home;
- document.getElementById("sound").onclick=()=>{Feedback.toggle();document.getElementById("sound").textContent=Feedback.enabled?"Son : ON":"Son : OFF"};
- document.getElementById("close").onclick=()=>document.getElementById("overlay").remove();
 }
 function ending(s){
- apply(s);
- root.innerHTML=`<section class="book-frame end-frame">
+ root.innerHTML=`<section class="book-frame adventure-frame">
    <div class="spiral"></div>
    <article class="scene-page page-paper">
      <div class="scene-picture">${ART.scene(book.id,s)}</div>
