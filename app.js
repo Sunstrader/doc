@@ -12,7 +12,8 @@ const slots={
  "book-05":{powerCell:0,photo:0,softCloth:1,songNote:1,friendshipToken:2},
  "book-06":{key:0,ribbon:0,bone:0,drawing:1,note:1,lantern:2}
 };
-const esc=(v="")=>String(v).replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">","\"":""","'":"&#039;"}[c]));
+const ENT={"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;","\"":"&"+"quot;","'":"&#039;"};
+const esc=(v="")=>String(v).replace(/[&<>"']/g,c=>ENT[c]||c);
 const ART=window.DW_ART||{scene:()=>"",cover:()=>"",avatar:()=>""};
 
 const Feedback={enabled:localStorage.getItem("dw_sound")!=="off",ctx:null,
